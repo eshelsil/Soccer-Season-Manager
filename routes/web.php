@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('groups', function () {
+    return view('groups');
+});
+Route::get('games', function () {
+    return view('games');
+});
+Route::get('table', function () {
+    return view('table');
+});
