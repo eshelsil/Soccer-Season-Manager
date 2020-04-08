@@ -16,11 +16,18 @@ class TableController extends Controller
                 $groups_by_id[$group_data->group_id] = $group_data->group_name;
             };
             define('TEAMS_BY_ID', $groups_by_id);
+            define('WEEKS_IN_ROUND', count(TEAMS_BY_ID) - 1 );
+            define('WEEKS_COUNT', WEEKS_IN_ROUND * 2 );
         }
     }
 
-    public function index(){
-        $games = DB::select("select * from games where is_done = 1");
-        return view('table', ['games' => $games]);
+    public function index(Request $request){
+        $week = $request->query('week');
+        $filter_string = !is_null($week) ? sprintf( "AND %s",  "week <= $week") : '';
+        $query_string = sprintf("select * from games where is_done = 1 %s", $filter_string);
+        $games = DB::select($query_string);
+        return view('table', ['games' => $games, 'query_params'=>array(
+            'week'=>$week
+        )]);
     }
 }

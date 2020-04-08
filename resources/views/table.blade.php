@@ -7,6 +7,22 @@
 @endsection
 
 @section('content')  
+    <div class="container row justify-content-start">
+        <div class="container col">
+            <label for="weekSelect" class="row pl-0">Until Week</label>
+            <select class="custom-select row" id="weekSelect" style="width:auto;">
+                <?php
+                    $selected = $query_params['week'] ?? 'unset';
+                    echo sprintf("<option value='all' %s>-----------</option>", $selected == 'unset' ? 'selected' : '');
+                    foreach(range(1, WEEKS_COUNT) as $week){
+                        $is_selected_str = $selected == $week ? 'selected' : '';
+                        echo sprintf("<option %s>$week</option>", $is_selected_str);
+                    }
+                ?>
+            </select>
+        </div>
+    </div>
+
     <div class="h3 mt-2 mb-4"><u>
         Season Table
     </u></div>
@@ -93,7 +109,7 @@
                 }
             }
             usort($table, 'cmp');
-            
+
             foreach($table as $index => $team_data){
                 $classes = $index == 0 ? "font-weight-bold" : '';
                 $rank = $index + 1;
