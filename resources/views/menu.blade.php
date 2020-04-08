@@ -5,11 +5,11 @@
     </button> --}}
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
+            <li class="nav-item @if ($view == 'manage') active @endif">
+                <a class="nav-link" href="/manage">Manage</a>
+            </li>
             <li class="nav-item @if ($view == 'games') active @endif">
                 <a class="nav-link" href="/games">Games</a>
-            </li>
-            <li class="nav-item @if ($view == 'groups') active @endif">
-                <a class="nav-link" href="/groups">Groups</a>
             </li>
             <li class="nav-item @if ($view == 'table') active @endif">
                 <a class="nav-link" href="/table">Table</a>
