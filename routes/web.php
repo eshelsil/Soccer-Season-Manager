@@ -19,9 +19,7 @@ Route::get('/', function () {
 Route::get('groups', function () {
     return view('groups');
 });
-Route::get('games', function () {
-    return view('games');
-});
+Route::get('games', 'GamesController@index');
 Route::get('table', function () {
     return view('table');
 });

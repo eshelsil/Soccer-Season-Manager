@@ -10882,3 +10882,14 @@ a.text-dark:focus {
   }
 }
 
+.table.shrunk {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.table td .shrunk,
+.table th .shrunk {
+  white-space: nowrap;
+  width: 1%;
+}
+

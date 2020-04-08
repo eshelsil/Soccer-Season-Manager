@@ -6,3 +6,16 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+.table {
+    &.shrunk{
+        white-space: nowrap;
+        width: 1%;
+    }
+    td, th {
+        .shrunk{
+            white-space: nowrap;
+            width: 1%;
+        }
+    }
+}
