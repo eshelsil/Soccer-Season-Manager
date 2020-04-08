@@ -77,6 +77,12 @@
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Week</th>
+                <?php
+                    $team_id = $query_params['team_id'];
+                    if (!is_null($team_id)){
+                        echo "<th scope=\"col\">Res.</th>";
+                    } 
+                ?>
                 <th scope="col">Home Team</th>
                 <th scope="col">Away Team</th>
                 <th colspan="3" scope="col">Score</th>
@@ -94,25 +100,50 @@
                 $away_team_name = TEAMS_BY_ID[$away_team_id];
                 $score_home = $game->home_score;
                 $score_away = $game->away_score;
-                $home_winner_class = '';
-                $away_winner_class = '';
-                $home_team_class = '';
-                $away_team_class = '';
-                $score_separator = ':';
-                if ($score_home > $score_away){
-                    $home_winner_class = 'font-weight-bold';
-                } elseif ($score_home < $score_away) {
-                    $away_winner_class = 'font-weight-bold';
-                }
                 $is_done = $game->is_done;
-                if (!$is_done){
-                    $score_separator = '';
+
+                if ($score_home > $score_away){
+                    $winner = 'home';
+                } elseif($score_home < $score_away){
+                    $winner = 'away';
+                } elseif (!is_null($score_home) && !is_null($score_away)) {
+                    $winner = 'draw';
+                } else{
+                    $winner = null;
                 }
-                $home_team_text = ($home_team_id == $team_id) ? "<u>$home_team_name</u>" : $home_team_name;
-                $away_team_text = ($away_team_id == $team_id) ? "<u>$away_team_name</u>" : $away_team_name;
+
+                if (is_null($team_id)){
+                    $selected_team = null;
+                } elseif($home_team_id == $team_id){
+                    $selected_team = 'home';
+                } else{
+                    $selected_team = 'away';
+                }
+
+                $home_winner_class = ($winner == 'home') ? 'font-weight-bold' : '';
+                $away_winner_class = ($winner == 'away') ? 'font-weight-bold' : '';
+                $home_team_text = ($selected_team == 'home') ? "<u>$home_team_name</u>" : $home_team_name;
+                $away_team_text = ($selected_team == 'away') ? "<u>$away_team_name</u>" : $away_team_name;
+                $score_separator = $is_done ? ':' : '';
+
+                $score_cell = '';
+                if (!is_null($team_id)){
+                    $cell_draw = "<td>D</td>";
+                    $cell_win = "<td class=\"text-success\">W</td>";
+                    $cell_lost = "<td class=\"text-danger\">L</td>";
+                    $cell_empty = "<td></td>";
+                    if ($winner == 'draw'){
+                        $score_cell = $cell_draw;
+                    } elseif (is_null($winner)){
+                        $score_cell = $cell_empty;
+                    } else{
+                        $score_cell = ($selected_team == $winner) ? $cell_win : $cell_lost;
+                    }
+                }
                 echo "
                 <tr>
                     <td class='shrunk'>$week</td>
+                    $score_cell
                     <td class='shrunk $home_winner_class'>$home_team_text</td>
                     <td class='shrunk $away_winner_class'>$away_team_text</td>
                     <td class='shrunk pr-0 $home_winner_class'>$score_home</td>
