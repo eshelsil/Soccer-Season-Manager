@@ -4,6 +4,9 @@
         <title>2020 - @yield('title')</title>
         <link href="{{ asset('/css/app.css') }}" rel="stylesheet">
         <link rel="shortcut icon" href="{{ asset('img/favicon.png') }}">
+        <script src="{{ asset('/js/app.js') }}"></script>
+        @section('script')
+        @show
     </head>
     <body>
         <div class="text-center container-fluid p-4 bg-primary text-white">
