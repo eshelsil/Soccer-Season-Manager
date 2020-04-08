@@ -76,7 +76,6 @@
     <table class="table table-striped shrunk">
         <thead class="thead-dark">
             <tr>
-                {{-- <th scope="col">Round</th> --}}
                 <th scope="col">Week</th>
                 <th scope="col">Home Team</th>
                 <th scope="col">Away Team</th>
@@ -95,34 +94,30 @@
                 $away_team_name = TEAMS_BY_ID[$away_team_id];
                 $score_home = $game->home_score;
                 $score_away = $game->away_score;
+                $home_winner_class = '';
+                $away_winner_class = '';
                 $home_team_class = '';
                 $away_team_class = '';
                 $score_separator = ':';
                 if ($score_home > $score_away){
-                    $home_team_class = $home_team_class . 'text-success';
-                    $away_team_class = $away_team_class . 'text-danger';
+                    $home_winner_class = 'font-weight-bold';
                 } elseif ($score_home < $score_away) {
-                    $home_team_class = $home_team_class . 'text-danger';
-                    $away_team_class = $away_team_class . 'text-success';
-                }
-                if ($home_team_id == $team_id){
-                    $home_team_class = $home_team_class . ' font-weight-bold';
-                } elseif ($away_team_id == $team_id){
-                    $away_team_class = $away_team_class . ' font-weight-bold';
+                    $away_winner_class = 'font-weight-bold';
                 }
                 $is_done = $game->is_done;
                 if (!$is_done){
                     $score_separator = '';
                 }
+                $home_team_text = ($home_team_id == $team_id) ? "<u>$home_team_name</u>" : $home_team_name;
+                $away_team_text = ($away_team_id == $team_id) ? "<u>$away_team_name</u>" : $away_team_name;
                 echo "
                 <tr>
-                    <!--td class='shrunk'>$round</td-->
                     <td class='shrunk'>$week</td>
-                    <td class='shrunk $home_team_class'>$home_team_name</td>
-                    <td class='shrunk $away_team_class'>$away_team_name</td>
-                    <td class='shrunk pr-0 $home_team_class'>$score_home</td>
+                    <td class='shrunk $home_winner_class'>$home_team_text</td>
+                    <td class='shrunk $away_winner_class'>$away_team_text</td>
+                    <td class='shrunk pr-0 $home_winner_class'>$score_home</td>
                     <td class='shrunk pr-0 pl-0'>$score_separator</td>
-                    <td class='shrunk pl-1 $away_team_class'>$score_away</td>
+                    <td class='shrunk pl-1 $away_winner_class'>$score_away</td>
                 </tr>
                 ";
             }
