@@ -20,7 +20,10 @@ Route::get('groups', function () {
     return view('groups');
 });
 Route::get('games', 'GamesController@index');
-Route::get('games/{team_id}', 'GamesController@team');
-Route::get('table', function () {
-    return view('table');
-});
+// Route::get('games/{team_id}', 'GamesController@team');
+
+
+Route::get('table', 'TableController@index');
+// Route::get('table', function () {
+//     return view('table');
+// });

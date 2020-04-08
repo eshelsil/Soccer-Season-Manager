@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Page Title')
+@section('title', 'Games')
 
 @section('script')
     <script src="{{ asset('/js/games.js') }}"></script>

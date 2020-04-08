@@ -41,10 +41,10 @@ class GamesController extends Controller
         )]);
     }
 
-    public function team($team_id)
-    {
-        $games = DB::select("select * from games where home_group_id = $team_id OR away_group_id = $team_id");
+    // public function team($team_id)
+    // {
+    //     $games = DB::select("select * from games where home_group_id = $team_id OR away_group_id = $team_id");
 
-        return view('games', ['games' => $games, 'team_id' => $team_id]);
-    }
+    //     return view('games', ['games' => $games, 'team_id' => $team_id]);
+    // }
 }
