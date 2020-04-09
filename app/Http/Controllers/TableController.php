@@ -10,12 +10,12 @@ class TableController extends Controller
     public function __construct()
     {
         if (!defined('TEAMS_BY_ID')){
-            $groups = DB::select("SELECT group_id, group_name FROM groups;");
-            $groups_by_id = array();
-            foreach($groups as $group_data){
-                $groups_by_id[$group_data->group_id] = $group_data->group_name;
+            $teams = DB::select("SELECT team_id, team_name FROM teams;");
+            $teams_by_id = array();
+            foreach($teams as $team_data){
+                $teams_by_id[$team_data->team_id] = $team_data->team_name;
             };
-            define('TEAMS_BY_ID', $groups_by_id);
+            define('TEAMS_BY_ID', $teams_by_id);
             define('WEEKS_IN_ROUND', count(TEAMS_BY_ID) - 1 );
             define('WEEKS_COUNT', WEEKS_IN_ROUND * 2 );
         }

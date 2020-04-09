@@ -10,7 +10,7 @@ use Illuminate\Database\Schema\Blueprint;
 class ManageController extends Controller
 {
     private function is_all_games_scheduled(){
-        $teams_count = DB::table('groups')->count();
+        $teams_count = DB::table('teams')->count();
         $games_count = DB::table('games')->count();
         return $games_count >= $teams_count * ( $teams_count - 1 );
     }
@@ -37,7 +37,7 @@ class ManageController extends Controller
 
     public function index(Request $request){
         $games_table_exists = Schema::hasTable('games');
-        $teams_table_exists = Schema::hasTable('groups');
+        $teams_table_exists = Schema::hasTable('teams');
         if (!$games_table_exists || !$teams_table_exists){
             return $this->show_set_teams();
         }
@@ -55,21 +55,21 @@ class ManageController extends Controller
 
     
     public static function create_teams_table(){
-        if (Schema::hasTable('groups')) {
+        if (Schema::hasTable('teams')) {
             return "Table already exists";
         }
-        return Schema::create('groups', function(Blueprint $table){
-            $table->increments('group_id');
-            $table->string('group_name', 50)->unique();
+        return Schema::create('teams', function(Blueprint $table){
+            $table->increments('team_id');
+            $table->string('team_name', 50)->unique();
         });
         
     }
     
     public static function drop_teams_table(){
-        if (!Schema::hasTable('groups')) {
-            return "\"groups\" table does not exist";
+        if (!Schema::hasTable('teams')) {
+            return "\"teams\" table does not exist";
         }
-        return Schema::drop('groups');
+        return Schema::drop('teams');
     }
     
     public function add_teams(Request $request){
@@ -97,8 +97,8 @@ class ManageController extends Controller
             $table->increments('game_id');
             $table->tinyInteger('round');
             $table->tinyInteger('week');
-            $table->integer('home_group_id');
-            $table->integer('away_group_id');
+            $table->integer('home_team_id');
+            $table->integer('away_team_id');
             $table->tinyInteger('home_score')->nullable();
             $table->tinyInteger('away_score')->nullable();
             $table->boolean('is_done')->virtualAs("home_score IS NOT NULL AND away_score IS NOT NULL");

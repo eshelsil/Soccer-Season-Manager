@@ -11,12 +11,12 @@ class GamesController extends Controller
     public function __construct()
     {
         if (!defined('TEAMS_BY_ID')){
-            $groups = DB::select("SELECT group_id, group_name FROM groups;");
-            $groups_by_id = array();
-            foreach($groups as $group_data){
-                $groups_by_id[$group_data->group_id] = $group_data->group_name;
+            $teams = DB::select("SELECT team_id, team_name FROM teams;");
+            $teams_by_id = array();
+            foreach($teams as $team_data){
+                $teams_by_id[$team_data->team_id] = $team_data->team_name;
             };
-            define('TEAMS_BY_ID', $groups_by_id);
+            define('TEAMS_BY_ID', $teams_by_id);
             define('WEEKS_IN_ROUND', count(TEAMS_BY_ID) - 1 );
             define('WEEKS_COUNT', WEEKS_IN_ROUND * 2 );
         }
@@ -26,7 +26,7 @@ class GamesController extends Controller
         $team_id = $request->query('team');
         $round = $request->query('round');
         $week = $request->query('week');
-        $team_query = !is_null($team_id) ? "(home_group_id = $team_id OR away_group_id = $team_id)" : '';
+        $team_query = !is_null($team_id) ? "(home_team_id = $team_id OR away_team_id = $team_id)" : '';
         $week_query = !is_null($week) ? "week = $week" : '';
         $round_query = !is_null($round) ? "round = $round" : '';
         $filter_queries = array_filter( array($team_query, $round_query, $week_query), function($q){return !empty($q);} );
@@ -43,7 +43,7 @@ class GamesController extends Controller
 
     // public function team($team_id)
     // {
-    //     $games = DB::select("select * from games where home_group_id = $team_id OR away_group_id = $team_id");
+    //     $games = DB::select("select * from games where home_team_id = $team_id OR away_team_id = $team_id");
 
     //     return view('games', ['games' => $games, 'team_id' => $team_id]);
     // }

@@ -94,8 +94,8 @@
             foreach($games as $game){
                 $round = $game->round;
                 $week = $game->week;
-                $home_team_id = $game->home_group_id;
-                $away_team_id = $game->away_group_id;
+                $home_team_id = $game->home_team_id;
+                $away_team_id = $game->away_team_id;
                 $home_team_name = TEAMS_BY_ID[$home_team_id];
                 $away_team_name = TEAMS_BY_ID[$away_team_id];
                 $score_home = $game->home_score;

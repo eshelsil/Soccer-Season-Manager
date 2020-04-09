@@ -59,8 +59,8 @@
                 );
             }
             foreach($games as $game){
-                $home_team_id = $game->home_group_id;
-                $away_team_id = $game->away_group_id;
+                $home_team_id = $game->home_team_id;
+                $away_team_id = $game->away_team_id;
                 $score_home = $game->home_score;
                 $score_away = $game->away_score;
                 
