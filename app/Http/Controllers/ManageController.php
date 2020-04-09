@@ -27,7 +27,8 @@ class ManageController extends Controller
     public function home(Request $request)
     { 
         $games_table = Schema::hasTable('games');    
-        if($games_table){
+        $teams_table = Schema::hasTable('teams');    
+        if($games_table && $teams_table){
             if ($this->is_all_games_scheduled()){
                     return redirect('table');
             }
