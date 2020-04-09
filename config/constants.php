@@ -8,7 +8,7 @@
             "Hapoel Tel Aviv",
             "Hapoel Haifa",
             "Bnei-Yehuda Tel Aviv",
-            "Hapoel Ra\'anana",
+            "Hapoel Ra'anana",
             "Maccabi Netanya",
             "Hapoel Hadera",
             "Moadon Sport Ashdod",
