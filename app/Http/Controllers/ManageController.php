@@ -114,6 +114,13 @@ class ManageController extends Controller
     }
     
     
+    public static function truncate_games_table(){
+        if (!Schema::hasTable('games')) {
+            return response("\"games\" table does not exist", 400);
+        }
+        return DB::table('games')->truncate();
+    }
+    
     public static function drop_games_table(){
         if (!Schema::hasTable('games')) {
             return "\"games\" table does not exist";

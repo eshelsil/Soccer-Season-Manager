@@ -22,9 +22,13 @@ Route::delete('manage/drop_teams', 'ManageController@drop_teams_table');
 Route::delete('manage/drop_games', 'ManageController@drop_games_table');
 Route::post('manage/auto_schedule', 'ManageController@auto_schedule_games');
 Route::post('manage/randomize_scores', 'ManageController@randomize_game_scores');
+Route::post('manage/reset_games', 'ManageController@truncate_games_table');
 
 Route::get('set_scores', 'ScoresController@index');
 Route::post('set_scores/randomize', 'ScoresController@randomize_game_scores');
+Route::post('set_scores/reset', 'ScoresController@reset_all');
+
+Route::get('reset_options', 'ResetController@index');
 
 
 Route::get('games', 'GamesController@index');

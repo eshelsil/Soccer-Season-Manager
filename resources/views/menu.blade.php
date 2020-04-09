@@ -14,6 +14,9 @@
             <li class="nav-item @if ($view == 'set_scores') active @endif">
                 <a class="nav-link" href="/set_scores">Set Scores</a>
             </li>
+            <li class="nav-item @if ($view == 'reset_options') active @endif">
+                <a class="nav-link" href="/reset_options">Reset Options</a>
+            </li>
         </ul>
     </div>
 </nav>

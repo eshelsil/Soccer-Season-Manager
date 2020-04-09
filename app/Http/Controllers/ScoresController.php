@@ -33,4 +33,11 @@ class ScoresController extends Controller
         return response(200);
         
     }
+
+    public function reset_all(){
+        return DB::table('games')->where('is_done', 1)
+            ->update(
+                ['home_score' => null, 'away_score' => null]
+            );
+    }
 }
