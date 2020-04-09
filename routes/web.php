@@ -19,11 +19,13 @@ Route::post('manage/init_teams', 'ManageController@create_teams_table');
 Route::post('manage/init_games', 'ManageController@create_games_table');
 Route::post('manage/add_teams', 'ManageController@add_teams')->name('add_teams');
 Route::delete('manage/drop_teams', 'ManageController@drop_teams_table');
-
-
 Route::delete('manage/drop_games', 'ManageController@drop_games_table');
 Route::post('manage/auto_schedule', 'ManageController@auto_schedule_games');
 Route::post('manage/randomize_scores', 'ManageController@randomize_game_scores');
+
+Route::get('set_scores', 'ScoresController@index');
+Route::post('set_scores/randomize', 'ScoresController@randomize_game_scores');
+
 
 Route::get('games', 'GamesController@index');
 // Route::get('games/{team_id}', 'GamesController@team');

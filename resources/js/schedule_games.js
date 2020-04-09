@@ -4,6 +4,10 @@ function auto_schedule(){
     .fail(function(e){alert(e.responseText)});
 }
 
+function go_to_set_scores(){
+    window.location = '/set_scores';
+}
+
 function drop_games_table(){
     $.ajax({
         url: '/manage/drop_games',
@@ -25,4 +29,5 @@ $(document).ready(function(){
     });
     $('#auto_schedule').click(auto_schedule);
     $('#drop_games_table').click(drop_games_table);
+    $('#to_set_score').click(go_to_set_scores);
 })

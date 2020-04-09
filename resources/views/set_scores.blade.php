@@ -1,22 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Scheduling')
+@section('title', 'Set Scores')
+@section('menu')
+    @include('menu', ['view' => 'set_scores'])
+@endsection
 
 @section('content')
     <div class="h3 mt-2 mb-4"><u>
-        Step 2 - Schedule Games
+        Set Scores
     </u></div>
     @csrf
-    <button id="drop_games_table" type="button" class="btn btn-danger">Drop games table</button>
-    <button id="auto_schedule" type="button" class="btn btn-primary">Auto schedule all games</button>
-    @if ($allow_set_scores)
-    <button id="to_set_score" type="button" class="btn btn-success">Continue to set scores</button>
-    @endif
+    {{-- <button id="drop_games_table" type="button" class="btn btn-danger">Drop games table</button> --}}
+    <button id="randomize_scores" type="button" class="btn btn-primary">Randomize all non-finished games</button>
     <div class="container col mt-3">
-        @if (count($games) === 0)
-            <div class="h5 mb-2">There are no scheduled games yet</div>
+        @if (count($unplayed_games) === 0)
+            <div class="h5 mb-2">All games are done</div>
         @else
-            <div class="h5 mb-2">Scheduled Games:</div>
+            <div class="h5 mb-2">Non Played Games:</div>
             <table class="table table-striped shrunk">
                 <thead class="thead-dark">
                     <tr>
@@ -28,7 +28,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    foreach($games as $game){
+                    foreach($unplayed_games as $game){
                         $round = $game->round;
                         $week = $game->week;
                         $home_team_name = $teams_by_id[$game->home_team_id];

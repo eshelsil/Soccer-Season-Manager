@@ -15,7 +15,7 @@ class ManageController extends Controller
         return $games_count >= $teams_count * ( $teams_count - 1 );
     }
 
-    private function get_teams_by_id(){
+    public static function get_teams_by_id(){
         $teams = DB::table('teams')->get();
         $teams_by_id = array();
         foreach($teams as $team_data){
@@ -30,7 +30,7 @@ class ManageController extends Controller
         $teams_table = Schema::hasTable('teams');    
         if($games_table && $teams_table){
             if ($this->is_all_games_scheduled()){
-                    return redirect('table');
+                    return redirect('set_scores');
             }
         }
         return redirect('manage');
