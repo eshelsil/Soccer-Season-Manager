@@ -25,6 +25,12 @@ Route::post('manage/randomize_scores', 'ManageController@randomize_game_scores')
 Route::post('manage/reset_games', 'ManageController@truncate_games_table');
 
 Route::get('set_scores', 'ScoresController@index');
+Route::get('set_scores/new', function(){
+    return App::call('App\Http\Controllers\ScoresController@index' , ['selected_tab' => 'unplayed']);
+});
+Route::get('set_scores/existing', function(){
+    return App::call('App\Http\Controllers\ScoresController@index' , ['selected_tab' => 'played']);
+});
 Route::post('set_scores/randomize', 'ScoresController@randomize_game_scores');
 Route::post('set_scores/reset', 'ScoresController@reset_all');
 

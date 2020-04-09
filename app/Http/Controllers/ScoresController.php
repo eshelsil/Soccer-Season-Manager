@@ -8,11 +8,16 @@ use Illuminate\Support\Facades\DB;
 class ScoresController extends Controller
 {
 
-    public function index(Request $request)
+    public function index(Request $request, $selected_tab = 'unplayed')
     { 
-        $games = DB::table('games')->where('is_done', 0)->get();
+        if ($selected_tab == 'unplayed'){
+            $games = DB::table('games')->where('is_done', 0)->get();
+        } else {
+            $games = DB::table('games')->where('is_done', 1)->get();
+        }
         return view('set_scores', [
-            'unplayed_games' => $games,
+            'selected_tab' => $selected_tab,
+            'games' => $games,
             'teams_by_id' => ManageController::get_teams_by_id()
         ]);
     }
