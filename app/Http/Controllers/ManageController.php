@@ -42,15 +42,22 @@ class ManageController extends Controller
         if (!$games_table_exists || !$teams_table_exists){
             return $this->show_set_teams();
         }
-        if (!$this->is_all_games_scheduled()){
-            return "schedule games view";
-        }
-        return 'set scores';
+        return $this->show_scheduling();
     }
 
     public function show_set_teams(){
         $this->create_teams_table();
         return view('set_teams', ['teams_by_id' => $this->get_teams_by_id()]);
+    }
+
+    public function show_scheduling(){
+        $this->create_games_table();
+        $games = DB::table('games')->get();
+        return view('scheduling', [
+            'teams_by_id' => $this->get_teams_by_id(),
+            'games' => $games,
+            'allow_set_scores' => $this->is_all_games_scheduled()
+        ]);
     }
 
 
@@ -106,5 +113,95 @@ class ManageController extends Controller
         });
     }
     
+    
+    public static function drop_games_table(){
+        if (!Schema::hasTable('games')) {
+            return "\"games\" table does not exist";
+        }
+        return Schema::drop('games');
+    }
+    
+    public function auto_schedule_games(){
+        # handle no teams_table
+        $games_count = DB::table('games')->count();
+        if ($games_count > 0){
+            return response("\"games\" table must be empty in order to auto schedule games", 400);
+        }
+        $games = $this->generate_games();
+        foreach($games as $game){
+            DB::table('games')->insert(
+                ['round' => $game['round'],
+                'week' => $game['week'],
+                'home_team_id' => $game['home_team_id'],
+                'away_team_id' => $game['away_team_id']]
+            );
+        }
+        return response(200);
+        
+    }
 
+    private function generate_games(){
+        $team_ids = array_keys($this->get_teams_by_id());
+        $first_round_games = $this->generate_first_round_order($team_ids);
+        $last_week = end($first_round_games)["week"];
+        $second_round_games = array();
+        foreach($first_round_games as $game){
+            array_push($second_round_games, array(
+                "round"=> 2,
+                "week"=> $last_week + $game["week"],
+                "home_team_id"=> $game["away_team_id"],
+                "away_team_id"=> $game["home_team_id"]
+            ));
+        }
+        return array_merge($first_round_games, $second_round_games);
+    }
+
+    private function generate_first_round_order($ids){
+        # explanation on method -> https://nrich.maths.org/1443
+        shuffle($ids);
+        $middle_of_poligon = $ids[0];
+        array_splice($ids, 0, 1);
+        $connections = array();
+        $weeks_count = count($ids);
+        $lower_index = 0;
+        $higher_index = $weeks_count -1;
+        $is_higher_index_hosting = TRUE;
+        while ($higher_index >= $lower_index){
+            if ($higher_index == $lower_index){
+                $connections["middle"] = $higher_index;
+                break;
+            }
+            if ($is_higher_index_hosting){
+                $connections[$higher_index] = $lower_index;
+            }else {
+                $connections[$lower_index] = $higher_index;
+            }
+            $lower_index ++;
+            $higher_index --;
+            $is_higher_index_hosting = !$is_higher_index_hosting;
+        }
+        $games = array();
+        foreach(range(1, $weeks_count) as $week){
+            $last_id = array_pop($ids);
+            array_unshift($ids, $last_id);
+            
+            foreach($connections as $ploygon_pos_a => $polygon_pos_b){
+                if ($ploygon_pos_a == "middle"){
+                    $teams = array($middle_of_poligon, $ids[$polygon_pos_b]);
+                    $home_team_id = $teams[$week % 2];
+                    $away_team_id = $teams[($week + 1) % 2];
+                } else {
+                    $home_team_id = $ids[$ploygon_pos_a];
+                    $away_team_id = $ids[$polygon_pos_b];
+                }
+                array_push($games, array(
+                    "round"=>1,
+                    "week"=>$week,
+                    "home_team_id"=>$home_team_id,
+                    "away_team_id"=>$away_team_id
+                ));
+            }
+        }
+        return $games;
+    }
 }
