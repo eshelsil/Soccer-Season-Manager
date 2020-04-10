@@ -101,8 +101,9 @@ class ManageController extends Controller
         return DB::table('teams')->insert(['team_name' => $team_name]);
     }
     
-    public function add_teams(Request $request){
+    public function set_teams(Request $request){
         #verify no games table
+        DB::table('teams')->truncate();
         $teams = $request->input('teams') ?? array();
         foreach($teams as $team){
             DB::table('teams')->updateOrInsert(["team_name" => $team]);

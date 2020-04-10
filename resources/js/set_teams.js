@@ -6,7 +6,7 @@ function create_games_table(){
 
 function set_deafult_teams(){ 
     let teams = params['teams'];
-    $.post('/manage/add_teams', {teams})
+    $.post('/manage/set_teams', {teams})
     .done(function(){window.location.reload();});
 }
 
