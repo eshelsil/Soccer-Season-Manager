@@ -23,18 +23,22 @@
         }
     }
 }
-.delete_btn, .edit_btn, .confirm_set_score_btn, .cancel_set_score_btn{
+.delete_btn, .edit_btn, .confirm_set_score_btn, .cancel_set_score_btn, .delete_team_btn{
     @include clickable;
     display: block;
     width: 24px;
     height: 24px;
     background-size: 24px 24px;
 }
-.delete_btn {
+.delete_btn, .delete_team_btn {
     background: url('/img/delete_btn.svg');
     &:hover{
         background: url('/img/delete_btn_hover.svg');
     }
+}
+.delete_team_btn{
+    width: 20px;
+    height: 20px;
 }
 .edit_btn {
     background: url('/img/edit_btn.svg');

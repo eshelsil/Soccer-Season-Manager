@@ -80,6 +80,27 @@ class ManageController extends Controller
         return Schema::drop('teams');
     }
     
+    public static function delete_team($team_id){
+        if (!Schema::hasTable('teams')) {
+            return response("\"teams\" table does not exist", 400);
+        }
+        if (Schema::hasTable('games')) {
+            return response("Deleting a team is not allwed after \"games\" table is initiated", 400);
+        }
+        return DB::table('teams')->where('team_id', $team_id)->delete();
+    }
+
+    public static function add_team(Request $request){
+        if (!Schema::hasTable('teams')) {
+            return response("\"teams\" table does not exist", 400);
+        }
+        if (Schema::hasTable('games')) {
+            return response("Adding a team is not allwed after \"games\" table is initiated", 400);
+        }
+        $team_name = $request->input()['name'];
+        return DB::table('teams')->insert(['team_name' => $team_name]);
+    }
+    
     public function add_teams(Request $request){
         #verify no games table
         $teams = $request->input('teams') ?? array();
@@ -90,13 +111,20 @@ class ManageController extends Controller
         return response('OK', 200);
     }
 
+    private function get_teams_count(){
+        return count($this->get_teams_by_id());
+    }
+
     private function has_min_team_amount(){
-        return count($this->get_teams_by_id()) >= 4;
+        return $this->get_teams_count() >= 4;
     }
     
     public function create_games_table(){
         if (!$this->has_min_team_amount()){
             return response("Must have at least 4 teams", 400);
+        }
+        if ($this->get_teams_count() % 2 != 0){
+            return response("Must have even number of teams", 400);
         }
         if (Schema::hasTable('games')) {
             return response("Table already exists", 200);

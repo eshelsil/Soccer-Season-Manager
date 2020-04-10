@@ -35,6 +35,8 @@ Route::post('set_scores/randomize', 'ScoresController@randomize_game_scores');
 Route::post('set_scores/reset', 'ScoresController@reset_all');
 Route::post('set_scores/delete/{game_id}', 'ScoresController@reset_score');
 Route::post('set_scores/update/{game_id}', 'ScoresController@update_score');
+Route::post('teams/delete/{team_id}', 'ManageController@delete_team');
+Route::post('teams/add', 'ManageController@add_team');
 
 Route::get('reset_options', 'ResetController@index');
 

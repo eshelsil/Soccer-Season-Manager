@@ -15,10 +15,26 @@ function drop_teams_table(){
         url: '/manage/drop_teams',
         type: 'DELETE',
         success: function(result) {
-            alert('cool');
             window.location.reload();
         }
     });
+}
+
+function delete_team(ev){
+    el = $(ev.target);
+    team_id = el.data('team_id')
+    $.post(`/teams/delete/${team_id}`)
+    .done(()=>{window.location.reload()})
+    .fail(function(e){alert(e.responseText)});
+}
+
+function add_team(){
+    team_input = $('#new_team_input')
+    team_name = team_input.val()
+    console.log({team_name})
+    $.post("/teams/add", {name: team_name})
+    .done(()=>{window.location.reload()})
+    .fail(function(e){alert(e.responseText)});
 }
 
 
@@ -33,4 +49,6 @@ $(document).ready(function(){
     $('#default_teams').click(set_deafult_teams);
     $('#drop_teams_table').click(drop_teams_table);
     $('#to_schedule').click(create_games_table);
+    $('.delete_team_btn').click(delete_team);
+    $('#new_team_add_btn').click(add_team);
 })
