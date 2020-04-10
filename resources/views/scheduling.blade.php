@@ -90,7 +90,7 @@
                 @if (count($games) === 0)
                     <div class="h5 mb-2">There are no scheduled games yet</div>
                 @else
-                    <div class="container row mb-3">
+                    <div class="container row mb-3 ml-0 p-0">
                         <div class="container col-2 m-0">
                             <label for="roundSelect" class="col pl-0">Round</label>
                             <select class="custom-select" id="roundSelect" style="width:auto;">
@@ -125,7 +125,7 @@
                                 ?>
                             </select>
                         </div>
-                        <div class="container col-6 m-0">
+                        <div class="container col-5 m-0">
                             <label for="teamSelect" class="col pl-0">Team</label>
                             <select class="custom-select" id="teamSelect" style="width:auto;">
                                 <?php
@@ -137,6 +137,9 @@
                                     }
                                 ?>
                             </select>
+                        </div>
+                        <div class="container col-3 mt-auto p-0">
+                            <button id="reset_filters" type="button" class="btn btn-secondary">Reset Filters</button>
                         </div>
                     </div>
                     <table class="table table-striped shrunk">

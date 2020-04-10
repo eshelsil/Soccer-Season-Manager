@@ -47,6 +47,14 @@ function drop_games_table(){
     });
 }
 
+function reset_filters(){
+    url = new URL(window.location);
+    url.searchParams.delete('team_id');
+    url.searchParams.delete('week');
+    url.searchParams.delete('round');
+    window.location = url.href;
+}
+
 
 
 $(document).ready(function(){
@@ -59,6 +67,7 @@ $(document).ready(function(){
     $('#auto_schedule').click(auto_schedule);
     $('#truncate_games_table').click(truncate_games_table);
     $('#drop_games_table').click(drop_games_table);
+    $('#reset_filters').click(reset_filters);
     $('#to_set_score').click(go_to_set_scores);
     $('#schedule_game_button').click(schedule_game);
     $('.delete_game_btn').click(delete_game);
