@@ -23,7 +23,7 @@ class GamesController extends Controller
     }
     public function index(Request $request)
     { 
-        $team_id = $request->query('team');
+        $team_id = $request->query('team_id');
         $round = $request->query('round');
         $week = $request->query('week');
         $team_query = !is_null($team_id) ? "(home_team_id = $team_id OR away_team_id = $team_id)" : '';

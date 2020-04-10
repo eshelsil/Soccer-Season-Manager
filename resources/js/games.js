@@ -1,7 +1,8 @@
 SELECT_ID_TO_KEY = {
-    'teamSelect': 'team',
+    'teamSelect': 'team_id',
     'roundSelect': 'round',
-    'weekSelect': 'week'
+    'weekSelect': 'week',
+    'setWeekSelect': 'set_week'
 };
 
 function selectChange(ev){

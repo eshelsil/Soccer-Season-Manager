@@ -52,7 +52,28 @@ class ManageController extends Controller
 
     public function show_scheduling(Request $request){
         $this->create_games_table();
-        $selected_week = $request->query('week');
+        $selected_week = $request->query('set_week');
+        $round = $request->query('round');
+        $week = $request->query('week');
+        $team_id = $request->query('team_id');
+        $where_conditions = [];
+        if (!is_null($week)){
+            array_push($where_conditions, ['week', '=', $week]);
+        }
+        if (!is_null($round)){
+            array_push($where_conditions, ['round', '=', $round]);
+        }
+        if (!is_null($team_id)){
+            $filtered_games = DB::table('games')
+                ->where('home_team_id', $team_id)
+                ->where($where_conditions)
+                ->orWhere('away_team_id', $team_id)
+                ->where($where_conditions)
+                ->get();
+        } else {
+            $filtered_games = DB::table('games')->where($where_conditions)->get();
+        }
+
         $teams_by_id = $this->get_teams_by_id();
         $teams_count = count(array_keys($teams_by_id));
         $games_per_week = $teams_count / 2;
@@ -75,11 +96,16 @@ class ManageController extends Controller
         $games = DB::table('games')->get();
         return view('scheduling', [
             'query_params' => array(
-                'week'=>$selected_week,
+                'set_week'=>$selected_week,
+                'round'=>$round,
+                'week'=>$week,
+                'team_id'=>$team_id,
             ),
             'weeks_to_schedule' => $weeks_to_schedule,
             'available_teams' => $available_teams,
+            'weeks_count' => $weeks_count,
             'teams_by_id' => $teams_by_id,
+            'filtered_games' => $filtered_games,
             'games' => $games,
             'allow_set_scores' => $this->is_all_games_scheduled()
         ]);
