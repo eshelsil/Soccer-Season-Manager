@@ -5,12 +5,10 @@ function auto_schedule(){
 }
 
 function schedule_game(){
-    round = $('#round_input').val();
     week = $('#setWeekSelect').val();
     home_team_id = $('#homeTeamSelect').val();
     away_team_id = $('#awayTeamSelect').val();
     $.post('/manage/schedule_game', {
-        round,
         week,
         home_team_id,
         away_team_id

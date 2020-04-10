@@ -222,11 +222,17 @@ class ManageController extends Controller
     
     public function schedule_game(Request $request){
         $params = $request->input();
+        $week = $params['week'];
+        $home_team_id = $params['home_team_id'];
+        $away_team_id = $params['away_team_id'];
+        $teams_count = $this->get_teams_count();
+        $weeks_per_round = $teams_count - 1;
+        $round = ceil($week / $weeks_per_round);
         return DB::table('games')->insert([
-            'round' => $params['round'],
-            'week' => $params['week'],
-            'home_team_id' => $params['home_team_id'],
-            'away_team_id' => $params['away_team_id']
+            'round' => $round,
+            'week' => $week,
+            'home_team_id' => $home_team_id,
+            'away_team_id' => $away_team_id
         ]);
     }
     
