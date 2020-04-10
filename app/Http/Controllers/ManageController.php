@@ -86,7 +86,15 @@ class ManageController extends Controller
             }
         }
         if (!in_array($selected_week, $weeks_to_schedule) && !empty($weeks_to_schedule)){
-            $selected_week = array_values($weeks_to_schedule)[0];
+            foreach (array_values($weeks_to_schedule) as $available_week){
+                if ($available_week > $selected_week){
+                    $selected_week = $available_week;
+                    break;
+                }
+            }
+            if (!in_array($selected_week, $weeks_to_schedule)){
+                $selected_week = array_values($weeks_to_schedule)[0];
+            }
         }
         $games_on_selected_week = DB::table('games')->where('week', $selected_week)->get();
         $available_teams = array_keys($teams_by_id);
