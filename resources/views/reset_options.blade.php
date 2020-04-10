@@ -12,16 +12,16 @@
     @csrf
     <div class="container row">
         @include('button_modal', [
-            'wrapper_class' => 'pr-4',
             'button_id' => 'reset_scores',
             'button_label' => 'Reset All Game Scores',
             'title' => 'Reset All Game Scores',
             'msg' => "This will reset the score of all played games. \n Are you sure?",
             'action_label' => 'Reset',
             'cancel_label' => 'Cancel'
-        ])
+            ])
+    </div>
+    <div class="container row mt-5">
         @include('button_modal', [
-            'wrapper_class' => 'pl-4',
             'button_id' => 'reset_games',
             'button_label' => 'Reset Games Schedule',
             'title' => 'Reset All Games From Schedule',
