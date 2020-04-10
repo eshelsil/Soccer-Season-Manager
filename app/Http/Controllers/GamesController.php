@@ -31,7 +31,6 @@ class GamesController extends Controller
         $round_query = !is_null($round) ? "round = $round" : '';
         $filter_queries = array_filter( array($team_query, $round_query, $week_query), function($q){return !empty($q);} );
         $filter_string = !empty($filter_queries) ? sprintf( "where %s", join(" AND ", $filter_queries) ) : '';
-        // dd($filter_string);
         $query_string = sprintf("select * from games %s", $filter_string);
         $games = DB::select($query_string);
         return view('games', ['games' => $games, 'query_params' => array(
@@ -40,11 +39,4 @@ class GamesController extends Controller
             'week'=>$week
         )]);
     }
-
-    // public function team($team_id)
-    // {
-    //     $games = DB::select("select * from games where home_team_id = $team_id OR away_team_id = $team_id");
-
-    //     return view('games', ['games' => $games, 'team_id' => $team_id]);
-    // }
 }
