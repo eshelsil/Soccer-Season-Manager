@@ -26,8 +26,14 @@ class TableController extends Controller
         $filter_string = !is_null($week) ? sprintf( "AND %s",  "week <= $week") : '';
         $query_string = sprintf("select * from games where is_done = 1 %s", $filter_string);
         $games = DB::select($query_string);
-        return view('table', ['games' => $games, 'query_params'=>array(
-            'week'=>$week
-        )]);
+        $last_game = DB::table('games')->where('is_done', 1)->orderBy('week', 'desc')->first();
+        $last_week = (is_null($last_game)) ? null : $last_game->week;
+        return view('table', [
+            'games' => $games,
+            'last_week'=>$last_week,
+            'query_params'=>array(
+                'week'=>$week
+            )
+        ]);
     }
 }

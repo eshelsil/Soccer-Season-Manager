@@ -7,6 +7,7 @@
 @endsection
 
 @section('content')  
+    @if (!is_null($last_week))
     <div class="container row justify-content-start">
         <div class="container col">
             <label for="weekSelect" class="row pl-0">Until Week</label>
@@ -14,7 +15,7 @@
                 <?php
                     $selected = $query_params['week'] ?? 'unset';
                     echo sprintf("<option value='all' %s>-----------</option>", $selected == 'unset' ? 'selected' : '');
-                    foreach(range(1, WEEKS_COUNT) as $week){
+                    foreach(range(1, $last_week) as $week){
                         $is_selected_str = $selected == $week ? 'selected' : '';
                         echo sprintf("<option %s>$week</option>", $is_selected_str);
                     }
@@ -22,6 +23,7 @@
             </select>
         </div>
     </div>
+    @endif
 
     <div class="h3 mt-2 mb-4"><u>
         Season Table
