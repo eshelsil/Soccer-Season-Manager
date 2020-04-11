@@ -10,7 +10,7 @@ use Illuminate\Database\Schema\Blueprint;
 class ManageController extends Controller
 {
     private function is_all_games_scheduled(){
-        $teams_count = DB::table('teams')->count();
+        $teams_count = $this->get_teams_count();
         $games_count = DB::table('games')->count();
         return $games_count >= $teams_count * ( $teams_count - 1 );
     }
@@ -78,9 +78,9 @@ class ManageController extends Controller
         }
 
         $teams_by_id = $this->get_teams_by_id();
-        $teams_count = count(array_keys($teams_by_id));
+        $teams_count = $this->get_teams_count();
         $games_per_week = $teams_count / 2;
-        $weeks_count = ($teams_count - 1) * 2;
+        $weeks_count = $this->get_weeks_count();
         $weeks_to_schedule = range(1, $weeks_count);
         $full_weeks = DB::table('games')->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
         foreach($full_weeks as $week_data){
@@ -174,8 +174,13 @@ class ManageController extends Controller
         return response('OK', 200);
     }
 
-    private function get_teams_count(){
+    public function get_teams_count(){
         return count($this->get_teams_by_id());
+    }
+
+    public function get_weeks_count(){
+        $teams_count = $this->get_teams_count();
+        return ($teams_count - 1) * 2;
     }
 
     private function has_min_team_amount(){
