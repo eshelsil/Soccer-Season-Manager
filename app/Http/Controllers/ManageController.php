@@ -30,6 +30,9 @@ class ManageController extends Controller
         $teams_table = Schema::hasTable('teams');    
         if($games_table && $teams_table){
             if ($this->is_all_games_scheduled()){
+                    if ( count(DB::table('games')->where('is_done', 0)->get()) == 0 ){
+                        return redirect('table');
+                    }
                     return redirect('set_scores');
             }
         }
