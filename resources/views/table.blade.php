@@ -128,7 +128,7 @@
                 echo "
                 <tr class='$classes'>
                     <td class='shrunk'>$rank</td>
-                    <td class='shrunk'><a href='/games?team=$team_id'>$team_name</a></td>
+                    <td class='shrunk'><a href='/games?team_id=$team_id'>$team_name</a></td>
                     <td class='shrunk'>$points</td>
                     <td class='shrunk'>$games</td>
                     <td class='shrunk'>$wins</td>
