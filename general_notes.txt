@@ -1,4 +1,10 @@
-- How to debug php rather than 'dd()'?
+- How to debug php rather than 'dd()'?  :
+    - xdebugger for php
+    - another option: "\Log::debug(var_export($request->input(), true));"
+- What should I store as config? constants?  :
+    - constants that are integral part of the app (like HTTP_STATUSES) should be stored in a class (as 'consts' property)
+    - defineable constants (such as default_teams) should be stored in config in a relevant file_name
+
 - What is app/console?
 - What is app/exceptions?
 - What middlewares are default used by laravel?
@@ -6,7 +12,6 @@
 - What are providers?
 - What is app/User?
 - What is app/bootstrap?
-- What should I stor as config? constants?
 - What is app/database?
 - What is public/.htaccess?
 - Anything I need to know about public/indx.php?

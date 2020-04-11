@@ -1,8 +1,12 @@
+{{-- @php
+  $str_query = "blablabla"
+@endphp --}}
 @extends('layouts.card', [
   'cards' => [
     [
       #NOTE what if I want to pass more complicated php (not one line) as a parameter?
-      'url' => sprintf('/set_scores?%s', http_build_query( array_merge($_GET, ['tab' => 'unplayed']) ) ),
+      'url' => '/set_scores?'. http_build_query( array_merge($_GET, ['tab' => 'unplayed']) ),
+      // 'url' => sprintf('/set_scores?%s', http_build_query( array_merge($_GET, ['tab' => 'unplayed']) ) ),
       'label' => 'Non Played Games',
       'active' => $selected_tab == 'unplayed',
     ],

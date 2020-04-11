@@ -4,7 +4,7 @@
 
 @section('script')
     <script src="{{ asset('/js/games.js') }}"></script>
-    {{-- #NOTE - is this necessary? --}}
+    {{-- #NOTE - is this necessary?  --> I know --}}
 @endsection
 
 @section('menu')
@@ -17,15 +17,20 @@
         <div class="container col-3 m-0">
             <label for="teamSelect" class="row pl-0">Choose Team</label>
             <select class="custom-select row" id="teamSelect" style="width:auto;">
-                <?php
-                    $selected = $query_params['team_id'] ?? 'all';
+                @php $selected = $query_params['team_id'] ?? 'all'; @endphp
+                <option value='all' {{ $selected == 'all' ? 'selected' : '' }}>--- All Teams ---</option>
+                @foreach(TEAMS_BY_ID as $id => $team_name)
+                    <option value='$id' {{ $selected == $id ? 'selected' : '' }}>{{$team_name}}</option>
+                @endforeach
+                {{-- <?php
+                    
                     echo sprintf("<option value='all' %s>--- All Teams ---</option>", $selected == 'all' ? 'selected' : '');
                     foreach(TEAMS_BY_ID as $id => $team_name){
                         $is_selected_str = $selected == $id ? 'selected' : '';
                         echo sprintf("<option value='$id' %s>$team_name</option>", $is_selected_str);
                         #NOTE what is the best way for string injection??
                     }
-                ?>
+                ?> --}}
             </select>
         </div>
         <div class="container col-3 m-0">

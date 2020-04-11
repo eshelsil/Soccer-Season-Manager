@@ -19,7 +19,14 @@ class ManageController extends Controller
     }
 
     public static function get_teams_by_id(){
-        #NOTE should query it once teams are ready once and that's it
+        #NOTE should query it once teams are ready once and that's it --> should be in another service (which? --> Singleton)
+        // if (teams_by_id)
+        //     return get_teams_by_id
+        // set teams_by_id
+        // return teams_by_id
+
+        // Game::query()->find(3)
+
 
         $teams = DB::table('teams')->get();
         $teams_by_id = array();
@@ -49,6 +56,8 @@ class ManageController extends Controller
     public function index(Request $request){
         #NOTE split to 2 controllers
 
+
+        #NOTE --> should check if tables are empty rather than exists
         $games_table_exists = Schema::hasTable('games');
         $teams_table_exists = Schema::hasTable('teams');
         if (!$games_table_exists || !$teams_table_exists){
@@ -91,7 +100,7 @@ class ManageController extends Controller
             $filtered_games = DB::table('games')->where($where_conditions)->get();
         }
 
-        #NOTE variables bellow should be set as constants when user done setting teams
+        #NOTE variables bellow should be set as constants when user done setting teams --> Singleton
         
         $teams_by_id = $this->get_teams_by_id();
         $teams_count = $this->get_teams_count();
@@ -102,6 +111,8 @@ class ManageController extends Controller
         foreach($full_weeks as $week_data){
             if ($week_data->games_count >= $games_per_week){
                 #NOTE is there a better way to remove a value from an array?
+
+                // unset($weeks_to_schedule[array_search($week_data->week)])
 
                 $weeks_to_schedule = array_diff($weeks_to_schedule, [$week_data->week]);
             }
@@ -122,7 +133,7 @@ class ManageController extends Controller
         foreach($games_on_selected_week as $game){
             $available_teams = array_diff($available_teams, [$game->home_team_id, $game->away_team_id]);
         }
-        #NOTE count games and then filter to selected week, is it possible?
+        #NOTE count games and then filter to selected week, is it possible? --> filter the collection returned
 
         $games = DB::table('games')->get();
         return view('scheduling', [
@@ -168,6 +179,8 @@ class ManageController extends Controller
     }
     
     public static function delete_team($team_id){
+
+        //https://laravel.com/docs/7.x/controllers  --> read about api restful implementation
         if (!Schema::hasTable('teams')) {
             return response("\"teams\" table does not exist", 400);
         }
@@ -180,6 +193,7 @@ class ManageController extends Controller
     }
 
     public static function add_team(Request $request){
+        #NOTE craete validations on backend for example team_name length  --> https://laravel.com/docs/7.x/validation
         if (!Schema::hasTable('teams')) {
             return response("\"teams\" table does not exist", 400);
         }
@@ -195,7 +209,7 @@ class ManageController extends Controller
         DB::table('teams')->truncate();
         $teams = $request->input('teams') ?? array();
         foreach($teams as $team){
-            #NOTE should be done as transaction?
+            #NOTE should be done as transaction?  --> yes
 
             DB::table('teams')->updateOrInsert(["team_name" => $team]);
             #handle faliure
@@ -204,7 +218,7 @@ class ManageController extends Controller
     }
 
     public function get_teams_count(){
-        #NOTE should not query database every time
+        #NOTE should not query database every time  --> singleton
 
         return count($this->get_teams_by_id());
     }
@@ -328,7 +342,7 @@ class ManageController extends Controller
         }
         $games = $this->generate_games();
         foreach($games as $game){
-            #NOTE should be done as transaction? this way the validation cannot take place
+            #NOTE should be done as transaction? this way the validation cannot take place  --> yes - move validation to another resource/function
 
             $this->add_game_to_db($game['round'],$game['week'],$game['home_team_id'], $game['away_team_id']);
         }
@@ -354,6 +368,7 @@ class ManageController extends Controller
     private function generate_first_round_order($ids){
         #NOTE is this the right place to do this? would it be better to generate games in javascipt and pass to php?
         #Is this one of the purposes of PHP or should it use this kind of functionality only for objects that are not accessible by frontend?
+        #--> this should be done on frontend, no reason to waste server resources for that (in general) --> note that if this functionallity is moved to FE, validation should take place 
 
         # explanation on method -> https://nrich.maths.org/1443
         shuffle($ids);

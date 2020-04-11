@@ -10,7 +10,7 @@ class GamesController extends Controller
 {
     public function __construct()
     {
-        #NOTE where is the best place to set constants?
+        #NOTE where is the best place to set constants?  --> this should not be a constant
 
         if (!defined('TEAMS_BY_ID')){
             $teams = DB::select("SELECT team_id, team_name FROM teams;");
