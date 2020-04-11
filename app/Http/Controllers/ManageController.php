@@ -225,9 +225,45 @@ class ManageController extends Controller
         $week = $params['week'];
         $home_team_id = $params['home_team_id'];
         $away_team_id = $params['away_team_id'];
+        $teams_playing = [$home_team_id, $away_team_id];
         $teams_count = $this->get_teams_count();
         $weeks_per_round = $teams_count - 1;
         $round = ceil($week / $weeks_per_round);
+
+        if ($away_team_id == $home_team_id){
+            return response("Team cannot play against itself", 400);
+        }
+
+        $week_not_team_unique = DB::table('games')
+                ->where('week', $week)
+                ->where(function($query) use($teams_playing){
+                    $query->whereIn('home_team_id', $teams_playing)
+                        ->orWhere(function($query) use($teams_playing){
+                            $query->whereIn('away_team_id', $teams_playing);
+                        });
+                })
+                ->get();
+        if ( count($week_not_team_unique) != 0 ){
+            return response("One of the teams is already playing this week", 400);
+        }
+
+        $round_not_teams_unique = DB::table('games')
+                ->where('round', $round)
+                ->whereIn('home_team_id', $teams_playing)
+                ->whereIn('away_team_id', $teams_playing)
+                ->get();
+        if ( count($round_not_teams_unique) != 0 ){
+            return response("Teams already play against each other on this round", 400);
+        }
+
+        $not_home_away_unique = DB::table('games')
+                ->where('home_team_id', $home_team_id)
+                ->where('away_team_id', $away_team_id)
+                ->get();
+        if ( count($not_home_away_unique) != 0 ){
+            return response("Home team is already hosting away team this season", 400);
+        }
+
         return DB::table('games')->insert([
             'round' => $round,
             'week' => $week,
