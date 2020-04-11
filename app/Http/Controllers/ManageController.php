@@ -225,10 +225,15 @@ class ManageController extends Controller
         $week = $params['week'];
         $home_team_id = $params['home_team_id'];
         $away_team_id = $params['away_team_id'];
-        $teams_playing = [$home_team_id, $away_team_id];
         $teams_count = $this->get_teams_count();
         $weeks_per_round = $teams_count - 1;
         $round = ceil($week / $weeks_per_round);
+        return $this->add_game_to_db($round, $week, $home_team_id, $away_team_id);
+    }
+
+    
+    private function add_game_to_db($round, $week, $home_team_id, $away_team_id){
+        $teams_playing = [$home_team_id, $away_team_id];
 
         if ($away_team_id == $home_team_id){
             return response("Team cannot play against itself", 400);
@@ -280,12 +285,7 @@ class ManageController extends Controller
         }
         $games = $this->generate_games();
         foreach($games as $game){
-            DB::table('games')->insert(
-                ['round' => $game['round'],
-                'week' => $game['week'],
-                'home_team_id' => $game['home_team_id'],
-                'away_team_id' => $game['away_team_id']]
-            );
+            $this->add_game_to_db($game['round'],$game['week'],$game['home_team_id'], $game['away_team_id']);
         }
         return response(200);
     }
