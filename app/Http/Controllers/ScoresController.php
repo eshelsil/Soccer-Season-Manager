@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\DB;
 class ScoresController extends Controller
 {
 
-    public function index(Request $request, $selected_tab = 'unplayed')
+    public function index(Request $request)
     { 
         $set_game_id = $request->query('set_game_id');
+        $selected_tab = $request->query('tab') ?? 'unplayed';
         $round = $request->query('round');
         $week = $request->query('week');
         $team_id = $request->query('team_id');
@@ -38,7 +39,7 @@ class ScoresController extends Controller
         } else {
             $games = DB::table('games')->where($where_conditions)->get();
         }
-        
+
         $teams_by_id = ManageController::get_teams_by_id();
         $weeks_count = ( count($teams_by_id) - 1 ) * 2;
         return view('set_scores', [

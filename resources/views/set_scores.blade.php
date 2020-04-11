@@ -1,12 +1,12 @@
 @extends('layouts.card', [
   'cards' => [
     [
-      'url' => '/set_scores/new',
+      'url' => sprintf('/set_scores?%s', http_build_query( array_merge($_GET, ['tab' => 'unplayed']) ) ),
       'label' => 'Non Played Games',
       'active' => $selected_tab == 'unplayed',
     ],
     [
-      'url' => '/set_scores/existing',
+      'url' => sprintf('/set_scores?%s', http_build_query( array_merge($_GET, ['tab' => 'played']) ) ),
       'label' => 'Played Games',
       'active' => $selected_tab == 'played',
     ]
@@ -21,18 +21,18 @@
 @section('view_title', 'Set Scores')
 
 @section('card_content')
-    <div class="h3 mt-2 mb-4"><u>
+    <div class="h3 mt-2 mb-5"><u>
         @if ($selected_tab == 'unplayed')
           Set New Scores
+          @if (!$no_available_games)
+            <button id="randomize_scores" type="button" class="btn btn-primary ml-5">Randomize all non-finished games</button>
+          @endif
         @else
           Update Scores
         @endif
     </u></div>
     @csrf
 
-    @if ($selected_tab == 'unplayed' && !$no_available_games)
-      <button id="randomize_scores" type="button" class="btn btn-primary">Randomize all non-finished games</button>
-    @endif
     <div class="container col mt-3">
         @if ($no_available_games)
             <div class="h5 mb-2">
@@ -44,9 +44,6 @@
             </div>
             
         @else
-            <div class="h5 mb-2">
-              Games:
-            </div>
             @include('table_filters', [
               'round_param' => $query_params['round'],
               'week_param' => $query_params['week'],
