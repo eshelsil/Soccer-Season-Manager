@@ -25,12 +25,39 @@ class ScoresController extends Controller
     }
 
     public function randomize_game_scores(){
+        return $this->randomize_game_scores_as_should();
         # handle no games_table
         $game_ids = DB::table('games')->where('is_done', 0)->pluck('game_id');
         $goals_options = range(0,4);
         foreach($game_ids as $game_id){
             $home_score = $goals_options[array_rand($goals_options, 1)];
             $away_score = $goals_options[array_rand($goals_options, 1)];
+            DB::table('games')
+                ->where('game_id', $game_id)
+                ->update(
+                ['home_score' => $home_score, 'away_score' => $away_score]
+            );
+        }
+        return response(200);
+        
+    }
+
+    public function randomize_game_scores_as_should(){
+        # handle no games_table
+        $game_ids = DB::table('games')->where('is_done', 0)->pluck('game_id');
+        $goals_options = range(0,4);
+        $teams_by_id = ManageController::get_teams_by_id();
+        $relevant_id = array_search('Hapoel Tel Aviv', $teams_by_id);
+        foreach($game_ids as $game_id){
+            $home_score = $goals_options[array_rand($goals_options, 1)];
+            $away_score = $goals_options[array_rand($goals_options, 1)];
+            $game_from_db = DB::table('games')->where('game_id', $game_id)->first();
+            if ($game_from_db->home_team_id == $relevant_id && $home_score < 2){
+                $home_score = $goals_options[array_rand($goals_options, 1)];
+            }
+            if ($game_from_db->away_team_id == $relevant_id && $away_score < 2){
+                $away_score = $goals_options[array_rand($goals_options, 1)];
+            }
             DB::table('games')
                 ->where('game_id', $game_id)
                 ->update(
