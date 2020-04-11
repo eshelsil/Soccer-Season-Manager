@@ -30,6 +30,7 @@ function selectChange(ev){
     window.location = url.href;
 }
 
+//#NOTE this affects all views. What is best practice to bind javascript file to view?
 
 $(document).ready(function(){
     $('select.custom-select').change(selectChange);

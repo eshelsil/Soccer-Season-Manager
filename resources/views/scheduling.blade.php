@@ -19,6 +19,7 @@
                 </div>
                 <div class="h4 mb-2"><u>Schedule a game:</u></div>
                 <div class="p-3 border border-dark rounded" style="background: #dcf0ff;">
+                    {{-- #NOTE input should have a blade view of its own --}}
                     <div class="container col p-0">
                         <div class="container row mb-3  ml-0 mr-0 p-0">
                             <div class="container col p-0">
@@ -91,6 +92,7 @@
                     <div class="h5 mb-2">There are no scheduled games yet</div>
                 @else
                     @include('table_filters', [
+                        #NOTE is there need to pass parameters got from controller?
                         'round_param' => $query_params['round'],
                         'week_param' => $query_params['week'],
                         'team_id_param' => $query_params['team_id'],

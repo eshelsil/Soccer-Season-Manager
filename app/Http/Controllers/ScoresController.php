@@ -20,6 +20,8 @@ class ScoresController extends Controller
         $available_games = DB::table('games')->where('is_done', $is_done)->get();
         $no_available_games = count($available_games) == 0;
 
+        #NOTE how to not query DB twice here?
+
         $where_conditions = [];
         array_push($where_conditions, ['is_done', '=', $is_done]);
         if (!is_null($week)){
@@ -36,6 +38,7 @@ class ScoresController extends Controller
                         ->orWhere('away_team_id', $team_id);
                 })
                 ->get();
+                #NOTE anyway to push team_id condition into where conditions?
         } else {
             $games = DB::table('games')->where($where_conditions)->get();
         }
@@ -63,6 +66,8 @@ class ScoresController extends Controller
         $game_ids = DB::table('games')->where('is_done', 0)->pluck('game_id');
         $goals_options = range(0,4);
         foreach($game_ids as $game_id){
+            #NOTE should use transaction here?
+            
             $home_score = $goals_options[array_rand($goals_options, 1)];
             $away_score = $goals_options[array_rand($goals_options, 1)];
             DB::table('games')

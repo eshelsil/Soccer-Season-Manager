@@ -1,6 +1,7 @@
 @extends('layouts.card', [
   'cards' => [
     [
+      #NOTE what if I want to pass more complicated php (not one line) as a parameter?
       'url' => sprintf('/set_scores?%s', http_build_query( array_merge($_GET, ['tab' => 'unplayed']) ) ),
       'label' => 'Non Played Games',
       'active' => $selected_tab == 'unplayed',
@@ -83,7 +84,7 @@
                         $underline_home_team = ($selected_team_id == $home_team_id) ? 'underlined' : '';
                         $underline_away_team = ($selected_team_id == $away_team_id) ? 'underlined' : '';
 
-
+                        #NOTE better way to generate html here?
                         $on_edit_action_cells = "
                             <td class='shrunk'>
                                 <div class='confirm_set_score_btn' data-game_id=$game_id></div>

@@ -11,6 +11,8 @@
     cursor: pointer;
 }
 
+//#NOTE split css to relevant files and import
+
 .table {
     &.shrunk{
         white-space: nowrap;

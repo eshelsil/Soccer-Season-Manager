@@ -10,6 +10,8 @@ class GamesController extends Controller
 {
     public function __construct()
     {
+        #NOTE where is the best place to set constants?
+
         if (!defined('TEAMS_BY_ID')){
             $teams = DB::select("SELECT team_id, team_name FROM teams;");
             $teams_by_id = array();
@@ -23,6 +25,8 @@ class GamesController extends Controller
     }
     public function index(Request $request)
     { 
+        #NOTE use laravel query like a normal person
+
         $team_id = $request->query('team_id');
         $round = $request->query('round');
         $week = $request->query('week');

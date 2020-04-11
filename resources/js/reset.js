@@ -5,6 +5,8 @@ function reset_scores(){
     .done(()=>{
         $('#reset_scores_dismiss_modal').click();
     })
+
+    //#NOTE improve error alerts
     .fail(function(e){alert(e.responseText)});
 }
 
@@ -26,6 +28,8 @@ $(document).ready(function(){
             'X-CSRF-TOKEN': csrf_tkn
       }
     });
+    //#NOTE use ajaxSetup only once. hot to do so?
+
     $('#reset_games_confirm').click(reset_games);
     $('#reset_scores_confirm').click(reset_scores);
 })

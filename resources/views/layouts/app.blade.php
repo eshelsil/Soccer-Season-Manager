@@ -15,8 +15,9 @@
         
         @section('menu')
         @show
-        
+        {{-- #NOTE need better understanding of bootstrap grid --}}
         <div class="container">
+            {{-- #NOTE what is the difference between section & yueld? --}}
             @yield('content')
         </div>
     </body>

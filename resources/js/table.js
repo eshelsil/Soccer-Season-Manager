@@ -27,6 +27,7 @@ function selectChange(ev){
     window.location = url.href;
 }
 
+//#NOTE exists in games.js
 
 $(document).ready(function(){
     $('select.custom-select').change(selectChange);

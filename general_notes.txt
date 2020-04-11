@@ -1,0 +1,20 @@
+- How to debug php rather than 'dd()'?
+- What is app/console?
+- What is app/exceptions?
+- What middlewares are default used by laravel?
+- What http/kernel?
+- What are providers?
+- What is app/User?
+- What is app/bootstrap?
+- What should I stor as config? constants?
+- What is app/database?
+- What is public/.htaccess?
+- Anything I need to know about public/indx.php?
+- What are route/[api,channels,console].php?
+- What is 'storage' folder?
+- How to work with tests?
+- What is 'vendor' folder?
+- What is '.styleci.yml'?
+- Should gitignore package-lock.json?
+- What is 'server.php'?
+- What is 'phpunit.xml'?

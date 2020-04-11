@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 
+
+#NOTE bad manager implementation -> split to relevant controllers: 'teams_setter', 'games_setter', 'app_main_router'
+
 class ManageController extends Controller
 {
     private function is_all_games_scheduled(){
@@ -16,6 +19,8 @@ class ManageController extends Controller
     }
 
     public static function get_teams_by_id(){
+        #NOTE should query it once teams are ready once and that's it
+
         $teams = DB::table('teams')->get();
         $teams_by_id = array();
         foreach($teams as $team_data){
@@ -26,6 +31,8 @@ class ManageController extends Controller
 
     public function home(Request $request)
     { 
+        #NOTE should be implemented in an 'app_main_controller' or something like that
+
         $games_table = Schema::hasTable('games');    
         $teams_table = Schema::hasTable('teams');    
         if($games_table && $teams_table){
@@ -40,6 +47,8 @@ class ManageController extends Controller
     }
 
     public function index(Request $request){
+        #NOTE split to 2 controllers
+
         $games_table_exists = Schema::hasTable('games');
         $teams_table_exists = Schema::hasTable('teams');
         if (!$games_table_exists || !$teams_table_exists){
@@ -54,7 +63,10 @@ class ManageController extends Controller
     }
 
     public function show_scheduling(Request $request){
+        #NOTE call create_games_table only by user request. check if exists and return error on this function
+
         $this->create_games_table();
+
         $selected_week = $request->query('set_week');
         $round = $request->query('round');
         $week = $request->query('week');
@@ -67,6 +79,8 @@ class ManageController extends Controller
             array_push($where_conditions, ['round', '=', $round]);
         }
         if (!is_null($team_id)){
+            #NOTE how should this be handled? 'orWhere'/where_as_function cannot be use as value in where_contions array
+
             $filtered_games = DB::table('games')
                 ->where('home_team_id', $team_id)
                 ->where($where_conditions)
@@ -77,6 +91,8 @@ class ManageController extends Controller
             $filtered_games = DB::table('games')->where($where_conditions)->get();
         }
 
+        #NOTE variables bellow should be set as constants when user done setting teams
+        
         $teams_by_id = $this->get_teams_by_id();
         $teams_count = $this->get_teams_count();
         $games_per_week = $teams_count / 2;
@@ -85,6 +101,8 @@ class ManageController extends Controller
         $full_weeks = DB::table('games')->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
         foreach($full_weeks as $week_data){
             if ($week_data->games_count >= $games_per_week){
+                #NOTE is there a better way to remove a value from an array?
+
                 $weeks_to_schedule = array_diff($weeks_to_schedule, [$week_data->week]);
             }
         }
@@ -104,6 +122,8 @@ class ManageController extends Controller
         foreach($games_on_selected_week as $game){
             $available_teams = array_diff($available_teams, [$game->home_team_id, $game->away_team_id]);
         }
+        #NOTE count games and then filter to selected week, is it possible?
+
         $games = DB::table('games')->get();
         return view('scheduling', [
             'query_params' => array(
@@ -125,6 +145,8 @@ class ManageController extends Controller
 
     
     public static function create_teams_table(){
+        #NOTE no reasont to return text
+
         if (Schema::hasTable('teams')) {
             return "Table already exists";
         }
@@ -132,10 +154,13 @@ class ManageController extends Controller
             $table->increments('team_id');
             $table->string('team_name', 50)->unique();
         });
+        #NOTE handle failure
         
     }
     
     public static function drop_teams_table(){
+        #NOTE should it be truncate instead?
+
         if (!Schema::hasTable('teams')) {
             return "\"teams\" table does not exist";
         }
@@ -149,6 +174,8 @@ class ManageController extends Controller
         if (Schema::hasTable('games')) {
             return response("Deleting a team is not allwed after \"games\" table is initiated", 400);
         }
+        #NOTE will this return bad errors if the error is returned from sql? see add_team as well
+
         return DB::table('teams')->where('team_id', $team_id)->delete();
     }
 
@@ -168,6 +195,8 @@ class ManageController extends Controller
         DB::table('teams')->truncate();
         $teams = $request->input('teams') ?? array();
         foreach($teams as $team){
+            #NOTE should be done as transaction?
+
             DB::table('teams')->updateOrInsert(["team_name" => $team]);
             #handle faliure
         }
@@ -175,6 +204,8 @@ class ManageController extends Controller
     }
 
     public function get_teams_count(){
+        #NOTE should not query database every time
+
         return count($this->get_teams_by_id());
     }
 
@@ -195,6 +226,8 @@ class ManageController extends Controller
             return response("Must have even number of teams", 400);
         }
         if (Schema::hasTable('games')) {
+            #NOTE this is a bad response status
+
             return response("Table already exists", 200);
         }
         return Schema::create('games', function(Blueprint $table){
@@ -219,6 +252,8 @@ class ManageController extends Controller
     
     public static function drop_games_table(){
         if (!Schema::hasTable('games')) {
+            #NOTE return proper response with status
+
             return "\"games\" table does not exist";
         }
         return Schema::drop('games');
@@ -293,6 +328,8 @@ class ManageController extends Controller
         }
         $games = $this->generate_games();
         foreach($games as $game){
+            #NOTE should be done as transaction? this way the validation cannot take place
+
             $this->add_game_to_db($game['round'],$game['week'],$game['home_team_id'], $game['away_team_id']);
         }
         return response(200);
@@ -315,6 +352,9 @@ class ManageController extends Controller
     }
 
     private function generate_first_round_order($ids){
+        #NOTE is this the right place to do this? would it be better to generate games in javascipt and pass to php?
+        #Is this one of the purposes of PHP or should it use this kind of functionality only for objects that are not accessible by frontend?
+
         # explanation on method -> https://nrich.maths.org/1443
         shuffle($ids);
         $middle_of_poligon = $ids[0];

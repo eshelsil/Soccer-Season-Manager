@@ -20,3 +20,4 @@
         </ul>
     </div>
 </nav>
+{{-- #NOTE - nav-items should be more intuitive - it is not good ux --}}

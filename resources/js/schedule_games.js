@@ -28,6 +28,8 @@ function go_to_set_scores(){
 }
 
 function truncate_games_table(){
+    //#NOTE this method exist in reset.js
+    
     $.post('/manage/reset_games')
     .done(()=>{
         window.location = '/manage';

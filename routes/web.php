@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+//#NOTE how to choose urls properly? (REST etc.)
+//#NOTE how to choose post/delete/put methods properly? (REST etc.)
 Route::get('/', 'ManageController@home');
 Route::get('manage', 'ManageController@index');
 Route::post('manage/init_teams', 'ManageController@create_teams_table');

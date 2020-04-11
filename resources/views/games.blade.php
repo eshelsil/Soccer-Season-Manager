@@ -4,6 +4,7 @@
 
 @section('script')
     <script src="{{ asset('/js/games.js') }}"></script>
+    {{-- #NOTE - is this necessary? --}}
 @endsection
 
 @section('menu')
@@ -12,6 +13,7 @@
 
 @section('content')
     <div class="container row justify-content-start">
+        {{-- #NOTE - should use filters template --}}
         <div class="container col-3 m-0">
             <label for="teamSelect" class="row pl-0">Choose Team</label>
             <select class="custom-select row" id="teamSelect" style="width:auto;">
@@ -21,6 +23,7 @@
                     foreach(TEAMS_BY_ID as $id => $team_name){
                         $is_selected_str = $selected == $id ? 'selected' : '';
                         echo sprintf("<option value='$id' %s>$team_name</option>", $is_selected_str);
+                        #NOTE what is the best way for string injection??
                     }
                 ?>
             </select>
@@ -78,6 +81,7 @@
             <tr>
                 <th scope="col">Week</th>
                 <?php
+                    #NOTE - use blade if endif
                     $team_id = $query_params['team_id'];
                     if (!is_null($team_id)){
                         echo "<th scope=\"col\">Res.</th>";
@@ -126,6 +130,8 @@
                 $away_team_text = ($selected_team == 'away') ? "<u>$away_team_name</u>" : $away_team_name;
                 $score_separator = $is_done ? ':' : '';
 
+                #NOTE is there a better way to generate html for this table row
+                
                 $score_cell = '';
                 if (!is_null($team_id)){
                     $cell_draw = "<td>D</td>";

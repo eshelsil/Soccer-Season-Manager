@@ -9,6 +9,7 @@ class TableController extends Controller
 {
     public function __construct()
     {
+        #NOTE should be defined from advanced
         if (!defined('TEAMS_BY_ID')){
             $teams = DB::select("SELECT team_id, team_name FROM teams;");
             $teams_by_id = array();
@@ -22,6 +23,7 @@ class TableController extends Controller
     }
 
     public function index(Request $request){
+        #NOTE improve query (use laravel)
         $week = $request->query('week');
         $filter_string = !is_null($week) ? sprintf( "AND %s",  "week <= $week") : '';
         $query_string = sprintf("select * from games where is_done = 1 %s", $filter_string);

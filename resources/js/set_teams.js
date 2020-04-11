@@ -5,6 +5,7 @@ function create_games_table(){
 }
 
 function set_deafult_teams(){ 
+    //#NOTE can I be sure that 'params' always will be there because the <script></script> row in set_teams blade>
     let teams = params['teams'];
     $.post('/manage/set_teams', {teams})
     .done(function(){window.location.reload();});

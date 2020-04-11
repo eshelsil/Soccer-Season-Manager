@@ -87,6 +87,7 @@
                     $table[$away_team_id]['points'] += 1;
                 }
             }
+            #NOTE is this the place to do table calculations or should do so in Controller?
 
             function cmp($team_a, $team_b){
                 $points_a = $team_a['points'];
@@ -111,6 +112,7 @@
                 }
             }
             usort($table, 'cmp');
+            #NOTE todo: equal teams by inner-games
 
             foreach($table as $index => $team_data){
                 $classes = $index == 0 ? "font-weight-bold" : '';
