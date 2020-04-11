@@ -10,17 +10,49 @@ class ScoresController extends Controller
 
     public function index(Request $request, $selected_tab = 'unplayed')
     { 
-        $set_game_id = $request->query()['set_game_id'] ?? null;
-        if ($selected_tab == 'unplayed'){
-            $games = DB::table('games')->where('is_done', 0)->get();
-        } else {
-            $games = DB::table('games')->where('is_done', 1)->get();
+        $set_game_id = $request->query('set_game_id');
+        $round = $request->query('round');
+        $week = $request->query('week');
+        $team_id = $request->query('team_id');
+        
+        $is_done = ($selected_tab == 'unplayed') ? 0 : 1;
+        $available_games = DB::table('games')->where('is_done', $is_done)->get();
+        $no_available_games = count($available_games) == 0;
+
+        $where_conditions = [];
+        array_push($where_conditions, ['is_done', '=', $is_done]);
+        if (!is_null($week)){
+            array_push($where_conditions, ['week', '=', $week]);
         }
+        if (!is_null($round)){
+            array_push($where_conditions, ['round', '=', $round]);
+        }
+        if (!is_null($team_id)){
+            $games = DB::table('games')
+                ->where($where_conditions)
+                ->where(function($query) use($team_id) {
+                    $query->where('home_team_id', $team_id)
+                        ->orWhere('away_team_id', $team_id);
+                })
+                ->get();
+        } else {
+            $games = DB::table('games')->where($where_conditions)->get();
+        }
+        
+        $teams_by_id = ManageController::get_teams_by_id();
+        $weeks_count = ( count($teams_by_id) - 1 ) * 2;
         return view('set_scores', [
+            'query_params' => array(
+                'round'=>$round,
+                'week'=>$week,
+                'team_id'=>$team_id,
+                'set_game_id' => $set_game_id
+            ),
             'selected_tab' => $selected_tab,
             'games' => $games,
-            'set_game_id' => $set_game_id,
-            'teams_by_id' => ManageController::get_teams_by_id()
+            'no_available_games' => $no_available_games,
+            'teams_by_id' => $teams_by_id,
+            'weeks_count' => $weeks_count
         ]);
     }
 

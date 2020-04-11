@@ -90,58 +90,13 @@
                 @if (count($games) === 0)
                     <div class="h5 mb-2">There are no scheduled games yet</div>
                 @else
-                    <div class="container row mb-3 ml-0 p-0">
-                        <div class="container col-2 m-0">
-                            <label for="roundSelect" class="col pl-0">Round</label>
-                            <select class="custom-select" id="roundSelect" style="width:auto;">
-                                <?php
-                                    $selected = $query_params['round'] ?? 'all';
-                                    echo sprintf("<option value='all' %s>---</option>", $selected == 'all' ? 'selected' : '');
-                                    foreach(range(1,2) as $round){
-                                        $is_selected_str = $selected == $round ? 'selected' : '';
-                                        echo sprintf("<option %s>$round</option>", $is_selected_str);
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="container col-2 m-0">
-                            <label for="weekSelect" class="col pl-0">Week</label>
-                            <select class="custom-select" id="weekSelect" style="width:auto;">
-                                <?php
-                                    $selected_round = $query_params['round'] ?? 'all';
-                                    $selected = $query_params['week'] ?? 'all';
-                                    echo sprintf("<option value='all' %s>---</option>", $selected == 'all' ? 'selected' : '');
-                                    $weeks_per_round = $weeks_count / 2;
-                                    foreach(range(1, $weeks_count) as $week){
-                                        if ($selected_round != 'all'){
-                                            $available_weeks = range( ( $selected_round - 1 ) * $weeks_per_round + 1 , $selected_round * $weeks_per_round);
-                                            if (!in_array($week, $available_weeks)){
-                                                continue;
-                                            }
-                                        }
-                                        $is_selected_str = $selected == $week ? 'selected' : '';
-                                        echo sprintf("<option %s>$week</option>", $is_selected_str);
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="container col-5 m-0">
-                            <label for="teamSelect" class="col pl-0">Team</label>
-                            <select class="custom-select" id="teamSelect" style="width:auto;">
-                                <?php
-                                    $selected = $query_params['team_id'] ?? 'all';
-                                    echo sprintf("<option value='all' %s>------</option>", $selected == 'all' ? 'selected' : '');
-                                    foreach($teams_by_id as $id => $team_name){
-                                        $is_selected_str = $selected == $id ? 'selected' : '';
-                                        echo sprintf("<option value='$id' %s>$team_name</option>", $is_selected_str);
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="container col-3 mt-auto p-0">
-                            <button id="reset_filters" type="button" class="btn btn-secondary">Reset Filters</button>
-                        </div>
-                    </div>
+                    @include('table_filters', [
+                        'round_param' => $query_params['round'],
+                        'week_param' => $query_params['week'],
+                        'team_id_param' => $query_params['team_id'],
+                        // 'weeks_count' => $weeks_count,
+                        // 'teams_by_id' => $teams_by_id
+                    ])
                     <table class="table table-striped shrunk">
                         <thead class="thead-dark">
                             <tr>

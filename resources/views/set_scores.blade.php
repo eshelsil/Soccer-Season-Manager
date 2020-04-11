@@ -30,11 +30,11 @@
     </u></div>
     @csrf
 
-    @if ($selected_tab == 'unplayed' && count($games) > 0)
+    @if ($selected_tab == 'unplayed' && !$no_available_games)
       <button id="randomize_scores" type="button" class="btn btn-primary">Randomize all non-finished games</button>
     @endif
     <div class="container col mt-3">
-        @if (count($games) === 0)
+        @if ($no_available_games)
             <div class="h5 mb-2">
               @if ($selected_tab == 'unplayed')
                 All games are done
@@ -47,6 +47,13 @@
             <div class="h5 mb-2">
               Games:
             </div>
+            @include('table_filters', [
+              'round_param' => $query_params['round'],
+              'week_param' => $query_params['week'],
+              'team_id_param' => $query_params['team_id'],
+              'weeks_count' => $weeks_count,
+              'teams_by_id' => $teams_by_id
+            ])
             <table class="table table-striped shrunk">
                 <thead class="thead-dark">
                     <tr>
@@ -54,7 +61,7 @@
                         <th scope="col">Week</th>
                         <th scope="col">Home Team</th>
                         <th scope="col">Away Team</th>
-                        @if ($selected_tab != 'unplayed' || ($set_game_id ?? false))
+                        @if ($selected_tab != 'unplayed' || ($query_params['set_game_id'] ?? false))
                         <th colspan="3" scope="col">Score</th>
                         @endif
                         <th colspan="2" scope="col">Actions</th>
@@ -64,14 +71,20 @@
                     <?php
                     foreach($games as $game){
                         $game_id = $game->game_id;
-                        $on_edit = ($set_game_id ?? null) == $game_id;
+                        $on_edit = ($query_params['set_game_id'] ?? null) == $game_id;
                         $round = $game->round;
                         $week = $game->week;
-                        $home_team_name = $teams_by_id[$game->home_team_id];
-                        $away_team_name = $teams_by_id[$game->away_team_id];
+                        $home_team_id = $game->home_team_id;
+                        $away_team_id = $game->away_team_id;
+                        $home_team_name = $teams_by_id[$home_team_id];
+                        $away_team_name = $teams_by_id[$away_team_id];
                         $score_cells = '';
                         $home_winner_class = '';
                         $away_winner_class = '';
+
+                        $selected_team_id = $query_params['team_id'] ?? null;
+                        $underline_home_team = ($selected_team_id == $home_team_id) ? 'underlined' : '';
+                        $underline_away_team = ($selected_team_id == $away_team_id) ? 'underlined' : '';
 
 
                         $on_edit_action_cells = "
@@ -128,7 +141,7 @@
                             $score_cells = strtr($on_edit_score_cells_tmpl, ['home_input' => $home_input, 'away_input' => $away_input]);
                             $action_cells = $on_edit_action_cells;
                           } else {
-                            if ($set_game_id ?? false){
+                            if ($query_params['set_game_id'] ?? false){
                               $score_cells="<td></td><td></td><td></td>";
                             }
                             $action_cells = "
@@ -145,8 +158,8 @@
                         <tr>
                             <td class='shrunk'>$round</td>
                             <td class='shrunk'>$week</td>
-                            <td class='shrunk $home_winner_class'>$home_team_name</td>
-                            <td class='shrunk $away_winner_class'>$away_team_name</td>
+                            <td class='shrunk $home_winner_class $underline_home_team'>$home_team_name</td>
+                            <td class='shrunk $away_winner_class $underline_away_team'>$away_team_name</td>
                             $score_cells
                             $action_cells
                         </tr>
