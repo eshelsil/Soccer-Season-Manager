@@ -22,14 +22,6 @@ function reset_games(){
 
 
 $(document).ready(function(){
-    let csrf_tkn = $('input[name="_token"]').val();
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': csrf_tkn
-      }
-    });
-    //#NOTE use ajaxSetup only once. hot to do so? -> implement on main container
-
     $('#reset_games_confirm').click(reset_games);
     $('#reset_scores_confirm').click(reset_scores);
 })

@@ -6,7 +6,6 @@
     <div class="h3 mt-2 mb-4"><u>
         Step 2 - Schedule Games
     </u></div>
-    @csrf
 
     <div class="row">
 

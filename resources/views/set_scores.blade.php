@@ -36,7 +36,6 @@
           Update Scores
         @endif
     </u></div>
-    @csrf
 
     <div class="col mt-3">
         @if (!$has_available_games)

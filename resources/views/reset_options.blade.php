@@ -9,7 +9,6 @@
     <div class="h3 mt-2 mb-4"><u>
         Reset Options
     </u></div>
-    @csrf
     <div class="row ml-0">
         @include('button_modal', [
             'button_id' => 'reset_scores',

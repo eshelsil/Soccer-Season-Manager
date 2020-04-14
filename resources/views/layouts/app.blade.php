@@ -9,6 +9,7 @@
         @show
     </head>
     <body>
+        @csrf
         <div class="text-center container-fluid p-4 bg-primary text-white">
             <p class="h1 m-0">Season 2020</p>
         </div>

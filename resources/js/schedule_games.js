@@ -58,12 +58,6 @@ function reset_filters(){
 
 
 $(document).ready(function(){
-    let csrf_tkn = $('input[name="_token"]').val();
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': csrf_tkn
-      }
-    });
     $('#auto_schedule').click(auto_schedule);
     $('#truncate_games_table').click(truncate_games_table);
     $('#drop_games_table').click(drop_games_table);

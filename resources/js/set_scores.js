@@ -48,12 +48,6 @@ function update_game_score(ev){
 
 
 $(document).ready(function(){
-    let csrf_tkn = $('input[name="_token"]').val();
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': csrf_tkn
-      }
-    });
     $('#randomize_scores').click(randomize_scores);
     $('.delete_btn').click(reset_game_score);
     $('.edit_btn').click(go_to_set_game_score);

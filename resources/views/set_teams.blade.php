@@ -8,7 +8,6 @@
 @endsection
 
 @section('content')
-    @csrf
     <div class="h3 mt-2 mb-4"><u>
         Step 1 - Set Teams
     </u></div>

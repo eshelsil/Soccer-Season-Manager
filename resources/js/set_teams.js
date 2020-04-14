@@ -41,12 +41,6 @@ function add_team(){
 
 
 $(document).ready(function(){
-    let csrf_tkn = $('input[name="_token"]').val();
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': csrf_tkn
-      }
-    });
     $('#default_teams').click(set_deafult_teams);
     $('#drop_teams_table').click(drop_teams_table);
     $('#to_schedule').click(create_games_table);
