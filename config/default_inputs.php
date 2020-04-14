@@ -1,6 +1,6 @@
 <?php
     return [
-        'DEAFULT_TEAMS_LIST' => [
+        'TEAMS_LIST' => [
             "Maccabi Tel Aviv",
             "Maccabi Haifa",
             "Hapoel Beer-Sheva",

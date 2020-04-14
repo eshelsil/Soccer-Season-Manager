@@ -3,7 +3,7 @@
 @section('title', 'Set Teams')
 @section('script')
     <script>
-        var params = @json(['teams'=>Config::get('constants.DEAFULT_TEAMS_LIST')])
+        var params = @json(['teams'=>Config::get('default_inputs.TEAMS_LIST')])
     </script>
 @endsection
 
