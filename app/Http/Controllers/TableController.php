@@ -23,11 +23,12 @@ class TableController extends Controller
     }
 
     public function index(Request $request){
-        #NOTE improve query (use laravel)
         $week = $request->query('week');
-        $filter_string = !is_null($week) ? sprintf( "AND %s",  "week <= $week") : '';
-        $query_string = sprintf("select * from games where is_done = 1 %s", $filter_string);
-        $games = DB::select($query_string);
+        $where_conditions = [['is_done', '=', 1]];
+        if (!is_null($week)){
+            array_push($where_conditions, ['week', '<=', $week]);
+        }
+        $games = DB::table('games')->where($where_conditions)->get();
         $last_game = DB::table('games')->where('is_done', 1)->orderBy('week', 'desc')->first();
         $last_week = (is_null($last_game)) ? null : $last_game->week;
         return view('table', [

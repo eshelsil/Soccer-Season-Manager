@@ -80,25 +80,65 @@ class ManageController extends Controller
         $round = $request->query('round');
         $week = $request->query('week');
         $team_id = $request->query('team_id');
-        $where_conditions = [];
-        if (!is_null($week)){
-            array_push($where_conditions, ['week', '=', $week]);
-        }
-        if (!is_null($round)){
-            array_push($where_conditions, ['round', '=', $round]);
-        }
-        if (!is_null($team_id)){
-            #NOTE how should this be handled? 'orWhere'/where_as_function cannot be use as value in where_contions array
 
+        $has_available_games = DB::table('games')->exists();
+        
+        if ($has_available_games){
             $filtered_games = DB::table('games')
-                ->where('home_team_id', $team_id)
-                ->where($where_conditions)
-                ->orWhere('away_team_id', $team_id)
-                ->where($where_conditions)
+                ->where(function($query) use($week, $round) {
+                    if (!is_null($week)){
+                        $query->where('week', $week);
+                    }
+                    if (!is_null($round)){
+                        $query->where('round', $round);
+                    }
+                })
+                ->where(function($query) use($team_id) {
+                    if (!is_null($team_id)){
+                        $query->where('home_team_id', $team_id)
+                            ->orWhere('away_team_id', $team_id);
+                    }
+                })
                 ->get();
+                // ->when(!is_null($week), function($query) use($week) {
+                //     $query->where('week', $week);
+                // })
+                // ->when(!is_null($round), function($query) use($round) {
+                //     $query->where('round', $round);
+                // })
+                // ->when(!is_null($team_id), function($query) use($team_id) {
+                //     $query->where('home_team_id', $team_id)
+                //         ->orWhere('away_team_id', $team_id);
+                // })
+                // ->get();
         } else {
-            $filtered_games = DB::table('games')->where($where_conditions)->get();
+            $filtered_games = null;
         }
+
+
+        // $where_conditions = [];
+        // if (!is_null($week)){
+        //     array_push($where_conditions, ['week', '=', $week]);
+        // }
+        // if (!is_null($round)){
+        //     array_push($where_conditions, ['round', '=', $round]);
+        // }
+        // if (!is_null($team_id)){
+        //     #NOTE how should this be handled? 'orWhere'/where_as_function cannot be use as value in where_contions array
+
+        //     $filtered_games = DB::table('games')
+        //         ->where('home_team_id', $team_id)
+        //         ->where($where_conditions)
+        //         ->orWhere('away_team_id', $team_id)
+        //         ->where($where_conditions)
+        //         ->get();
+        // } else {
+        //     $filtered_games = DB::table('games')->where($where_conditions)->get();
+        // }
+
+
+
+
 
         #NOTE variables bellow should be set as constants when user done setting teams --> Singleton
         
@@ -129,7 +169,6 @@ class ManageController extends Controller
         foreach($games_on_selected_week as $game){
             $available_teams = array_diff($available_teams, [$game->home_team_id, $game->away_team_id]);
         }
-        #NOTE count games and then filter to selected week, is it possible? --> filter the collection returned
 
         $games = DB::table('games')->get();
         return view('scheduling', [
@@ -144,7 +183,7 @@ class ManageController extends Controller
             'weeks_count' => $weeks_count,
             'teams_by_id' => $teams_by_id,
             'filtered_games' => $filtered_games,
-            'games' => $games,
+            'has_available_games' => $has_available_games,
             'allow_set_scores' => $this->is_all_games_scheduled()
         ]);
     }

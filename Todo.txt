@@ -1,7 +1,7 @@
 1. Simple changes:
-    - prevent db_fetch->get_data->db_fetch_filtered  -> filter the returned collection
-    - improve orWhere complicated quieries
-    - use laravel DB::table... for all queries
+    DONE - prevent db_fetch->get_data->db_fetch_filtered  -> filter the returned collection
+    DONE - improve orWhere complicated quieries
+    DONE - use laravel DB::table... for all queries
     - change config/constants filename to a relevant file (all config files are constants)
     - bootstrap: dont use "container" class for every div
     - blades: remove functionality of php to return string of html elemnts. Use blade functionality instead

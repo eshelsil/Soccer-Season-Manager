@@ -29,7 +29,7 @@
     <div class="h3 mt-2 mb-5"><u>
         @if ($selected_tab == 'unplayed')
           Set New Scores
-          @if (!$no_available_games)
+          @if ($has_available_games)
             <button id="randomize_scores" type="button" class="btn btn-primary ml-5">Randomize all non-finished games</button>
           @endif
         @else
@@ -39,7 +39,7 @@
     @csrf
 
     <div class="container col mt-3">
-        @if ($no_available_games)
+        @if (!$has_available_games)
             <div class="h5 mb-2">
               @if ($selected_tab == 'unplayed')
                 All games are done

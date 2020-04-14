@@ -77,10 +77,10 @@
 
         <div class="container col-7 mt-3 pl-2">
             <div class="container row-1 mb-3 p-0">
-                @if (count($games) === 0)
-                    <button id="drop_games_table" type="button" class="btn btn-secondary mr-2">Back to set teams</button>
-                @else
+                @if ($has_available_games)
                     <button id="truncate_games_table" type="button" class="btn btn-danger mr-2">Delete all games</button>
+                @else
+                    <button id="drop_games_table" type="button" class="btn btn-secondary mr-2">Back to set teams</button>
                 @endif
                 @if ($allow_set_scores)
                     <button id="to_set_score" type="button" class="btn btn-success">Continue to set scores</button>
@@ -88,7 +88,7 @@
             </div>
             <div class="h4 mb-2"><u>Scheduled Games:</u></div>
             <div class="p-2 border border-dark rounded" style="background: #dcf0ff;">
-                @if (count($games) === 0)
+                @if (!$has_available_games)
                     <div class="h5 mb-2">There are no scheduled games yet</div>
                 @else
                     @include('table_filters', [

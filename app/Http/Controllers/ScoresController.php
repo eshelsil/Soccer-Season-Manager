@@ -17,75 +17,75 @@ class ScoresController extends Controller
         $team_id = $request->query('team_id');
         
         $is_done = ($selected_tab == 'unplayed') ? 0 : 1;
-        $available_games = DB::table('games')->where('is_done', $is_done)->get();
-        $no_available_games = count($available_games) == 0;
+        // $available_games = DB::table('games')->where('is_done', $is_done)->get();
+        // $no_available_games = count($available_games) == 0;
+        $has_available_games = DB::table('games')->where('is_done', $is_done)->exists();
         
-        #NOTE how to not query DB twice here? -->
-        // $has_available_games = DB::table('games')->where('is_done', $is_done)->exists();
-        
-
-        $where_conditions = [];
-        array_push($where_conditions, ['is_done', '=', $is_done]);
-        if (!is_null($week)){
-            array_push($where_conditions, ['week', '=', $week]);
-        }
-        if (!is_null($round)){
-            array_push($where_conditions, ['round', '=', $round]);
-        }
-        if (!is_null($team_id)){
-            $games = Game::query()
-                ->where($where_conditions)
-                ->where(function($query) use($team_id, $week, $round) {
-                    $query->where()
+        if ($has_available_games){
+            $games = DB::table('games')
+                ->where('is_done', $is_done)
+                ->where(function($query) use($week, $round) {
                     if (!is_null($week)){
-                        array_push($where_conditions, ['week', '=', $week]);
+                        $query->where('week', $week);
                     }
                     if (!is_null($round)){
-                        array_push($where_conditions, ['round', '=', $round]);
+                        $query->where('round', $round);
                     }
-                    $query->where('home_team_id', $team_id)
-                        ->orWhere('away_team_id', $team_id);
+                })
+                ->where(function($query) use($team_id) {
+                    if (!is_null($team_id)){
+                        $query->where('home_team_id', $team_id)
+                            ->orWhere('away_team_id', $team_id);
+                    }
                 })
                 ->get();
-                #NOTE anyway to push team_id condition into where conditions?
         } else {
-            $games = DB::table('games')->where($where_conditions)->get();
+            $games = null;
         }
 
 
+        // $where_conditions = [];
+        // array_push($where_conditions, ['is_done', '=', $is_done]);
+        // if (!is_null($week)){
+        //     array_push($where_conditions, ['week', '=', $week]);
+        // }
+        // if (!is_null($round)){
+        //     array_push($where_conditions, ['round', '=', $round]);
+        // }
+        // if (!is_null($team_id)){
+        //     $games = Game::query()
+        //         ->where($where_conditions)
+        //         ->where(function($query) use($team_id, $week, $round) {
+        //             $query->where()
+        //             if (!is_null($week)){
+        //                 array_push($where_conditions, ['week', '=', $week]);
+        //             }
+        //             if (!is_null($round)){
+        //                 array_push($where_conditions, ['round', '=', $round]);
+        //             }
+        //             $query->where('home_team_id', $team_id)
+        //                 ->orWhere('away_team_id', $team_id);
+        //         })
+        //         ->get();
+        //         #NOTE anyway to push team_id condition into where conditions?
+        // } else {
+        //     $games = DB::table('games')->where($where_conditions)->get();
+        // }
 
 
-        // $games = Game::query()
+        // $games = DB::table('games')
+        //         ->where('is_done', $is_done)
         //         ->when(!is_null($week), function($query) use($week) {
         //             $query->where('week', $week);
         //         })
         //         ->when(!is_null($round), function($query) use($round) {
         //             $query->where('round', $round);
         //         })
-        //         ->where(function($query) use($team_id) {
+        //         ->when(!is_null($team_id), function($query) use($team_id) {
         //             $query->where('home_team_id', $team_id)
         //                 ->orWhere('away_team_id', $team_id);
         //         })
         //         ->get();
-
-
-
-        // $games = Game::query()
-        //         ->where(function($query) use($team_id, $week, $round) {
-        //             if (!is_null($week)){
-        //                 $query->where('week', $week);
-        //             }
-        //             if (!is_null($round)){
-        //                 $query->where('round', $round);
-        //             }
-        //         })
-        //         ->where(function($query) use($team_id, $week, $round) {
-        //             $query->where('home_team_id', $team_id)
-        //                 ->orWhere('away_team_id', $team_id);
-        //         })
-        //         ->get();
-
-
 
 
         $teams_by_id = ManageController::get_teams_by_id();
@@ -99,7 +99,7 @@ class ScoresController extends Controller
             ),
             'selected_tab' => $selected_tab,
             'games' => $games,
-            'no_available_games' => $no_available_games,
+            'has_available_games' => $has_available_games,
             'teams_by_id' => $teams_by_id,
             'weeks_count' => $weeks_count
         ]);

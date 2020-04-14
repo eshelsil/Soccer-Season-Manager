@@ -24,19 +24,27 @@ class GamesController extends Controller
         }
     }
     public function index(Request $request)
-    { 
-        #NOTE use laravel query like a normal person
-
+    {
         $team_id = $request->query('team_id');
         $round = $request->query('round');
         $week = $request->query('week');
-        $team_query = !is_null($team_id) ? "(home_team_id = $team_id OR away_team_id = $team_id)" : '';
-        $week_query = !is_null($week) ? "week = $week" : '';
-        $round_query = !is_null($round) ? "round = $round" : '';
-        $filter_queries = array_filter( array($team_query, $round_query, $week_query), function($q){return !empty($q);} );
-        $filter_string = !empty($filter_queries) ? sprintf( "where %s", join(" AND ", $filter_queries) ) : '';
-        $query_string = sprintf("select * from games %s", $filter_string);
-        $games = DB::select($query_string);
+    
+        $games = DB::table('games')
+            ->where(function($query) use($week, $round) {
+                if (!is_null($week)){
+                    $query->where('week', $week);
+                }
+                if (!is_null($round)){
+                    $query->where('round', $round);
+                }
+            })
+            ->where(function($query) use($team_id) {
+                if (!is_null($team_id)){
+                    $query->where('home_team_id', $team_id)
+                        ->orWhere('away_team_id', $team_id);
+                }
+            })
+            ->get();
         return view('games', ['games' => $games, 'query_params' => array(
             'team_id'=>$team_id,
             'round'=>$round,
