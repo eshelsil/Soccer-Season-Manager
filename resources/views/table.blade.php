@@ -11,14 +11,11 @@
     <div class="col mb-4">
         <label for="weekSelect" class="row pl-0">Until Week</label>
         <select class="custom-select row" id="weekSelect" style="width:auto;">
-            <?php
-                $selected = $query_params['week'] ?? 'unset';
-                echo sprintf("<option value='all' %s>-----------</option>", $selected == 'unset' ? 'selected' : '');
-                foreach(range(1, $last_week) as $week){
-                    $is_selected_str = $selected == $week ? 'selected' : '';
-                    echo sprintf("<option %s>$week</option>", $is_selected_str);
-                }
-            ?>
+            @php $selected = $query_params['week'] ?? 'unset'; ; @endphp
+            <option value='all' {{$selected == 'unset' ? 'selected' : ''}}>---</option>
+            @foreach (range(1, $last_week) as $week)
+                <option {{$selected == $week ? 'selected' : null}}>{{$week}}</option>
+            @endforeach
         </select>
     </div>
     @endif
@@ -85,7 +82,7 @@
                     $table[$away_team_id]['points'] += 1;
                 }
             }
-            #NOTE is this the place to do table calculations or should do so in Controller?
+            #NOTE move these calculations to frontend
 
             function cmp($team_a, $team_b){
                 $points_a = $team_a['points'];
@@ -111,9 +108,10 @@
             }
             usort($table, 'cmp');
             #NOTE todo: equal teams by inner-games
-
-            foreach($table as $index => $team_data){
-                $classes = $index == 0 ? "font-weight-bold" : '';
+            $leader_class = "font-weight-bold";
+        ?>
+        @foreach ($table as $index => $team_data)
+            @php
                 $rank = $index + 1;
                 $team_id = $team_data['team_id'];
                 $team_name = $team_data['team_name'];
@@ -125,22 +123,20 @@
                 $gf = $team_data['goals_for'];
                 $ga = $team_data['goals_against'];
                 $gd = $gf - $ga;
-                echo "
-                <tr class='$classes'>
-                    <td class='shrunk'>$rank</td>
-                    <td class='shrunk'><a href='/games?team_id=$team_id'>$team_name</a></td>
-                    <td class='shrunk'>$points</td>
-                    <td class='shrunk'>$games</td>
-                    <td class='shrunk'>$wins</td>
-                    <td class='shrunk'>$draws</td>
-                    <td class='shrunk'>$loses</td>
-                    <td class='shrunk'>$gf</td>
-                    <td class='shrunk'>$ga</td>
-                    <td class='shrunk'>$gd</td>
-                </tr>
-                ";
-            }
-        ?>
+            @endphp
+            <tr class='{{$index == 0 ? $leader_class : null}}'>
+                <td class='shrunk'>{{$rank}}</td>
+                <td class='shrunk'><a href='/games?team_id={{$team_id}}'>{{$team_name}}</a></td>
+                <td class='shrunk'>{{$points}}</td>
+                <td class='shrunk'>{{$games}}</td>
+                <td class='shrunk'>{{$wins}}</td>
+                <td class='shrunk'>{{$draws}}</td>
+                <td class='shrunk'>{{$loses}}</td>
+                <td class='shrunk'>{{$gf}}</td>
+                <td class='shrunk'>{{$ga}}</td>
+                <td class='shrunk'>{{$gd}}</td>
+            </tr>
+        @endforeach
     </tbody>
     </table>
 @endsection

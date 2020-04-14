@@ -24,17 +24,12 @@
             <div class="col-6 p-2 bg-white border border-dark rounded">
                 <div class="col">
                     <div class="h5 mb-1">Teams:</div>
-                    <?php
-                        foreach($teams_by_id as $id => $name){
-                            
-                            echo "
-                                <div class='row p-1'>
-                                    <div class='delete_team_btn' data-team_id=$id></div>
-                                    <p class='mb-0'>$name</p>
-                                </div>
-                            ";
-                        }
-                    ?>
+                    @foreach ($teams_by_id as $id => $name)
+                        <div class='row p-1'>
+                            <div class='delete_team_btn' data-team_id={{$id}}></div>
+                            <p class='mb-0'>{{$name}}</p>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>

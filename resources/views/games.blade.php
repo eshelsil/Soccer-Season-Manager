@@ -12,6 +12,9 @@
 @endsection
 
 @section('content')
+    @php
+        $team_id = $query_params['team_id'];
+    @endphp
     <div class="row justify-content-start m-0">
         {{-- #NOTE - should use filters template --}}
         <div class="col-3 m-0">
@@ -22,62 +25,47 @@
                 @foreach(TEAMS_BY_ID as $id => $team_name)
                     <option value='{{$id}}' {{ $selected == $id ? 'selected' : '' }}>{{$team_name}}</option>
                 @endforeach
-                {{-- <?php
-                    
-                    echo sprintf("<option value='all' %s>--- All Teams ---</option>", $selected == 'all' ? 'selected' : '');
-                    foreach(TEAMS_BY_ID as $id => $team_name){
-                        $is_selected_str = $selected == $id ? 'selected' : '';
-                        echo sprintf("<option value='$id' %s>$team_name</option>", $is_selected_str);
-                        #NOTE what is the best way for string injection??
-                    }
-                ?> --}}
             </select>
         </div>
         <div class="col-3 m-0">
             <label for="roundSelect" class="row pl-0">Choose Round</label>
             <select class="custom-select row" id="roundSelect" style="width:auto;">
-                <?php
-                    $selected = $query_params['round'] ?? 'all';
-                    echo sprintf("<option value='all' %s>--- All Rounds ---</option>", $selected == 'all' ? 'selected' : '');
-                    foreach(range(1,2) as $round){
-                        $is_selected_str = $selected == $round ? 'selected' : '';
-                        echo sprintf("<option %s>$round</option>", $is_selected_str);
-                    }
-                ?>
+                @php $selected = $query_params['round'] ?? 'all'; @endphp
+                <option value='all' {{ $selected == 'all' ? 'selected' : '' }}>--- All Rounds ---</option>;
+                @foreach(range(1,2) as $round)
+                    <option {{ $selected == $round ? 'selected' : '' }}>{{$round}}</option>
+                @endforeach
             </select>
         </div>
         <div class="col-3 m-0">
             <label for="weekSelect" class="row pl-0">Choose Week</label>
             <select class="custom-select row" id="weekSelect" style="width:auto;">
-                <?php
+                @php
                     $selected_round = $query_params['round'] ?? 'all';
                     $selected = $query_params['week'] ?? 'all';
-                    echo sprintf("<option value='all' %s>--- All Weeks ---</option>", $selected == 'all' ? 'selected' : '');
-                    foreach(range(1, WEEKS_COUNT) as $week){
-                        if ($selected_round != 'all'){
-                            $available_weeks = range( ( $selected_round - 1 ) * WEEKS_IN_ROUND + 1 , $selected_round * WEEKS_IN_ROUND);
-                            if (!in_array($week, $available_weeks)){
-                                continue;
-                            }
-                        }
-                        $is_selected_str = $selected == $week ? 'selected' : '';
-                        echo sprintf("<option %s>$week</option>", $is_selected_str);
-                    }
-                ?>
+                @endphp
+                <option value='all' {{ $selected == 'all' ? 'selected' : '' }}>--- All Weeks ---</option>;
+                @foreach(range(1, WEEKS_COUNT) as $week)
+                    @if ($selected_round != 'all')
+                        @php
+                        $available_weeks = range( ( $selected_round - 1 ) * WEEKS_IN_ROUND + 1 , $selected_round * WEEKS_IN_ROUND);
+                        @endphp
+                        @if (!in_array($week, $available_weeks))
+                            @continue
+                        @endif
+                    @endif
+                    <option {{ $selected == $week ? 'selected' : '' }}>{{$week}}</option>
+                @endforeach
             </select>
         </div>
     </div>
         
         <div class="h3 mt-2 mb-4"><u>
-            <?php
-                $team_id = $query_params['team_id'];
-                if (!is_null($team_id)){
-                    $team_name = TEAMS_BY_ID[$team_id];
-                    echo "Games of $team_name";
-                } else {
-                    echo "Games";
-                }
-                ?>
+            @if (!is_null($team_id))
+                Games of {{TEAMS_BY_ID[$team_id]}}
+            @else
+                Games
+            @endif
         </u></div>
     
     
@@ -85,22 +73,17 @@
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Week</th>
-                <?php
-                    #NOTE - use blade if endif
-                    $team_id = $query_params['team_id'];
-                    if (!is_null($team_id)){
-                        echo "<th scope=\"col\">Res.</th>";
-                    } 
-                ?>
+                @if (!is_null($team_id))
+                <th scope="col">Res.</th>
+                @endif
                 <th scope="col">Home Team</th>
                 <th scope="col">Away Team</th>
                 <th colspan="3" scope="col">Score</th>
             </tr>
         </thead>
         <tbody>
-            <?php
-            $team_id = $query_params['team_id'];
-            foreach($games as $game){
+            @foreach ($games as $game)
+                @php
                 $round = $game->round;
                 $week = $game->week;
                 $home_team_id = $game->home_team_id;
@@ -112,58 +95,48 @@
                 $is_done = $game->is_done;
 
                 if ($score_home > $score_away){
-                    $winner = 'home';
+                    $winner_side = 'home';
                 } elseif($score_home < $score_away){
-                    $winner = 'away';
+                    $winner_side = 'away';
                 } elseif (!is_null($score_home) && !is_null($score_away)) {
-                    $winner = 'draw';
+                    $winner_side = 'draw';
                 } else{
-                    $winner = null;
+                    $winner_side = null;
                 }
 
                 if (is_null($team_id)){
-                    $selected_team = null;
+                    $team_side = null;
                 } elseif($home_team_id == $team_id){
-                    $selected_team = 'home';
+                    $team_side = 'home';
                 } else{
-                    $selected_team = 'away';
+                    $team_side = 'away';
                 }
-
-                $home_winner_class = ($winner == 'home') ? 'font-weight-bold' : '';
-                $away_winner_class = ($winner == 'away') ? 'font-weight-bold' : '';
-                $home_team_text = ($selected_team == 'home') ? "<u>$home_team_name</u>" : $home_team_name;
-                $away_team_text = ($selected_team == 'away') ? "<u>$away_team_name</u>" : $away_team_name;
-                $score_separator = $is_done ? ':' : '';
-
-                #NOTE is there a better way to generate html for this table row
-                
-                $score_cell = '';
-                if (!is_null($team_id)){
-                    $cell_draw = "<td>D</td>";
-                    $cell_win = "<td class=\"text-success\">W</td>";
-                    $cell_lost = "<td class=\"text-danger\">L</td>";
-                    $cell_empty = "<td></td>";
-                    if ($winner == 'draw'){
-                        $score_cell = $cell_draw;
-                    } elseif (is_null($winner)){
-                        $score_cell = $cell_empty;
-                    } else{
-                        $score_cell = ($selected_team == $winner) ? $cell_win : $cell_lost;
-                    }
-                }
-                echo "
+                $winner_class = "font-weight-bold";
+                $selected_team_class = "underlined";
+                $is_home_winner = $winner_side == 'home';
+                $is_away_winner = $winner_side == 'away';
+                @endphp
                 <tr>
-                    <td class='shrunk'>$week</td>
-                    $score_cell
-                    <td class='shrunk $home_winner_class'>$home_team_text</td>
-                    <td class='shrunk $away_winner_class'>$away_team_text</td>
-                    <td class='shrunk pr-0 $home_winner_class'>$score_home</td>
-                    <td class='shrunk pr-0 pl-0'>$score_separator</td>
-                    <td class='shrunk pl-1 $away_winner_class'>$score_away</td>
+                    <td class='shrunk'>{{$week}}</td>
+                    @if (!is_null($team_id))
+                        @if (is_null($winner_side))
+                            <td></td>
+                        @elseif($winner_side == 'draw')
+                            <td>D</td>
+                        @elseif ($winner_side == $team_side)
+                            <td class="text-success">W</td>
+                        @else
+                            <td class="text-danger">L</td>
+                        @endif
+                    @endif
+                    <td class='shrunk {{$is_home_winner ? $winner_class : ''}} {{$team_side == 'home' ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
+                    <td class='shrunk {{$is_away_winner ? $winner_class : ''}} {{$team_side == 'away' ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
+                    <td class='shrunk pr-0 {{$is_home_winner ? $winner_class : ''}}'>{{$score_home}}</td>
+                    <td class='shrunk pr-0 pl-0'>{{$is_done ? ':' : ''}}</td>
+                    <td class='shrunk pl-1 {{$is_away_winner ? $winner_class : ''}}'>{{$score_away}}</td>
                 </tr>
-                ";
-            }
-            ?>
+            @endforeach
+            
         </tbody>
     </table>
 @endsection

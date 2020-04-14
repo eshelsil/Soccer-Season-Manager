@@ -24,21 +24,19 @@
                         <div class="row mb-3  ml-0 mr-0 p-0">
                             <div class="col p-0">
                                 <label class="row m-0">Round</label>
-                                <?php
+                                @php
                                     $teams_count = count(array_keys($teams_by_id));
                                     $games_per_round = $teams_count - 1;
                                     $round = ceil($query_params['set_week'] / $games_per_round);
-                                    echo sprintf('<input type="text" id ="round_input" maxlength="1" value="%s" disabled style="width:1rem;">', $round);
-                                ?>
+                                @endphp
+                                <input type="text" id ="round_input" maxlength="1" value="{{$round}}" disabled style="width:1rem;">
                             </div>
                             <div class="col m-0 p-0">
                                 <label for="setWeekSelect" class="row m-0">Week</label>
                                 <select class="custom-select" id="setWeekSelect" style="width:auto;">
-                                    <?php
-                                        foreach($weeks_to_schedule as $week){
-                                            echo sprintf("<option %s>$week</option>", ($query_params['set_week'] == $week) ? 'selected' : '');
-                                        }
-                                    ?>
+                                    @foreach ($weeks_to_schedule as $week)
+                                        <option {{($query_params['set_week'] == $week) ? 'selected' : ''}}>{{$week}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -46,24 +44,22 @@
                             <div class="col m-0 p-0">
                                 <label for="homeTeamSelect" class="col m-0 p-0">Home Team</label>
                                 <select class="custom-select" id="homeTeamSelect" style="width:auto;">
-                                    <?php
-                                        foreach($available_teams as $team_id){
-                                            $team_name = $teams_by_id[$team_id];
-                                            echo "<option value='$team_id'>$team_name</option>";
-                                        }
-                                    ?>
+                                    @foreach ($available_teams as $team_id)
+                                        @php $team_name = $teams_by_id[$team_id]; @endphp
+                                        <option value="{{$team_id}}">{{$team_name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col m-0 p-0">
                                 <label for="awayTeamSelect" class="col m-0 p-0">Away Team</label>
                                 <select class="custom-select" id="awayTeamSelect" style="width:auto;">
-                                    <?php
-                                        foreach($available_teams as $team_id){
+                                    @foreach ($available_teams as $team_id)
+                                        @php
                                             $team_name = $teams_by_id[$team_id];
                                             $is_selected = array_values($available_teams)[1] == $team_id;
-                                            echo sprintf("<option value='$team_id' %s>$team_name</option>", ($is_selected) ? 'selected' : '');
-                                        }
-                                    ?>
+                                        @endphp
+                                        <option value="{{$team_id}}" {{$is_selected ? 'selected' : ''}}>{{$team_name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -109,26 +105,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            foreach($filtered_games as $game){
-                                $game_id = $game->game_id;
-                                $round = $game->round;
-                                $week = $game->week;
-                                $home_team_name = $teams_by_id[$game->home_team_id];
-                                $away_team_name = $teams_by_id[$game->away_team_id];
-                                echo "
+                            @foreach ($filtered_games as $game)
+                                @php
+                                    $game_id = $game->game_id;
+                                    $round = $game->round;
+                                    $week = $game->week;
+                                    $home_team_name = $teams_by_id[$game->home_team_id];
+                                    $away_team_name = $teams_by_id[$game->away_team_id];
+                                @endphp
                                 <tr>
-                                    <td class='shrunk'>$round</td>
-                                    <td class='shrunk'>$week</td>
-                                    <td class='shrunk'>$home_team_name</td>
-                                    <td class='shrunk'>$away_team_name</td>
+                                    <td class='shrunk'>{{$round}}</td>
+                                    <td class='shrunk'>{{$week}}</td>
+                                    <td class='shrunk'>{{$home_team_name}}</td>
+                                    <td class='shrunk'>{{$away_team_name}}</td>
                                     <td class='shrunk'>
-                                        <div class='delete_game_btn' data-game_id=$game_id></div>
+                                        <div class='delete_game_btn' data-game_id={{$game_id}}></div>
                                     </td>
                                 </tr>
-                                ";
-                            }
-                            ?>
+                            @endforeach
                         </tbody>
                     </table>
                 @endif

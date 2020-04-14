@@ -13,8 +13,8 @@
             <p class="h1 m-0">Season 2020</p>
         </div>
         
-        @section('menu')
-        @show
+        @yield('menu')
+
         <div class="ml-5 mr-5 mt-3">
             @yield('content')
         </div>

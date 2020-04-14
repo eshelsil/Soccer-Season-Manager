@@ -8,17 +8,17 @@
     <div class="card">
         <div class="card-header">
           <ul class="nav nav-tabs card-header-tabs">
-            <?php
-              foreach($cards as $card){
+            @foreach($cards as $card)
+              @php
                 $url = $card['url'];
                 $label = $card['label'];
                 $active = ($card['active'] ?? null) ? 'active' : '';
                 $disabled = ($card['disabled'] ?? null) ? 'disabled' : '';
-                echo sprintf("<li class='nav-item'>
-                  <a class='nav-link $active $disabled' href='$url'>$label</a>
-                  </li>");
-                }
-            ?> 
+              @endphp
+              <li class='nav-item'>
+                <a class='nav-link {{$active}} {{$disabled}}' href='{{$url}}'>{{$label}}</a>
+              </li>
+            @endforeach
           </ul>
         </div>
         <div class="card-body">
