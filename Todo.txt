@@ -27,6 +27,7 @@
     - compare equal teams by inner games
     - add is_done filter to games view
     - scheduling - underline selected team cell
+    - add loaders
     
 - debug using Log::
 
