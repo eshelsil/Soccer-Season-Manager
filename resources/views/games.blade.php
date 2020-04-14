@@ -20,7 +20,7 @@
                 @php $selected = $query_params['team_id'] ?? 'all'; @endphp
                 <option value='all' {{ $selected == 'all' ? 'selected' : '' }}>--- All Teams ---</option>
                 @foreach(TEAMS_BY_ID as $id => $team_name)
-                    <option value='$id' {{ $selected == $id ? 'selected' : '' }}>{{$team_name}}</option>
+                    <option value='{{$id}}' {{ $selected == $id ? 'selected' : '' }}>{{$team_name}}</option>
                 @endforeach
                 {{-- <?php
                     
