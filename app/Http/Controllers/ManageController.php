@@ -110,10 +110,6 @@ class ManageController extends Controller
         $full_weeks = DB::table('games')->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
         foreach($full_weeks as $week_data){
             if ($week_data->games_count >= $games_per_week){
-                #NOTE is there a better way to remove a value from an array?
-
-                // unset($weeks_to_schedule[array_search($week_data->week)])
-
                 $weeks_to_schedule = array_diff($weeks_to_schedule, [$week_data->week]);
             }
         }

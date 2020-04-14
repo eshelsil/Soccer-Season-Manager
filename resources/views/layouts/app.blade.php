@@ -17,7 +17,6 @@
         @show
         {{-- #NOTE need better understanding of bootstrap grid  --> dont use container like a morhun --}} 
         <div class="container">
-            {{-- #NOTE what is the difference between section & yield? --}}
             @yield('content')
         </div>
     </body>

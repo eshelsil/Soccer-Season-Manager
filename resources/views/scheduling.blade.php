@@ -92,12 +92,11 @@
                     <div class="h5 mb-2">There are no scheduled games yet</div>
                 @else
                     @include('table_filters', [
-                        #NOTE is there need to pass parameters got from controller?
                         'round_param' => $query_params['round'],
                         'week_param' => $query_params['week'],
                         'team_id_param' => $query_params['team_id'],
-                        // 'weeks_count' => $weeks_count,
-                        // 'teams_by_id' => $teams_by_id
+                        'weeks_count' => $weeks_count,
+                        'teams_by_id' => $teams_by_id
                     ])
                     <table class="table table-striped shrunk">
                         <thead class="thead-dark">
