@@ -10,7 +10,7 @@
         Reset Options
     </u></div>
     @csrf
-    <div class="container row">
+    <div class="row ml-0">
         @include('button_modal', [
             'button_id' => 'reset_scores',
             'button_label' => 'Reset All Game Scores',
@@ -20,7 +20,7 @@
             'cancel_label' => 'Cancel'
             ])
     </div>
-    <div class="container row mt-5">
+    <div class="row ml-0 mt-5">
         @include('button_modal', [
             'button_id' => 'reset_games',
             'button_label' => 'Reset Games Schedule',

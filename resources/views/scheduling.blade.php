@@ -8,21 +8,21 @@
     </u></div>
     @csrf
 
-    <div class="container row">
+    <div class="row">
 
-        <div class="container col-5 mt-3 pl-0">
+        <div class="col-5 mt-3 pl-0">
             @if (empty($weeks_to_schedule))
                 <div class="h4 mb-2">No more games to schedule :)</div>
             @else
-                <div class="container row-1 mb-3 p-0">
+                <div class="row-1 mb-3 p-0">
                     <button id="auto_schedule" type="button" class="btn btn-primary">Auto schedule all games</button>
                 </div>
                 <div class="h4 mb-2"><u>Schedule a game:</u></div>
                 <div class="p-3 border border-dark rounded" style="background: #dcf0ff;">
                     {{-- #NOTE input should have a blade view of its own --}}
-                    <div class="container col p-0">
-                        <div class="container row mb-3  ml-0 mr-0 p-0">
-                            <div class="container col p-0">
+                    <div class="col p-0">
+                        <div class="row mb-3  ml-0 mr-0 p-0">
+                            <div class="col p-0">
                                 <label class="row m-0">Round</label>
                                 <?php
                                     $teams_count = count(array_keys($teams_by_id));
@@ -31,7 +31,7 @@
                                     echo sprintf('<input type="text" id ="round_input" maxlength="1" value="%s" disabled style="width:1rem;">', $round);
                                 ?>
                             </div>
-                            <div class="container col m-0 p-0">
+                            <div class="col m-0 p-0">
                                 <label for="setWeekSelect" class="row m-0">Week</label>
                                 <select class="custom-select" id="setWeekSelect" style="width:auto;">
                                     <?php
@@ -42,8 +42,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="container row m-0 p-0">
-                            <div class="container col m-0 p-0">
+                        <div class="row m-0 p-0">
+                            <div class="col m-0 p-0">
                                 <label for="homeTeamSelect" class="col m-0 p-0">Home Team</label>
                                 <select class="custom-select" id="homeTeamSelect" style="width:auto;">
                                     <?php
@@ -54,7 +54,7 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="container col m-0 p-0">
+                            <div class="col m-0 p-0">
                                 <label for="awayTeamSelect" class="col m-0 p-0">Away Team</label>
                                 <select class="custom-select" id="awayTeamSelect" style="width:auto;">
                                     <?php
@@ -68,15 +68,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="container row justify-content-center mt-4">
+                    <div class="row justify-content-center mt-4">
                         <button id="schedule_game_button" type="button" class="btn btn-primary">Add Game</button>
                     </div>
                 </div>
             @endif
         </div>
 
-        <div class="container col-7 mt-3 pl-2">
-            <div class="container row-1 mb-3 p-0">
+        <div class="col-7 mt-3 pl-2">
+            <div class="row-1 mb-3 p-0">
                 @if ($has_available_games)
                     <button id="truncate_games_table" type="button" class="btn btn-danger mr-2">Delete all games</button>
                 @else
@@ -87,7 +87,7 @@
                 @endif
             </div>
             <div class="h4 mb-2"><u>Scheduled Games:</u></div>
-            <div class="p-2 border border-dark rounded" style="background: #dcf0ff;">
+            <div class="p-2 pl-4 border border-dark rounded" style="background: #dcf0ff;">
                 @if (!$has_available_games)
                     <div class="h5 mb-2">There are no scheduled games yet</div>
                 @else

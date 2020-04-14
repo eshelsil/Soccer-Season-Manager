@@ -15,8 +15,7 @@
         
         @section('menu')
         @show
-        {{-- #NOTE need better understanding of bootstrap grid  --> dont use container like a morhun --}} 
-        <div class="container">
+        <div class="ml-5 mr-5 mt-3">
             @yield('content')
         </div>
     </body>

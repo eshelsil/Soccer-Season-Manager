@@ -12,9 +12,9 @@
 @endsection
 
 @section('content')
-    <div class="container row justify-content-start">
+    <div class="row justify-content-start m-0">
         {{-- #NOTE - should use filters template --}}
-        <div class="container col-3 m-0">
+        <div class="col-3 m-0">
             <label for="teamSelect" class="row pl-0">Choose Team</label>
             <select class="custom-select row" id="teamSelect" style="width:auto;">
                 @php $selected = $query_params['team_id'] ?? 'all'; @endphp
@@ -33,7 +33,7 @@
                 ?> --}}
             </select>
         </div>
-        <div class="container col-3 m-0">
+        <div class="col-3 m-0">
             <label for="roundSelect" class="row pl-0">Choose Round</label>
             <select class="custom-select row" id="roundSelect" style="width:auto;">
                 <?php
@@ -46,7 +46,7 @@
                 ?>
             </select>
         </div>
-        <div class="container col-3 m-0">
+        <div class="col-3 m-0">
             <label for="weekSelect" class="row pl-0">Choose Week</label>
             <select class="custom-select row" id="weekSelect" style="width:auto;">
                 <?php

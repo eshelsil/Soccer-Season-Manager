@@ -3,7 +3,7 @@
     DONE - improve orWhere complicated quieries
     DONE - use laravel DB::table... for all queries
     DONE - change config/constants filename to a relevant file (all config files are constants)
-    - bootstrap: dont use "container" class for every div
+    DONE - bootstrap: dont use "container" class for every div
     - blades: remove functionality of php to return string of html elemnts. Use blade functionality instead
         - variable for blade can be calculated in a @php @endphp
     - implement ajaxSetup on main container (also @csrf)

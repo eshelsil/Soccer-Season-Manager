@@ -38,7 +38,7 @@
     </u></div>
     @csrf
 
-    <div class="container col mt-3">
+    <div class="col mt-3">
         @if (!$has_available_games)
             <div class="h5 mb-2">
               @if ($selected_tab == 'unplayed')
