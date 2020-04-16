@@ -8,7 +8,7 @@
     DONE - implement ajaxSetup on main container (also @csrf)
 
 2. Handle frontend:
-    - use frontend mvc (react)
+    - use frontend mvc (angularjs 1.7)
     - input view should have its own template
     - move complicated functionality (game generator, score genreator) to frontend (js)
     - split scss to relevant files
