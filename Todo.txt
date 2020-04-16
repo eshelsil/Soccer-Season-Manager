@@ -9,7 +9,7 @@
 
 2. Handle frontend:
     - use frontend mvc (angularjs 1.7)
-    - input view should have its own template
+    DONE - input view should have its own template
     - move complicated functionality (game generator, score genreator) to frontend (js)
     - split scss to relevant files
     - change app menu

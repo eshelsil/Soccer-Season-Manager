@@ -16,48 +16,23 @@
         $team_id = $query_params['team_id'];
     @endphp
     <div class="row justify-content-start m-0">
-        {{-- #NOTE - should use filters template --}}
-        <div class="col-3 m-0">
-            <label for="teamSelect" class="row pl-0">Choose Team</label>
-            <select class="custom-select row" id="teamSelect" style="width:auto;">
-                @php $selected = $query_params['team_id'] ?? 'all'; @endphp
-                <option value='all' {{ $selected == 'all' ? 'selected' : '' }}>--- All Teams ---</option>
-                @foreach(TEAMS_BY_ID as $id => $team_name)
-                    <option value='{{$id}}' {{ $selected == $id ? 'selected' : '' }}>{{$team_name}}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-3 m-0">
-            <label for="roundSelect" class="row pl-0">Choose Round</label>
-            <select class="custom-select row" id="roundSelect" style="width:auto;">
-                @php $selected = $query_params['round'] ?? 'all'; @endphp
-                <option value='all' {{ $selected == 'all' ? 'selected' : '' }}>--- All Rounds ---</option>;
-                @foreach(range(1,2) as $round)
-                    <option {{ $selected == $round ? 'selected' : '' }}>{{$round}}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-3 m-0">
-            <label for="weekSelect" class="row pl-0">Choose Week</label>
-            <select class="custom-select row" id="weekSelect" style="width:auto;">
-                @php
-                    $selected_round = $query_params['round'] ?? 'all';
-                    $selected = $query_params['week'] ?? 'all';
-                @endphp
-                <option value='all' {{ $selected == 'all' ? 'selected' : '' }}>--- All Weeks ---</option>;
-                @foreach(range(1, WEEKS_COUNT) as $week)
-                    @if ($selected_round != 'all')
-                        @php
-                        $available_weeks = range( ( $selected_round - 1 ) * WEEKS_IN_ROUND + 1 , $selected_round * WEEKS_IN_ROUND);
-                        @endphp
-                        @if (!in_array($week, $available_weeks))
-                            @continue
-                        @endif
-                    @endif
-                    <option {{ $selected == $week ? 'selected' : '' }}>{{$week}}</option>
-                @endforeach
-            </select>
-        </div>
+        @include('snippets.table_filters', [
+            'filters' => ['team', 'round', 'week'],
+            'round_param' => $query_params['round'],
+            'week_param' => $query_params['week'],
+            'team_id_param' => $query_params['team_id'],
+            'weeks_count' => WEEKS_COUNT,
+            'teams_by_id' => TEAMS_BY_ID,
+            'team_attrs' => [
+                'label' => 'Choose Team'
+            ],
+            'round_attrs' => [
+                'label' => 'Choose Round'
+            ],
+            'week_attrs' => [
+                'label' => 'Choose Week'
+            ]
+        ])
     </div>
 
         <div class="h3 mt-2 mb-4"><u>
