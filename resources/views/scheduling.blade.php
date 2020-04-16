@@ -18,7 +18,6 @@
                 </div>
                 <div class="h4 mb-2"><u>Schedule a game:</u></div>
                 <div class="p-3 border border-dark rounded" style="background: #dcf0ff;">
-                    {{-- #NOTE input should have a blade view of its own --}}
                     <div class="col p-0">
                         <div class="row mb-3  ml-0 mr-0 p-0">
                             <div class="col p-0">
@@ -31,35 +30,37 @@
                                 <input type="text" id ="round_input" maxlength="1" value="{{$round}}" disabled style="width:1rem;">
                             </div>
                             <div class="col m-0 p-0">
-                                <label for="setWeekSelect" class="row m-0">Week</label>
-                                <select class="custom-select" id="setWeekSelect" style="width:auto;">
-                                    @foreach ($weeks_to_schedule as $week)
-                                        <option {{($query_params['set_week'] == $week) ? 'selected' : ''}}>{{$week}}</option>
-                                    @endforeach
-                                </select>
+                                @include('snippets.select_input', [
+                                    'id' => 'setWeekSelect',
+                                    'label' => 'Week',
+                                    'initial_value' => $query_params['set_week'],
+                                    'options' => $weeks_to_schedule
+                                ])
                             </div>
                         </div>
                         <div class="row m-0 p-0">
+                            @php
+                            $team_options = [];
+                            foreach($available_teams as $team_id){
+                                $team_options[$team_id] = $teams_by_id[$team_id];
+                            }   
+                            @endphp
                             <div class="col m-0 p-0">
-                                <label for="homeTeamSelect" class="col m-0 p-0">Home Team</label>
-                                <select class="custom-select" id="homeTeamSelect" style="width:auto;">
-                                    @foreach ($available_teams as $team_id)
-                                        @php $team_name = $teams_by_id[$team_id]; @endphp
-                                        <option value="{{$team_id}}">{{$team_name}}</option>
-                                    @endforeach
-                                </select>
+                                @include('snippets.select_input', [
+                                    'id' => 'homeTeamSelect',
+                                    'label' => 'Home Team',
+                                    'key_as_value' => true,
+                                    'options' => $team_options
+                                ])
                             </div>
                             <div class="col m-0 p-0">
-                                <label for="awayTeamSelect" class="col m-0 p-0">Away Team</label>
-                                <select class="custom-select" id="awayTeamSelect" style="width:auto;">
-                                    @foreach ($available_teams as $team_id)
-                                        @php
-                                            $team_name = $teams_by_id[$team_id];
-                                            $is_selected = array_values($available_teams)[1] == $team_id;
-                                        @endphp
-                                        <option value="{{$team_id}}" {{$is_selected ? 'selected' : ''}}>{{$team_name}}</option>
-                                    @endforeach
-                                </select>
+                                @include('snippets.select_input', [
+                                    'id' => 'awayTeamSelect',
+                                    'label' => 'Away Team',
+                                    'initial_value' => array_keys($team_options)[1],
+                                    'key_as_value' => true,
+                                    'options' => $team_options
+                                ])
                             </div>
                         </div>
                     </div>
@@ -86,7 +87,7 @@
                 @if (!$has_available_games)
                     <div class="h5 mb-2">There are no scheduled games yet</div>
                 @else
-                    @include('table_filters', [
+                    @include('snippets.table_filters', [
                         'round_param' => $query_params['round'],
                         'week_param' => $query_params['week'],
                         'team_id_param' => $query_params['team_id'],

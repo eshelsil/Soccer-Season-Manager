@@ -3,20 +3,19 @@
 @section('title', 'Table')
 
 @section('menu')
-    @include('menu', ['view' => 'table'])
+    @include('snippets.menu', ['view' => 'table'])
 @endsection
 
-@section('content')  
+@section('content')
     @if (!is_null($last_week))
     <div class="col mb-4">
-        <label for="weekSelect" class="row pl-0">Until Week</label>
-        <select class="custom-select row" id="weekSelect" style="width:auto;">
-            @php $selected = $query_params['week'] ?? 'unset'; ; @endphp
-            <option value='all' {{$selected == 'unset' ? 'selected' : ''}}>---</option>
-            @foreach (range(1, $last_week) as $week)
-                <option {{$selected == $week ? 'selected' : null}}>{{$week}}</option>
-            @endforeach
-        </select>
+        @include('snippets.select_input', [
+            'id' => 'weekSelect',
+            'label' => 'Until Week',
+            'with_all_option' => true,
+            'initial_value' => $query_params['week'] ?? null,
+            'options' => range(1, $last_week)
+        ])
     </div>
     @endif
 
@@ -60,7 +59,7 @@
                 $away_team_id = $game->away_team_id;
                 $score_home = $game->home_score;
                 $score_away = $game->away_score;
-                
+
                 $table[$home_team_id]['games'] += 1;
                 $table[$home_team_id]['goals_for'] += $score_home;
                 $table[$home_team_id]['goals_against'] += $score_away;

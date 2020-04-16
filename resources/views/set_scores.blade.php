@@ -20,7 +20,7 @@
 
 @section('title', 'Set Scores')
 @section('menu')
-  @include('menu', ['view' => 'set_scores'])
+  @include('snippets.menu', ['view' => 'set_scores'])
 @endsection
 
 @section('view_title', 'Set Scores')
@@ -46,9 +46,9 @@
                 There are no played games
               @endif
             </div>
-            
+
         @else
-            @include('table_filters', [
+            @include('snippets.table_filters', [
               'round_param' => $query_params['round'],
               'week_param' => $query_params['week'],
               'team_id_param' => $query_params['team_id'],
@@ -95,7 +95,7 @@
                         <td class='shrunk'>{{$week}}</td>
                         <td class='shrunk $home_winner_class {{$selected_team_id == $home_team_id ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
                         <td class='shrunk $away_winner_class {{$selected_team_id == $away_team_id ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
-                        
+
                         @if ($row_on_edit)
                           <td class='pr-1'>
                             <input type="number" value="{{$played_tab_is_on ? $home_score : 0}}" min="0" max="20" class="score_input" data-team="home">

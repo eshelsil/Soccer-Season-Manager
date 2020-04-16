@@ -8,7 +8,7 @@
 @endsection
 
 @section('menu')
-    @include('menu', ['view' => 'games'])
+    @include('snippets.menu', ['view' => 'games'])
 @endsection
 
 @section('content')
@@ -59,7 +59,7 @@
             </select>
         </div>
     </div>
-        
+
         <div class="h3 mt-2 mb-4"><u>
             @if (!is_null($team_id))
                 Games of {{TEAMS_BY_ID[$team_id]}}
@@ -67,8 +67,8 @@
                 Games
             @endif
         </u></div>
-    
-    
+
+
     <table class="table table-striped shrunk">
         <thead class="thead-dark">
             <tr>
@@ -136,7 +136,7 @@
                     <td class='shrunk pl-1 {{$is_away_winner ? $winner_class : ''}}'>{{$score_away}}</td>
                 </tr>
             @endforeach
-            
+
         </tbody>
     </table>
 @endsection

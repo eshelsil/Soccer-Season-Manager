@@ -2,7 +2,7 @@
 
 @section('title', 'Reset')
 @section('menu')
-    @include('menu', ['view' => 'reset_options'])
+    @include('snippets.menu', ['view' => 'reset_options'])
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
         Reset Options
     </u></div>
     <div class="row ml-0">
-        @include('button_modal', [
+        @include('snippets.button_modal', [
             'button_id' => 'reset_scores',
             'button_label' => 'Reset All Game Scores',
             'title' => 'Reset All Game Scores',
@@ -20,7 +20,7 @@
             ])
     </div>
     <div class="row ml-0 mt-5">
-        @include('button_modal', [
+        @include('snippets.button_modal', [
             'button_id' => 'reset_games',
             'button_label' => 'Reset Games Schedule',
             'title' => 'Reset All Games From Schedule',
