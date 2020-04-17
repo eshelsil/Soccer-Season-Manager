@@ -19,12 +19,6 @@
 ])
 
 @section('title', 'Set Scores')
-@section('container', 'set_scores')
-
-{{-- @section('script')
-    <script src="{{ asset('/js/set_scores.js') }}"></script>
-@endsection --}}
-
 @section('menu')
   @include('snippets.menu', ['view' => 'set_scores'])
 @endsection
@@ -32,7 +26,6 @@
 @section('view_title', 'Set Scores')
 
 @section('card_content')
-<div ng-controller="set_scores">
     <div class="h3 mt-2 mb-5"><u>
         @if ($selected_tab == 'unplayed')
           Set New Scores
@@ -69,10 +62,9 @@
                         <th scope="col">Week</th>
                         <th scope="col">Home Team</th>
                         <th scope="col">Away Team</th>
-                        {{-- @if ($selected_tab != 'unplayed' || ($query_params['set_game_id'] ?? false)) --}}
-                        <th colspan="3" scope="col" ng-show="game_on_edit !== undefined">Score</th>
-                        {{-- <th colspan="3" scope="col">Score</th> --}}
-                        {{-- @endif --}}
+                        @if ($selected_tab != 'unplayed' || ($query_params['set_game_id'] ?? false))
+                        <th colspan="3" scope="col">Score</th>
+                        @endif
                         <th colspan="2" scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -104,25 +96,7 @@
                         <td class='shrunk $home_winner_class {{$selected_team_id == $home_team_id ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
                         <td class='shrunk $away_winner_class {{$selected_team_id == $away_team_id ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
 
-                          <td ng-if-start="game_on_edit == {{$game_id}}" class='pr-1'>
-                            <input type="number" value="{{$played_tab_is_on ? $home_score : 0}}" min="0" max="20" class="score_input" data-team="home">
-                          </td>
-                          <td class='shrunk pr-0 pl-0'>:</td>
-                          <td ng-if-end class='pl-1'>
-                            <input type="number" value="{{$played_tab_is_on ? $away_score : 0}}" min="0" max="20" class="score_input" data-team="away">
-                          </td>
-
-                          <td ng-if-start="selected_tab == played && game_on_edit !== {{$game_id}}" class='shrunk pr-1 text-center {{$is_home_winner ? $winner_class : ''}}'>{{$home_score}}</td>
-                          <td class='shrunk pr-0 pl-0'>:</td>
-                          <td ng-if-end class='shrunk pl-0 text-center {{$is_away_winner ? $winner_class : ''}}'>{{$away_score}}</td>
-
-
-
-                          <td ng-if-start="game_on_edit !== undefined && selected_tab !== played && game_on_edit !== {{$game_id}}"></td>
-                          <td></td>
-                          <td ng-if-end></td>
-
-                        {{-- @if ($row_on_edit)
+                        @if ($row_on_edit)
                           <td class='pr-1'>
                             <input type="number" value="{{$played_tab_is_on ? $home_score : 0}}" min="0" max="20" class="score_input" data-team="home">
                           </td>
@@ -135,23 +109,23 @@
                           <td class='shrunk pr-0 pl-0'>:</td>
                           <td class='shrunk pl-0 text-center {{$is_away_winner ? $winner_class : ''}}'>{{$away_score}}</td>
                         @elseif ($edit_is_on)
-                          <td ></td>
                           <td></td>
                           <td></td>
-                        @endif --}}
+                          <td></td>
+                        @endif
 
                         <td class='shrunk'>
                           @if ($row_on_edit)
                             <div class='confirm_set_score_btn' data-game_id={{$game_id}}></div>
                           @else
-                            <div class='edit_btn' ng-click="edit_game({{$game_id}})"></div>
+                            <div class='edit_btn' data-game_id={{$game_id}}></div>
                           @endif
                         </td>
                         <td class='shrunk'>
                           @if ($row_on_edit)
                             <div class='cancel_set_score_btn'></div>
                           @elseif ($played_tab_is_on)
-                        <div class='delete_btn' ng-click="remove_game({{$game_id}})"></div>
+                            <div class='delete_btn' data-game_id={{$game_id}}></div>
                           @endif
                         </td>
                       </tr>
@@ -160,5 +134,4 @@
             </table>
         @endif
     </div>
-  </div>
 @endsection

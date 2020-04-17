@@ -1,9 +1,3 @@
-// window.app = angular.module('app', [], function($interpolateProvider) {
-//     $interpolateProvider.startSymbol('<%');
-//     $interpolateProvider.endSymbol('%>');
-// });
-window.app = angular.module('app', []);
-
 require('./bootstrap');
 require('./games');
 require('./set_teams');
