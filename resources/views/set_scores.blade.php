@@ -93,8 +93,8 @@
                       <tr>
                         <td class='shrunk'>{{$round}}</td>
                         <td class='shrunk'>{{$week}}</td>
-                        <td class='shrunk $home_winner_class {{$selected_team_id == $home_team_id ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
-                        <td class='shrunk $away_winner_class {{$selected_team_id == $away_team_id ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
+                        <td class='shrunk {{$is_home_winner ? $winner_class : ''}} {{$selected_team_id == $home_team_id ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
+                        <td class='shrunk {{$is_away_winner ? $winner_class : ''}} {{$selected_team_id == $away_team_id ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
 
                         @if ($row_on_edit)
                           <td class='pr-1'>
