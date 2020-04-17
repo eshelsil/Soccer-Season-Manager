@@ -76,7 +76,7 @@
                 @if ($has_available_games)
                     <button id="truncate_games_table" type="button" class="btn btn-danger mr-2">Delete all games</button>
                 @else
-                    <button id="drop_games_table" type="button" class="btn btn-secondary mr-2">Back to set teams</button>
+                    <button id="go_to_set_teams" type="button" class="btn btn-secondary mr-2">Back to set teams</button>
                 @endif
                 @if ($allow_set_scores)
                     <button id="to_set_score" type="button" class="btn btn-success">Continue to set scores</button>

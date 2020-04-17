@@ -11,10 +11,10 @@ function reset_scores(){
 }
 
 function reset_games(){
-    $.post('/manage/reset_games')
+    $.post('/schedule/reset_games')
     .done(()=>{
         $('#reset_games_dismiss_modal').click();
-        window.location = '/manage';
+        window.location = '/schedule';
     })
     .fail(function(e){alert(e.responseText)});
 }

@@ -33,8 +33,8 @@
             </div>
         </div>
     </div>
-    <button id="drop_teams_table" type="button" class="btn btn-danger">Drop teams table</button>
-    <button id="default_teams" type="button" class="btn btn-primary">Use default temas</button>
+    <button id="empty_teams_table" type="button" class="btn btn-danger">Delete all teams</button>
+    <button id="default_teams" type="button" class="btn btn-primary">Use default teams</button>
     <button id="to_schedule" type="button" class="btn btn-success">Continue to schedule games</button>
     
 @endsection

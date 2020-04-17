@@ -1,19 +1,17 @@
-function create_games_table(){
-    $.post('/manage/init_games')
-    .done(function(){window.location.reload();})
-    .fail(function(e){alert(e.responseText);});
+function go_to_schedule(){
+    window.location = '/schedule';
 }
 
 function set_deafult_teams(){ 
     //#NOTE can I be sure that 'params' always will be there because the <script></script> row in set_teams blade>
     let teams = params['teams'];
-    $.post('/manage/set_teams', {teams})
+    $.post('/set_teams', {teams})
     .done(function(){window.location.reload();});
 }
 
-function drop_teams_table(){
+function empty_teams_table(){
     $.ajax({
-        url: '/manage/drop_teams',
+        url: '/set_teams/delete_all',
         type: 'DELETE',
         success: function(result) {
             window.location.reload();
@@ -42,8 +40,8 @@ function add_team(){
 
 $(document).ready(function(){
     $('#default_teams').click(set_deafult_teams);
-    $('#drop_teams_table').click(drop_teams_table);
-    $('#to_schedule').click(create_games_table);
+    $('#empty_teams_table').click(empty_teams_table);
+    $('#to_schedule').click(go_to_schedule);
     $('.delete_team_btn').click(delete_team);
     $('#new_team_add_btn').click(add_team);
 })

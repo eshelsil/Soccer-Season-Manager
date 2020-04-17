@@ -7,6 +7,19 @@ use Illuminate\Support\Facades\DB;
 
 class ScoresController extends Controller
 {
+    private $teams_by_id = null;
+
+    public function get_teams_by_id(){
+        if (is_null($this->teams_by_id)){
+            $teams = DB::table('teams')->get();
+            $teams_by_id = array();
+            foreach($teams as $team_data){
+                $teams_by_id[$team_data->team_id] = $team_data->team_name;
+            };
+            $this->teams_by_id = $teams_by_id;
+        }
+        return $this->teams_by_id;
+    }
 
     public function index(Request $request)
     { 
@@ -88,7 +101,7 @@ class ScoresController extends Controller
         //         ->get();
 
 
-        $teams_by_id = ManageController::get_teams_by_id();
+        $teams_by_id = $this->get_teams_by_id();
         $weeks_count = ( count($teams_by_id) - 1 ) * 2;
         return view('set_scores', [
             'query_params' => array(
@@ -129,7 +142,7 @@ class ScoresController extends Controller
         # handle no games_table
         $game_ids = DB::table('games')->where('is_done', 0)->pluck('game_id');
         $goals_options = range(0,4);
-        $teams_by_id = ManageController::get_teams_by_id();
+        $teams_by_id = $this->get_teams_by_id();
         $relevant_id = array_search('Hapoel Tel Aviv', $teams_by_id);
         foreach($game_ids as $game_id){
             $home_score = $goals_options[array_rand($goals_options, 1)];

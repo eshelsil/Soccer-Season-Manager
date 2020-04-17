@@ -10,77 +10,74 @@ use Illuminate\Database\Schema\Blueprint;
 
 #NOTE bad manager implementation -> split to relevant controllers: 'teams_setter', 'games_setter', 'app_main_router'
 
-class ManageController extends Controller
+class ScheduleController extends Controller
 {
-    private function is_all_games_scheduled(){
+    private $teams_by_id = null;
+
+    public function __construct()
+    {
+        $this->ensure_games_table_existance();
+    }
+
+    private function ensure_games_table_existance(){
+        if (!Schema::hasTable('games')) {
+            Schema::create('games', function(Blueprint $table){
+                $table->increments('game_id');
+                $table->tinyInteger('round');
+                $table->tinyInteger('week');
+                $table->integer('home_team_id');
+                $table->integer('away_team_id');
+                $table->tinyInteger('home_score')->nullable();
+                $table->tinyInteger('away_score')->nullable();
+                $table->boolean('is_done')->virtualAs("home_score IS NOT NULL AND away_score IS NOT NULL");
+            });
+        }
+    }
+
+    public function get_teams_by_id(){
+        if (is_null($this->teams_by_id)){
+            $teams = DB::table('teams')->get();
+            $teams_by_id = array();
+            foreach($teams as $team_data){
+                $teams_by_id[$team_data->team_id] = $team_data->team_name;
+            };
+            $this->teams_by_id = $teams_by_id;
+        }
+        return $this->teams_by_id;
+    }
+
+    public function get_teams_count(){
+        return count($this->get_teams_by_id());
+    }
+
+    public function get_games_per_week(){
+        return $this->get_teams_count() / 2;
+    }
+
+    public function get_weeks_count(){
+        $teams_count = $this->get_teams_count();
+        return ($teams_count - 1) * 2;
+    }
+
+    private function has_min_team_amount(){
+        return $this->get_teams_count() >= 4;
+    }
+
+    private function is_teams_count_even(){
+        return $this->get_teams_count() % 2 == 0;
+    }
+
+    public function is_all_games_scheduled(){
         $teams_count = $this->get_teams_count();
         $games_count = DB::table('games')->count();
         return $games_count >= $teams_count * ( $teams_count - 1 );
     }
 
-    public static function get_teams_by_id(){
-        #NOTE should query it once teams are ready once and that's it --> should be in another service (which? --> Singleton)
-        // if (teams_by_id)
-        //     return get_teams_by_id
-        // set teams_by_id
-        // return teams_by_id
-
-        // Game::query()->find(3)
-
-
-        $teams = DB::table('teams')->get();
-        $teams_by_id = array();
-        foreach($teams as $team_data){
-            $teams_by_id[$team_data->team_id] = $team_data->team_name;
-        };
-        return $teams_by_id;
-    }
-
-    public function home(Request $request)
-    { 
-        #NOTE should be implemented in an 'app_main_controller' or something like that
-
-        $games_table = Schema::hasTable('games');    
-        $teams_table = Schema::hasTable('teams');    
-        if($games_table && $teams_table){
-            if ($this->is_all_games_scheduled()){
-                    if ( count(DB::table('games')->where('is_done', 0)->get()) == 0 ){
-                        return redirect('table');
-                    }
-                    return redirect('set_scores');
-            }
-        }
-        return redirect('manage');
-    }
-
     public function index(Request $request){
-        #NOTE split to 2 controllers
-
-
-        #NOTE --> should check if tables are empty rather than exists
-        $games_table_exists = Schema::hasTable('games');
-        $teams_table_exists = Schema::hasTable('teams');
-        if (!$games_table_exists || !$teams_table_exists){
-            return $this->show_set_teams();
-        }
-        return $this->show_scheduling($request);
-    }
-
-    public function show_set_teams(){
-        $this->create_teams_table();
-        return view('set_teams', ['teams_by_id' => $this->get_teams_by_id()]);
-    }
-
-    public function show_scheduling(Request $request){
-        #NOTE call create_games_table only by user request. check if exists and return error on this function
-
-        $this->create_games_table();
-
         $selected_week = $request->query('set_week');
         $round = $request->query('round');
         $week = $request->query('week');
         $team_id = $request->query('team_id');
-
         $has_available_games = DB::table('games')->exists();
         
         if ($has_available_games){
@@ -100,51 +97,13 @@ class ManageController extends Controller
                     }
                 })
                 ->get();
-                // ->when(!is_null($week), function($query) use($week) {
-                //     $query->where('week', $week);
-                // })
-                // ->when(!is_null($round), function($query) use($round) {
-                //     $query->where('round', $round);
-                // })
-                // ->when(!is_null($team_id), function($query) use($team_id) {
-                //     $query->where('home_team_id', $team_id)
-                //         ->orWhere('away_team_id', $team_id);
-                // })
-                // ->get();
         } else {
             $filtered_games = null;
         }
-
-
-        // $where_conditions = [];
-        // if (!is_null($week)){
-        //     array_push($where_conditions, ['week', '=', $week]);
-        // }
-        // if (!is_null($round)){
-        //     array_push($where_conditions, ['round', '=', $round]);
-        // }
-        // if (!is_null($team_id)){
-        //     #NOTE how should this be handled? 'orWhere'/where_as_function cannot be use as value in where_contions array
-
-        //     $filtered_games = DB::table('games')
-        //         ->where('home_team_id', $team_id)
-        //         ->where($where_conditions)
-        //         ->orWhere('away_team_id', $team_id)
-        //         ->where($where_conditions)
-        //         ->get();
-        // } else {
-        //     $filtered_games = DB::table('games')->where($where_conditions)->get();
-        // }
-
-
-
-
-
-        #NOTE variables bellow should be set as constants when user done setting teams --> Singleton
         
         $teams_by_id = $this->get_teams_by_id();
         $teams_count = $this->get_teams_count();
-        $games_per_week = $teams_count / 2;
+        $games_per_week = $this->get_games_per_week();
         $weeks_count = $this->get_weeks_count();
         $weeks_to_schedule = range(1, $weeks_count);
         $full_weeks = DB::table('games')->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
@@ -164,13 +123,17 @@ class ManageController extends Controller
                 $selected_week = array_values($weeks_to_schedule)[0];
             }
         }
-        $games_on_selected_week = DB::table('games')->where('week', $selected_week)->get();
+
+        $games = DB::table('games')->get();
+        // $games_on_selected_week = DB::table('games')->where('week', $selected_week)->get();
+        $games_on_selected_week = $games->filter(function($game) use($selected_week){
+            return $game->week == $selected_week;
+        });
         $available_teams = array_keys($teams_by_id);
         foreach($games_on_selected_week as $game){
             $available_teams = array_diff($available_teams, [$game->home_team_id, $game->away_team_id]);
         }
 
-        $games = DB::table('games')->get();
         return view('scheduling', [
             'query_params' => array(
                 'set_week'=>$selected_week,
@@ -188,124 +151,8 @@ class ManageController extends Controller
         ]);
     }
 
-
-    
-    public static function create_teams_table(){
-        #NOTE no reasont to return text
-
-        if (Schema::hasTable('teams')) {
-            return "Table already exists";
-        }
-        return Schema::create('teams', function(Blueprint $table){
-            $table->increments('team_id');
-            $table->string('team_name', 50)->unique();
-        });
-        #NOTE handle failure
-        
-    }
-    
-    public static function drop_teams_table(){
-        #NOTE should it be truncate instead?
-
-        if (!Schema::hasTable('teams')) {
-            return "\"teams\" table does not exist";
-        }
-        return Schema::drop('teams');
-    }
-    
-    public static function delete_team($team_id){
-
-        //https://laravel.com/docs/7.x/controllers  --> read about api restful implementation
-        if (!Schema::hasTable('teams')) {
-            return response("\"teams\" table does not exist", 400);
-        }
-        if (Schema::hasTable('games')) {
-            return response("Deleting a team is not allwed after \"games\" table is initiated", 400);
-        }
-        #NOTE will this return bad errors if the error is returned from sql? see add_team as well
-
-        return DB::table('teams')->where('team_id', $team_id)->delete();
-    }
-
-    public static function add_team(Request $request){
-        #NOTE craete validations on backend for example team_name length  --> https://laravel.com/docs/7.x/validation
-        if (!Schema::hasTable('teams')) {
-            return response("\"teams\" table does not exist", 400);
-        }
-        if (Schema::hasTable('games')) {
-            return response("Adding a team is not allwed after \"games\" table is initiated", 400);
-        }
-        $team_name = $request->input()['name'];
-        return DB::table('teams')->insert(['team_name' => $team_name]);
-    }
-    
-    public function set_teams(Request $request){
-        #verify no games table
-        DB::table('teams')->truncate();
-        $teams = $request->input('teams') ?? array();
-        foreach($teams as $team){
-            #NOTE should be done as transaction?  --> yes
-
-            DB::table('teams')->updateOrInsert(["team_name" => $team]);
-            #handle faliure
-        }
-        return response('OK', 200);
-    }
-
-    public function get_teams_count(){
-        #NOTE should not query database every time  --> singleton
-
-        return count($this->get_teams_by_id());
-    }
-
-    public function get_weeks_count(){
-        $teams_count = $this->get_teams_count();
-        return ($teams_count - 1) * 2;
-    }
-
-    private function has_min_team_amount(){
-        return $this->get_teams_count() >= 4;
-    }
-    
-    public function create_games_table(){
-        if (!$this->has_min_team_amount()){
-            return response("Must have at least 4 teams", 400);
-        }
-        if ($this->get_teams_count() % 2 != 0){
-            return response("Must have even number of teams", 400);
-        }
-        if (Schema::hasTable('games')) {
-            #NOTE this is a bad response status
-
-            return response("Table already exists", 200);
-        }
-        return Schema::create('games', function(Blueprint $table){
-            $table->increments('game_id');
-            $table->tinyInteger('round');
-            $table->tinyInteger('week');
-            $table->integer('home_team_id');
-            $table->integer('away_team_id');
-            $table->tinyInteger('home_score')->nullable();
-            $table->tinyInteger('away_score')->nullable();
-            $table->boolean('is_done')->virtualAs("home_score IS NOT NULL AND away_score IS NOT NULL");
-        });
-    }
-    
-    
     public static function truncate_games_table(){
-        if (!Schema::hasTable('games')) {
-            return response("\"games\" table does not exist", 400);
-        }
         return DB::table('games')->truncate();
-    }
-    
-    public static function drop_games_table(){
-        if (!Schema::hasTable('games')) {
-            #NOTE return proper response with status
-
-            return "\"games\" table does not exist";
-        }
-        return Schema::drop('games');
     }
     
     public function delete_game($game_id){
@@ -325,7 +172,16 @@ class ManageController extends Controller
 
     
     private function add_game_to_db($round, $week, $home_team_id, $away_team_id){
+        if (!$this->has_min_team_amount()){
+            return response("In order to schedule a game there must be at least 4 teams", 400);
+        }
+        
+        if (!$this->is_teams_count_even()){
+            return response("In order to schedule a game there must be an even number of teams", 400);
+        }
+
         $teams_playing = [$home_team_id, $away_team_id];
+
 
         if ($away_team_id == $home_team_id){
             return response("Team cannot play against itself", 400);
@@ -339,8 +195,8 @@ class ManageController extends Controller
                             $query->whereIn('away_team_id', $teams_playing);
                         });
                 })
-                ->get();
-        if ( count($week_not_team_unique) != 0 ){
+                ->exists();
+        if ( $week_not_team_unique ){
             return response("One of the teams is already playing this week", 400);
         }
 
@@ -348,16 +204,16 @@ class ManageController extends Controller
                 ->where('round', $round)
                 ->whereIn('home_team_id', $teams_playing)
                 ->whereIn('away_team_id', $teams_playing)
-                ->get();
-        if ( count($round_not_teams_unique) != 0 ){
+                ->exists();
+        if ( $round_not_teams_unique ){
             return response("Teams already play against each other on this round", 400);
         }
 
         $not_home_away_unique = DB::table('games')
                 ->where('home_team_id', $home_team_id)
                 ->where('away_team_id', $away_team_id)
-                ->get();
-        if ( count($not_home_away_unique) != 0 ){
+                ->exists();
+        if ( $not_home_away_unique ){
             return response("Home team is already hosting away team this season", 400);
         }
 
@@ -370,7 +226,6 @@ class ManageController extends Controller
     }
     
     public function auto_schedule_games(){
-        # handle no teams_table
         $games_count = DB::table('games')->count();
         if ($games_count > 0){
             return response("\"games\" table must be empty in order to auto schedule games", 400);

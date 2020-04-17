@@ -10,8 +10,9 @@
 2. Handle Backend
     - use singleton to fetch data that shouldn't change
     - use models
-    - check if table is empty rather than exsits (don't delete tables)
-    - implement restful api (split ManageController)
+    DONE - check if table is empty rather than exsits (don't delete tables)
+    - route '/' to proper view
+    - implement restful api
     - add validations on backend to api/db_actions
     - use transactions
     - return proper responses and handle errors returned from databse action
