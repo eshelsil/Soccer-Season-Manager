@@ -63,12 +63,11 @@ class TeamsController extends Controller
         #verify no games table
         DB::table('teams')->truncate();
         $teams = $request->input('teams') ?? array();
-        foreach($teams as $team){
-            #NOTE should be done as transaction?  --> yes
-
-            DB::table('teams')->updateOrInsert(["team_name" => $team]);
-            #handle faliure
-        }
-        return response('OK', 200);
+        return DB::transaction(function () use($teams) {
+            foreach($teams as $team){
+                DB::table('teams')->updateOrInsert(["team_name" => $team]);
+                #handle faliure
+            }
+        });
     }
 }

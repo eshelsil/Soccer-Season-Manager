@@ -123,19 +123,17 @@ class ScoresController extends Controller
         # handle no games_table
         $game_ids = DB::table('games')->where('is_done', 0)->pluck('game_id');
         $goals_options = range(0,4);
-        foreach($game_ids as $game_id){
-            #NOTE should use transaction here?  -->  yes
-
-            $home_score = $goals_options[array_rand($goals_options, 1)];
-            $away_score = $goals_options[array_rand($goals_options, 1)];
-            DB::table('games')
-                ->where('game_id', $game_id)
-                ->update(
-                ['home_score' => $home_score, 'away_score' => $away_score]
-            );
-        }
-        return response(200);
-        
+        return DB::transaction(function () use($game_ids, $goals_options) {
+            foreach($game_ids as $game_id){
+                $home_score = $goals_options[array_rand($goals_options, 1)];
+                $away_score = $goals_options[array_rand($goals_options, 1)];
+                DB::table('games')
+                    ->where('game_id', $game_id)
+                    ->update(
+                    ['home_score' => $home_score, 'away_score' => $away_score]
+                );
+            }
+        });
     }
 
     public function randomize_game_scores_as_should(){

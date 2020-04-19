@@ -172,6 +172,7 @@ class ScheduleController extends Controller
 
     
     private function add_game_to_db($round, $week, $home_team_id, $away_team_id){
+        #NOTE move validation to another resource/function
         if (!$this->has_min_team_amount()){
             return response("In order to schedule a game there must be at least 4 teams", 400);
         }
@@ -231,12 +232,11 @@ class ScheduleController extends Controller
             return response("\"games\" table must be empty in order to auto schedule games", 400);
         }
         $games = $this->generate_games();
-        foreach($games as $game){
-            #NOTE should be done as transaction? this way the validation cannot take place  --> yes - move validation to another resource/function
-
-            $this->add_game_to_db($game['round'],$game['week'],$game['home_team_id'], $game['away_team_id']);
-        }
-        return response(200);
+        return DB::transaction(function () use($games) {
+            foreach($games as $game){    
+                $this->add_game_to_db($game['round'],$game['week'],$game['home_team_id'], $game['away_team_id']);
+            }
+        });
     }
 
     private function generate_games(){

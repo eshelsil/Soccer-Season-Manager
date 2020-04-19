@@ -13,8 +13,8 @@
     DONE - check if table is empty rather than exsits (don't delete tables)
     - route '/' to proper view
     - implement restful api
-    - add validations on backend to api/db_actions
-    - use transactions
+    - add validations on backend to api/db_actions:
+        - make sure they handle well transactions as well
     - return proper responses and handle errors returned from databse action
 
 3. Handle frontend:
