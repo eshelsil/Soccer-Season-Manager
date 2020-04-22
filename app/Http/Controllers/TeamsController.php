@@ -63,6 +63,9 @@ class TeamsController extends Controller
     
     public function set_teams(Request $request){
         #verify no games table
+        if (Game::query()->exists()) {
+            return response("Adding/Removing teams is not allwed when \"games\" table is not empty", 400);
+        }
         $this->truncate_teams_table();
         $teams = $request->input('teams') ?? array();
         return DB::transaction(function () use($teams) {
