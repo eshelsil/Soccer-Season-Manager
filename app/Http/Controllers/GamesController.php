@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Game;
 
 
 class GamesController extends Controller
@@ -29,7 +30,7 @@ class GamesController extends Controller
         $round = $request->query('round');
         $week = $request->query('week');
     
-        $games = DB::table('games')
+        $games = Game::query()
             ->where(function($query) use($week, $round) {
                 if (!is_null($week)){
                     $query->where('week', $week);

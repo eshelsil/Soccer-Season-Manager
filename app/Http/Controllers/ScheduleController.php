@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use App\Game;
 
 
 #NOTE bad manager implementation -> split to relevant controllers: 'teams_setter', 'games_setter', 'app_main_router'
@@ -69,7 +70,7 @@ class ScheduleController extends Controller
 
     public function is_all_games_scheduled(){
         $teams_count = $this->get_teams_count();
-        $games_count = DB::table('games')->count();
+        $games_count = Game::query()->count();
         return $games_count >= $teams_count * ( $teams_count - 1 );
     }
 
@@ -78,10 +79,10 @@ class ScheduleController extends Controller
         $round = $request->query('round');
         $week = $request->query('week');
         $team_id = $request->query('team_id');
-        $has_available_games = DB::table('games')->exists();
+        $has_available_games = Game::query()->exists();
         
         if ($has_available_games){
-            $filtered_games = DB::table('games')
+            $filtered_games = Game::query()
                 ->where(function($query) use($week, $round) {
                     if (!is_null($week)){
                         $query->where('week', $week);
@@ -106,7 +107,7 @@ class ScheduleController extends Controller
         $games_per_week = $this->get_games_per_week();
         $weeks_count = $this->get_weeks_count();
         $weeks_to_schedule = range(1, $weeks_count);
-        $full_weeks = DB::table('games')->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
+        $full_weeks = Game::query()->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
         foreach($full_weeks as $week_data){
             if ($week_data->games_count >= $games_per_week){
                 $weeks_to_schedule = array_diff($weeks_to_schedule, [$week_data->week]);
@@ -124,7 +125,7 @@ class ScheduleController extends Controller
             }
         }
 
-        $games = DB::table('games')->get();
+        $games = Game::query()->get();
         // $games_on_selected_week = DB::table('games')->where('week', $selected_week)->get();
         $games_on_selected_week = $games->filter(function($game) use($selected_week){
             return $game->week == $selected_week;
@@ -152,11 +153,12 @@ class ScheduleController extends Controller
     }
 
     public static function truncate_games_table(){
-        return DB::table('games')->truncate();
+        // return Game::truncate();   // works but returns an error
+        return Game::query()->delete();
     }
     
     public function delete_game($game_id){
-        return DB::table('games')->where('game_id', $game_id)->delete();
+        return Game::query()->where('game_id', $game_id)->delete();
     }
     
     public function schedule_game(Request $request){
@@ -188,7 +190,7 @@ class ScheduleController extends Controller
             return response("Team cannot play against itself", 400);
         }
 
-        $week_not_team_unique = DB::table('games')
+        $week_not_team_unique = Game::query()
                 ->where('week', $week)
                 ->where(function($query) use($teams_playing){
                     $query->whereIn('home_team_id', $teams_playing)
@@ -201,7 +203,7 @@ class ScheduleController extends Controller
             return response("One of the teams is already playing this week", 400);
         }
 
-        $round_not_teams_unique = DB::table('games')
+        $round_not_teams_unique = Game::query()
                 ->where('round', $round)
                 ->whereIn('home_team_id', $teams_playing)
                 ->whereIn('away_team_id', $teams_playing)
@@ -210,7 +212,7 @@ class ScheduleController extends Controller
             return response("Teams already play against each other on this round", 400);
         }
 
-        $not_home_away_unique = DB::table('games')
+        $not_home_away_unique = Game::query()
                 ->where('home_team_id', $home_team_id)
                 ->where('away_team_id', $away_team_id)
                 ->exists();
@@ -218,7 +220,7 @@ class ScheduleController extends Controller
             return response("Home team is already hosting away team this season", 400);
         }
 
-        return DB::table('games')->insert([
+        return Game::insert([
             'round' => $round,
             'week' => $week,
             'home_team_id' => $home_team_id,
@@ -227,7 +229,7 @@ class ScheduleController extends Controller
     }
     
     public function auto_schedule_games(){
-        $games_count = DB::table('games')->count();
+        $games_count = Game::query()->count();
         if ($games_count > 0){
             return response("\"games\" table must be empty in order to auto schedule games", 400);
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Game;
 
 class TableController extends Controller
 {
@@ -28,9 +29,8 @@ class TableController extends Controller
         if (!is_null($week)){
             array_push($where_conditions, ['week', '<=', $week]);
         }
-        $games = DB::table('games')->where($where_conditions)->get();
-        $last_game = DB::table('games')->where('is_done', 1)->orderBy('week', 'desc')->first();
-        $last_week = (is_null($last_game)) ? null : $last_game->week;
+        $games = Game::where($where_conditions)->get();
+        $last_week = $games->max('week');
         return view('table', [
             'games' => $games,
             'last_week'=>$last_week,

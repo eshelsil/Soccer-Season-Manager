@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Game;
 
 class ScoresController extends Controller
 {
@@ -32,10 +33,10 @@ class ScoresController extends Controller
         $is_done = ($selected_tab == 'unplayed') ? 0 : 1;
         // $available_games = DB::table('games')->where('is_done', $is_done)->get();
         // $no_available_games = count($available_games) == 0;
-        $has_available_games = DB::table('games')->where('is_done', $is_done)->exists();
+        $has_available_games = Game::query()->where('is_done', $is_done)->exists();
         
         if ($has_available_games){
-            $games = DB::table('games')
+            $games = Game::query()
                 ->where('is_done', $is_done)
                 ->where(function($query) use($week, $round) {
                     if (!is_null($week)){
@@ -121,56 +122,51 @@ class ScoresController extends Controller
     public function randomize_game_scores(){
         return $this->randomize_game_scores_as_should();
         # handle no games_table
-        $game_ids = DB::table('games')->where('is_done', 0)->pluck('game_id');
+        $games_to_set = Game::query()->where('is_done', 0)->get();
         $goals_options = range(0,4);
-        return DB::transaction(function () use($game_ids, $goals_options) {
-            foreach($game_ids as $game_id){
+        return DB::transaction(function () use($games_to_set, $goals_options) {
+            foreach($games_to_set as $game){
                 $home_score = $goals_options[array_rand($goals_options, 1)];
                 $away_score = $goals_options[array_rand($goals_options, 1)];
-                DB::table('games')
-                    ->where('game_id', $game_id)
-                    ->update(
-                    ['home_score' => $home_score, 'away_score' => $away_score]
-                );
+                $game->home_score = $home_score;
+                $game->away_score = $away_score;
+                $game->update();
             }
         });
     }
 
     public function randomize_game_scores_as_should(){
         # handle no games_table
-        $game_ids = DB::table('games')->where('is_done', 0)->pluck('game_id');
+        $games_to_set = Game::query()->where('is_done', 0)->get();
         $goals_options = range(0,4);
         $teams_by_id = $this->get_teams_by_id();
         $relevant_id = array_search('Hapoel Tel Aviv', $teams_by_id);
-        foreach($game_ids as $game_id){
-            $home_score = $goals_options[array_rand($goals_options, 1)];
-            $away_score = $goals_options[array_rand($goals_options, 1)];
-            $game_from_db = DB::table('games')->where('game_id', $game_id)->first();
-            if ($game_from_db->home_team_id == $relevant_id && $home_score < 2){
+        return DB::transaction(function () use($games_to_set, $goals_options, $relevant_id) {
+            foreach($games_to_set as $game){
                 $home_score = $goals_options[array_rand($goals_options, 1)];
-            }
-            if ($game_from_db->away_team_id == $relevant_id && $away_score < 2){
                 $away_score = $goals_options[array_rand($goals_options, 1)];
+                if ($game->getTeamSide($relevant_id) == 'home' && $home_score < 2){
+                    $home_score = $goals_options[array_rand($goals_options, 1)];
+                }
+                if ($game->getTeamSide($relevant_id) == 'away' && $away_score < 2){
+                    $away_score = $goals_options[array_rand($goals_options, 1)];
+                }
+                $game->home_score = $home_score;
+                $game->away_score = $away_score;
+                $game->update();
             }
-            DB::table('games')
-                ->where('game_id', $game_id)
-                ->update(
-                ['home_score' => $home_score, 'away_score' => $away_score]
-            );
-        }
-        return response(200);
-        
+        });
     }
 
     public function reset_all(){
-        return DB::table('games')->where('is_done', 1)
+        return Game::where('is_done', 1)
             ->update(
                 ['home_score' => null, 'away_score' => null]
             );
     }
     
     public function reset_score($game_id){
-        return DB::table('games')->where('game_id', $game_id)
+        return Game::find($game_id)
             ->update(
                 ['home_score' => null, 'away_score' => null]
             );
@@ -179,7 +175,7 @@ class ScoresController extends Controller
     public function update_score(Request $request, $game_id){
         $home_score = $request->input()['home'];
         $away_score = $request->input()['away'];
-        return DB::table('games')->where('game_id', $game_id)
+        return Game::find($game_id)
             ->update(
                 ['home_score' => $home_score, 'away_score' => $away_score]
             );

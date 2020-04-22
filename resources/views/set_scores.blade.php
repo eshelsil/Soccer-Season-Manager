@@ -83,9 +83,10 @@
                         $home_score = $game->home_score;
                         $away_score = $game->away_score;
 
-                        $is_home_winner = $home_score > $away_score;
-                        $is_away_winner = $home_score < $away_score;
+                        $is_home_winner = $game->isHomeWinner();
+                        $is_away_winner = $game->isAwayWinner();
                         $selected_team_id = $query_params['team_id'] ?? null;
+                        $team_side = $game->getTeamSide($selected_team_id);
                         $selected_team_class = 'underlined';
                         $winner_class = 'font-weight-bold';
                         $played_tab_is_on = $selected_tab == 'played';
@@ -93,8 +94,8 @@
                       <tr>
                         <td class='shrunk'>{{$round}}</td>
                         <td class='shrunk'>{{$week}}</td>
-                        <td class='shrunk {{$is_home_winner ? $winner_class : ''}} {{$selected_team_id == $home_team_id ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
-                        <td class='shrunk {{$is_away_winner ? $winner_class : ''}} {{$selected_team_id == $away_team_id ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
+                        <td class='shrunk {{$is_home_winner ? $winner_class : ''}} {{$team_side == 'home' ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
+                        <td class='shrunk {{$is_away_winner ? $winner_class : ''}} {{$team_side == 'away' ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
 
                         @if ($row_on_edit)
                           <td class='pr-1'>

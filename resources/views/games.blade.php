@@ -69,40 +69,30 @@
                 $score_away = $game->away_score;
                 $is_done = $game->is_done;
 
-                if ($score_home > $score_away){
-                    $winner_side = 'home';
-                } elseif($score_home < $score_away){
-                    $winner_side = 'away';
-                } elseif (!is_null($score_home) && !is_null($score_away)) {
-                    $winner_side = 'draw';
-                } else{
-                    $winner_side = null;
-                }
+                $team_side = $game->getTeamSide($team_id);
+                $team_result = $game->getTeamResult($team_id);
+                $is_home_winner = $game->isHomeWinner();
+                $is_away_winner = $game->isAwayWinner();
 
-                if (is_null($team_id)){
-                    $team_side = null;
-                } elseif($home_team_id == $team_id){
-                    $team_side = 'home';
-                } else{
-                    $team_side = 'away';
-                }
                 $winner_class = "font-weight-bold";
                 $selected_team_class = "underlined";
-                $is_home_winner = $winner_side == 'home';
-                $is_away_winner = $winner_side == 'away';
                 @endphp
                 <tr>
                     <td class='shrunk'>{{$week}}</td>
                     @if (!is_null($team_id))
-                        @if (is_null($winner_side))
-                            <td></td>
-                        @elseif($winner_side == 'draw')
-                            <td>D</td>
-                        @elseif ($winner_side == $team_side)
-                            <td class="text-success">W</td>
-                        @else
-                            <td class="text-danger">L</td>
-                        @endif
+                        @switch ($team_result)
+                            @case('draw')
+                                <td>D</td>
+                                @break
+                            @case('win')
+                                <td class="text-success">W</td>
+                                @break
+                            @case('lose')
+                                <td class="text-danger">L</td>
+                                @break
+                            @default
+                                <td></td>
+                        @endswitch
                     @endif
                     <td class='shrunk {{$is_home_winner ? $winner_class : ''}} {{$team_side == 'home' ? $selected_team_class : ''}}'>{{$home_team_name}}</td>
                     <td class='shrunk {{$is_away_winner ? $winner_class : ''}} {{$team_side == 'away' ? $selected_team_class : ''}}'>{{$away_team_name}}</td>
