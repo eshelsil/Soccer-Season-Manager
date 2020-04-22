@@ -11,7 +11,7 @@
     - use singleton to fetch data that shouldn't change
     DONE - use models
     DONE - check if table is empty rather than exsits (don't delete tables)
-    - route '/' to proper view
+    DONE - route '/' to proper view
     - implement restful api
     - add validations on backend to api/db_actions:
         - make sure they handle well transactions as well

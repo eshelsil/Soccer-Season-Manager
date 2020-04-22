@@ -17,9 +17,7 @@ use Illuminate\Support\Facades\Route;
 //#NOTE how to choose urls properly? (REST etc.)
 //#NOTE how to choose post/delete/put methods properly? (REST etc.)
 
-Route::get('/', function(){
-    return redirect('/set_teams');
-});
+Route::get('/', 'DefaultRouteController@index');
 Route::get('schedule', 'ScheduleController@index');
 Route::get('set_teams', 'TeamsController@index');
 Route::post('set_teams', 'TeamsController@set_teams');
