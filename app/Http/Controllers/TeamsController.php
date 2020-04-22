@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use App\Game;
+use App\Team;
 
 
 class TeamsController extends Controller
@@ -25,7 +27,7 @@ class TeamsController extends Controller
     }
     
     private function get_teams_by_id(){
-        $teams = DB::table('teams')->get();
+        $teams = Team::query()->get();
         $teams_by_id = array();
         foreach($teams as $team_data){
             $teams_by_id[$team_data->team_id] = $team_data->team_name;
@@ -38,34 +40,34 @@ class TeamsController extends Controller
     }
 
     public static function truncate_teams_table(){
-        return DB::table('teams')->truncate();
+        return Team::query()->delete();
     }
     
     public static function delete_team($team_id){
         //https://laravel.com/docs/7.x/controllers  --> read about api restful implementation
-        if (DB::table('games')->exists()) {
+        if (Game::query()->exists()) {
             return response("Deleting a team is not allwed when \"games\" table is not empty", 400);
         }
         #NOTE will this return bad errors if the error is returned from sql? see add_team as well
-        return DB::table('teams')->where('team_id', $team_id)->delete();
+        return Team::find($team_id)->delete();
     }
 
     public static function add_team(Request $request){
         #NOTE craete validations on backend for example team_name length  --> https://laravel.com/docs/7.x/validation
-        if (DB::table('games')->exists()) {
+        if (Game::query()->exists()) {
             return response("Adding a team is not allwed when \"games\" table is not empty", 400);
         }
         $team_name = $request->input()['name'];
-        return DB::table('teams')->insert(['team_name' => $team_name]);
+        return Team::insert(['team_name' => $team_name]);
     }
     
     public function set_teams(Request $request){
         #verify no games table
-        DB::table('teams')->truncate();
+        $this->truncate_teams_table();
         $teams = $request->input('teams') ?? array();
         return DB::transaction(function () use($teams) {
             foreach($teams as $team){
-                DB::table('teams')->updateOrInsert(["team_name" => $team]);
+                Team::insert(["team_name" => $team]);
                 #handle faliure
             }
         });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Game;
+use App\Team;
 
 class ScoresController extends Controller
 {
@@ -12,7 +13,7 @@ class ScoresController extends Controller
 
     public function get_teams_by_id(){
         if (is_null($this->teams_by_id)){
-            $teams = DB::table('teams')->get();
+            $teams = Team::query()->get();
             $teams_by_id = array();
             foreach($teams as $team_data){
                 $teams_by_id[$team_data->team_id] = $team_data->team_name;

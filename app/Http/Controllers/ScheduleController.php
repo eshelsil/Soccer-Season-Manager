@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use App\Game;
+use App\Team;
 
 
 #NOTE bad manager implementation -> split to relevant controllers: 'teams_setter', 'games_setter', 'app_main_router'
@@ -37,7 +38,7 @@ class ScheduleController extends Controller
 
     public function get_teams_by_id(){
         if (is_null($this->teams_by_id)){
-            $teams = DB::table('teams')->get();
+            $teams = Team::query()->get();
             $teams_by_id = array();
             foreach($teams as $team_data){
                 $teams_by_id[$team_data->team_id] = $team_data->team_name;

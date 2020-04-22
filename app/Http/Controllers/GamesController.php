@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Game;
+use App\Team;
 
 
 class GamesController extends Controller
@@ -14,10 +15,10 @@ class GamesController extends Controller
         #NOTE where is the best place to set constants?  --> this should not be a constant
 
         if (!defined('TEAMS_BY_ID')){
-            $teams = DB::select("SELECT team_id, team_name FROM teams;");
+            $teams = Team::query()->get();
             $teams_by_id = array();
-            foreach($teams as $team_data){
-                $teams_by_id[$team_data->team_id] = $team_data->team_name;
+            foreach($teams as $team){
+                $teams_by_id[$team->team_id] = $team->team_name;
             };
             define('TEAMS_BY_ID', $teams_by_id);
             define('WEEKS_IN_ROUND', count(TEAMS_BY_ID) - 1 );

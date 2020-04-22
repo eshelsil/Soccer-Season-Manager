@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Team;
 use App\Game;
 
 class TableController extends Controller
@@ -12,7 +13,7 @@ class TableController extends Controller
     {
         #NOTE should be defined from advanced
         if (!defined('TEAMS_BY_ID')){
-            $teams = DB::select("SELECT team_id, team_name FROM teams;");
+            $teams = Team::query()->get();
             $teams_by_id = array();
             foreach($teams as $team_data){
                 $teams_by_id[$team_data->team_id] = $team_data->team_name;
