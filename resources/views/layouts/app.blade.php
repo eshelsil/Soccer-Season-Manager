@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
     <head>
         <title>2020 - @yield('title')</title>
         <link href="{{ asset('/css/app.css') }}" rel="stylesheet">
         <link rel="shortcut icon" href="{{ asset('img/favicon.png') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
         <script src="{{ asset('/js/app.js') }}"></script>
         @section('script')
         @show
@@ -17,6 +18,7 @@
         @yield('menu')
 
         <div class="ml-5 mr-5 mt-3">
+        {{-- <div class="ml-5 mr-5 mt-3" ng-controller="@yield('controller')"> --}}
             @yield('content')
         </div>
     </body>

@@ -4,9 +4,7 @@ function randomize_scores(){
     .fail(function(e){alert(e.responseText)});
 }
 
-function reset_game_score(ev){
-    el = $(ev.target);
-    game_id = el.data('game_id')
+function reset_game_score(game_id){
     $.post(`/set_scores/delete/${game_id}`)
     .done(()=>{window.location.reload()})
     .fail(function(e){alert(e.responseText)});
@@ -18,10 +16,9 @@ function cancel_set_score(ev){
     window.location = url.href;
 }
 
-function go_to_set_game_score(ev){
-    el = $(ev.target);
+function go_to_set_game_score(game_id){
     url = new URL(window.location);
-    url.searchParams.set('set_game_id',el.data('game_id'));
+    url.searchParams.set('set_game_id',game_id);
     window.location = url.href;
 }
 
@@ -45,12 +42,19 @@ function update_game_score(ev){
     .fail(function(e){alert(e.responseText)});
 }
 
-
+app.controller('set_scores', function($scope, $location) {
+    $scope.remove_game = reset_game_score;
+    $scope.selected_tab = $location.search('tab');
+    $scope.edit_game = function(game_id){
+        $scope.game_on_edit = game_id;
+        return;
+    };
+});
 
 $(document).ready(function(){
     $('#randomize_scores').click(randomize_scores);
-    $('.delete_btn').click(reset_game_score);
-    $('.edit_btn').click(go_to_set_game_score);
+    // $('.delete_btn').click(reset_game_score);
+    // $('.edit_btn').click(go_to_set_game_score);
     $('.cancel_set_score_btn').click(cancel_set_score);
     $('.confirm_set_score_btn').click(update_game_score);
 })
