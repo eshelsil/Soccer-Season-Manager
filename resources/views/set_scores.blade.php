@@ -30,29 +30,26 @@
 @section('view_title', 'Set Scores')
 
 @section('card_content')
-<div ng-controller="set_scores">
+<div ng-controller="set_scores" ng-cloak ng-init="get_games()">
     <div class="h3 mt-2 mb-5"><u>
         @if (!$is_on_done_tab)
           Set New Scores
-          @if ($has_available_games)
-            <button type="button" ng-click="randomize_all()" class="btn btn-primary ml-5">Randomize all non-finished games</button>
-          @endif
+            <button ng-show="has_games()" type="button" ng-click="randomize_all()" class="btn btn-primary ml-5">Randomize all non-finished games</button>
         @else
           Update Scores
         @endif
     </u></div>
 
     <div class="col mt-3">
-        @if (!$has_available_games)
-            <div class="h5 mb-2">
-              @if (!$is_on_done_tab)
-                All games are done
-              @else
-                There are no played games
-              @endif
-            </div>
+        <div ng-show="!has_games()" class="h5 mb-2">
+          @if (!$is_on_done_tab)
+            All games are done
+          @else
+            There are no played games
+          @endif
+        </div>
 
-        @else
+        <div ng-show="has_games()">   
             @include('snippets.table_filters', [
               'round_param' => $query_params['round'],
               'week_param' => $query_params['week'],
@@ -60,7 +57,7 @@
               'weeks_count' => $weeks_count,
               'teams_by_id' => $teams_by_id
             ])
-            <table ng-cloak ng-init="get_games()" class="table table-striped shrunk">
+            <table class="table table-striped shrunk">
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">Round</th>
@@ -111,7 +108,7 @@
                       </tr>
                 </tbody>
             </table>
-        @endif
+        </div>
     </div>
   </div>
 @endsection
