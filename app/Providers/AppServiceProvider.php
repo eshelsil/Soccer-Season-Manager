@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Component\RegisteredTeamsManager;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('RegisteredTeamsManager', function ($app) {
+            return new RegisteredTeamsManager();
+        });
     }
 
     /**
