@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 //#NOTE how to choose urls properly? (REST etc.)
 //#NOTE how to choose post/delete/put methods properly? (REST etc.)
 
+Route::resource('/api/games', 'GamesAPIController');
+
+
 Route::get('/', 'DefaultRouteController@index');
 Route::get('schedule', 'ScheduleController@index');
 Route::get('set_teams', 'TeamsController@index');
