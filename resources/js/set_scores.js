@@ -55,9 +55,6 @@ app.controller('set_scores', function($scope, $location) {
             $scope.$apply();
         })
     }
-    $scope.has_games= ()=>{
-        return Object.keys($scope.games || {}).length > 0
-    }
     $scope.randomize_all = ()=>{
         games_data = [];
         for (game_id in $scope.games){

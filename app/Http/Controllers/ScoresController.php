@@ -30,6 +30,8 @@ class ScoresController extends Controller
         $team_id = $request->query('team_id');
         $is_done = $request->query('is_done') == 1 ? 1 : 0;
         
+        $has_available_games = Game::query()->where('is_done', $is_done)->exists();
+        
         $teams_manager = app('RegisteredTeamsManager');
         return view('set_scores', [
             'query_params' => array(
@@ -38,6 +40,7 @@ class ScoresController extends Controller
                 'team_id'=>$team_id,
                 'is_done'=>$is_done
             ),
+            'has_available_games' => $has_available_games,
             'teams_by_id' => $teams_manager->get_teams_by_id(),
             'weeks_count' => $teams_manager->get_weeks_count()
         ]);
