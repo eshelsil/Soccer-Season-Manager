@@ -8,7 +8,7 @@ function schedule_game(){
     week = $('#setWeekSelect').val();
     home_team_id = $('#homeTeamSelect').val();
     away_team_id = $('#awayTeamSelect').val();
-    $.post('/schedule/add_game', {
+    $.post('/api/games', {
         week,
         home_team_id,
         away_team_id
@@ -19,7 +19,7 @@ function schedule_game(){
 function delete_game(ev){
     el = $(ev.target);
     game_id = el.data('game_id')
-    $.post(`/schedule/delete_game/${game_id}`)
+    $.post(`/api/games/${game_id}?_method=delete`)
     .done(()=>{window.location.reload()})
     .fail(function(e){alert(e.responseText)});
 }
