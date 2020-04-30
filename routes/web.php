@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 //#NOTE how to choose post/delete/put methods properly? (REST etc.)
 
 Route::resource('/api/games', 'GamesAPIController');
+Route::patch('/api/games', 'GamesAPIController@update_many');
 
 
 Route::get('/', 'DefaultRouteController@index');

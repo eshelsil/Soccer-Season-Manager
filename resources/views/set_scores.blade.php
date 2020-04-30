@@ -35,7 +35,7 @@
         @if (!$is_on_done_tab)
           Set New Scores
           @if ($has_available_games)
-            <button id="randomize_scores" type="button" class="btn btn-primary ml-5">Randomize all non-finished games</button>
+            <button type="button" ng-click="randomize_all()" class="btn btn-primary ml-5">Randomize all non-finished games</button>
           @endif
         @else
           Update Scores

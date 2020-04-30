@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Game;
@@ -147,6 +148,28 @@ class GamesAPIController extends Controller
     public function show($id)
     {
         //
+    }
+
+    /**
+     * Update Many resources in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function update_many(Request $request)
+    {
+        $games_data = $request->input('games');
+        $output = [];
+        return DB::transaction(function () use($games_data, $output) {
+            foreach($games_data as $index=>$game_data ) {
+                $game = Game::find($game_data['id']);
+                $game->update(
+                    ['home_score' => $game_data['home'], 'away_score' => $game_data['away']]
+                );
+                $output[$game->game_id] = $game->json_export();
+            }
+            return response()->json($output, 200);
+        });
     }
 
     /**

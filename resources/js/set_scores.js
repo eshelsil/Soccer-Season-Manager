@@ -1,9 +1,3 @@
-function randomize_scores(){
-    $.post('/set_scores/randomize')
-    .done(()=>{window.location.reload()})
-    .fail(function(e){alert(e.responseText)});
-}
-
 app.controller('set_scores', function($scope, $location) {
     $scope.home_input = {};
     $scope.away_input = {};
@@ -61,9 +55,28 @@ app.controller('set_scores', function($scope, $location) {
             $scope.$apply();
         })
     }
+    $scope.randomize_all = ()=>{
+        games_data = [];
+        for (game_id in $scope.games){
+            home_score = Math.floor(Math.random() * 5);
+            away_score = Math.floor(Math.random() * 5);
+            game = $scope.games[game_id]
+            if (game.home_team_name == 'Hapoel Tel Aviv' && home_score < 2){
+                home_score = Math.floor(Math.random() * 5);
+            }
+            if (game.away_team_name == 'Hapoel Tel Aviv' && away_score < 2){
+                away_score = Math.floor(Math.random() * 5);
+            }
+            games_data.push({id: game_id, home: home_score, away: away_score})
+        }
+        $.post(`/api/games?_method=patch`, {games: games_data})
+        .done((games)=>{
+            for (game_id in games){
+                delete($scope.games[game_id])
+            }
+            $scope.$apply();
+        })
+        .fail((e)=>{alert(e.responseText)});
+    }
     $scope.is_on_played_tab = serach_params.get('is_done') == 1;
 });
-
-$(document).ready(function(){
-    $('#randomize_scores').click(randomize_scores);
-})
