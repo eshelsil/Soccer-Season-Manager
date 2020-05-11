@@ -30,5 +30,5 @@ function selectChange(ev){
 //#NOTE exists in games.js
 
 $(document).ready(function(){
-    $('select.custom-select').change(selectChange);
+    // $('select.custom-select').change(selectChange);
 })

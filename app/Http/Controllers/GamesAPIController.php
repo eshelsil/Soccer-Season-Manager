@@ -202,4 +202,15 @@ class GamesAPIController extends Controller
         $game->delete();
         return response()->json([], 200);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function reset_all()
+    {
+        Game::query()->delete();
+        return response()->json([], 200);
+    }
 }

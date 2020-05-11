@@ -33,5 +33,5 @@ function selectChange(ev){
 //#NOTE this affects all views. What is best practice to bind javascript file to view?
 
 $(document).ready(function(){
-    $('select.custom-select').change(selectChange);
+    // $('select.custom-select').change(selectChange);
 })

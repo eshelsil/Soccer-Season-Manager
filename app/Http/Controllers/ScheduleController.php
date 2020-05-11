@@ -80,61 +80,65 @@ class ScheduleController extends Controller
         $round = $request->query('round');
         $week = $request->query('week');
         $team_id = $request->query('team_id');
-        $has_available_games = Game::query()->exists();
-        
-        if ($has_available_games){
-            $filtered_games = Game::query()
-                ->where(function($query) use($week, $round) {
-                    if (!is_null($week)){
-                        $query->where('week', $week);
-                    }
-                    if (!is_null($round)){
-                        $query->where('round', $round);
-                    }
-                })
-                ->where(function($query) use($team_id) {
-                    if (!is_null($team_id)){
-                        $query->where('home_team_id', $team_id)
-                            ->orWhere('away_team_id', $team_id);
-                    }
-                })
-                ->get();
-        } else {
-            $filtered_games = null;
-        }
-        
-        $teams_by_id = $this->get_teams_by_id();
-        $teams_count = $this->get_teams_count();
-        $games_per_week = $this->get_games_per_week();
-        $weeks_count = $this->get_weeks_count();
-        $weeks_to_schedule = range(1, $weeks_count);
-        $full_weeks = Game::query()->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
-        foreach($full_weeks as $week_data){
-            if ($week_data->games_count >= $games_per_week){
-                $weeks_to_schedule = array_diff($weeks_to_schedule, [$week_data->week]);
-            }
-        }
-        if (!in_array($selected_week, $weeks_to_schedule) && !empty($weeks_to_schedule)){
-            foreach (array_values($weeks_to_schedule) as $available_week){
-                if ($available_week > $selected_week){
-                    $selected_week = $available_week;
-                    break;
-                }
-            }
-            if (!in_array($selected_week, $weeks_to_schedule)){
-                $selected_week = array_values($weeks_to_schedule)[0];
-            }
-        }
 
-        $games = Game::query()->get();
-        // $games_on_selected_week = DB::table('games')->where('week', $selected_week)->get();
-        $games_on_selected_week = $games->filter(function($game) use($selected_week){
-            return $game->week == $selected_week;
-        });
-        $available_teams = array_keys($teams_by_id);
-        foreach($games_on_selected_week as $game){
-            $available_teams = array_diff($available_teams, [$game->home_team_id, $game->away_team_id]);
-        }
+        $teams_manager = app('RegisteredTeamsManager');
+
+        // $has_available_games = Game::query()->exists();
+        
+        // if ($has_available_games){
+        //     $filtered_games = Game::query()
+        //         ->where(function($query) use($week, $round) {
+        //             if (!is_null($week)){
+        //                 $query->where('week', $week);
+        //             }
+        //             if (!is_null($round)){
+        //                 $query->where('round', $round);
+        //             }
+        //         })
+        //         ->where(function($query) use($team_id) {
+        //             if (!is_null($team_id)){
+        //                 $query->where('home_team_id', $team_id)
+        //                     ->orWhere('away_team_id', $team_id);
+        //             }
+        //         })
+        //         ->get();
+        // } else {
+        //     $filtered_games = null;
+        // }
+        
+        // $teams_by_id = $this->get_teams_by_id();
+        // $teams_count = $this->get_teams_count();
+        // $games_per_week = $this->get_games_per_week();
+        // $weeks_count = $this->get_weeks_count();
+        // $weeks_to_schedule = range(1, $weeks_count);
+        // $full_weeks = Game::query()->select('week', DB::raw('count(*) as games_count'))->groupBy('week')->get();
+        // foreach($full_weeks as $week_data){
+        //     if ($week_data->games_count >= $games_per_week){
+        //         $weeks_to_schedule = array_diff($weeks_to_schedule, [$week_data->week]);
+        //     }
+        // }
+        // if (!in_array($selected_week, $weeks_to_schedule) && !empty($weeks_to_schedule)){
+        //     foreach (array_values($weeks_to_schedule) as $available_week){
+        //         if ($available_week > $selected_week){
+        //             $selected_week = $available_week;
+        //             break;
+        //         }
+        //     }
+        //     if (!in_array($selected_week, $weeks_to_schedule)){
+        //         $selected_week = array_values($weeks_to_schedule)[0];
+        //     }
+        // }
+
+        // $games = Game::query()->get();
+        // // $games_on_selected_week = DB::table('games')->where('week', $selected_week)->get();
+        // $games_on_selected_week = $games->filter(function($game) use($selected_week){
+        //     return $game->week == $selected_week;
+        // });
+        // $available_teams = array_keys($teams_by_id);
+        // foreach($games_on_selected_week as $game){
+        //     $available_teams = array_diff($available_teams, [$game->home_team_id, $game->away_team_id]);
+        // }
+
 
         return view('scheduling', [
             'query_params' => array(
@@ -143,13 +147,13 @@ class ScheduleController extends Controller
                 'week'=>$week,
                 'team_id'=>$team_id,
             ),
-            'weeks_to_schedule' => $weeks_to_schedule,
-            'available_teams' => $available_teams,
-            'weeks_count' => $weeks_count,
-            'teams_by_id' => $teams_by_id,
-            'filtered_games' => $filtered_games,
-            'has_available_games' => $has_available_games,
-            'allow_set_scores' => $this->is_all_games_scheduled()
+            // 'weeks_to_schedule' => $weeks_to_schedule,
+            // 'available_teams' => $available_teams,
+            'weeks_count' => $teams_manager->get_weeks_count(),
+            'teams_by_id' => $teams_manager->get_teams_by_id(),
+            // 'filtered_games' => $filtered_games,
+            // 'has_available_games' => $has_available_games,
+            'games_in_season' => $teams_manager->get_games_in_season_count()
         ]);
     }
 

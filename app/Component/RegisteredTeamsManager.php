@@ -49,10 +49,14 @@ class RegisteredTeamsManager {
         return $this->get_teams_count() % 2 == 0;
     }
 
-    public function is_all_games_scheduled(){
+    public function get_games_in_season_count(){
         $teams_count = $this->get_teams_count();
+        return $teams_count * ( $teams_count - 1 );
+    }
+
+    public function is_all_games_scheduled(){
         $games_count = Game::query()->count();
-        return $games_count >= $teams_count * ( $teams_count - 1 );
+        return $games_count >= $this->get_games_in_season_count();
     }
 
     public function is_locked(){

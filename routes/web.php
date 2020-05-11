@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 //#NOTE how to choose urls properly? (REST etc.)
 //#NOTE how to choose post/delete/put methods properly? (REST etc.)
 
+Route::delete('/api/games/reset_all', 'GamesAPIController@reset_all');
 Route::resource('/api/games', 'GamesAPIController');
 Route::patch('/api/games', 'GamesAPIController@update_many');
 
