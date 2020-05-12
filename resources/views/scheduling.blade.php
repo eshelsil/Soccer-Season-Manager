@@ -102,8 +102,8 @@
                             <tr ng-repeat="game in filtered_games">
                                 <td class='shrunk'>@{{game.round}}</td>
                                 <td class='shrunk'>@{{game.week}}</td>
-                                <td class='shrunk'>@{{game.home_team_name}}</td>
-                                <td class='shrunk'>@{{game.away_team_name}}</td>
+                                <td class='shrunk' ng-class="{'selected_team_cell': game.home_team_id==team_filter}">@{{game.home_team_name}}</td>
+                                <td class='shrunk' ng-class="{'selected_team_cell': game.away_team_id==team_filter}">@{{game.away_team_name}}</td>
                                 <td class='shrunk'>
                                     <div class='delete_game_btn' ng-click="remove_game(game.id)"></div>
                                 </td>
