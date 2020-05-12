@@ -51,24 +51,21 @@ function reset_filters(){
 
 
 app.controller('games_scheduler', function($scope, $location) {
-    // $scope.home_input = {};
-    // $scope.away_input = {};
     url = new URL(window.location);
     serach_params = url.searchParams;
-    // getSearchParam = function(key){return serach_params.get(key)};
-    // $scope.selected_team_class = 'underlined';
-    // $scope.winner_class = 'font-weight-bold';
-    // $scope.home_team_input = serach_params.get('set_week')
-    // $scope.away_team_input = serach_params.get('set_week')
     $scope.go_to_set_scores = go_to_set_scores;
     $scope.go_to_set_teams = go_to_set_teams;
     $scope.update_and_apply = ()=>{
         $scope.update_weeks_to_schedule()
         $scope.update_available_teams()
-        // $scope.update_round_input()
-        // $scope.games_filters_config = $scope.format_table_filters_attrs()
-        // console.log('games_filters_config', $scope.games_filters_config)
+        $scope.update_filtered_games()
+        $scope.reset_filters_if_no_table()
         $scope.$apply()
+    }
+    $scope.reset_filters_if_no_table = () =>{
+        if (Object.keys($scope.games).length == 0){
+            $scope.reset_table_filters()
+        }
     }
     $scope.add_game = function(){
         h= $scope.home_team_input;
@@ -90,7 +87,6 @@ app.controller('games_scheduler', function($scope, $location) {
     }
     $scope.update_weeks_to_schedule = function(){
         games_per_week = {};
-        console.log($scope.games, '$scope.games')
         for (game of Object.values($scope.games)){
             if (games_per_week[game.week] == undefined){
                 games_per_week[game.week] = 1;
@@ -106,7 +102,6 @@ app.controller('games_scheduler', function($scope, $location) {
             }
             available_weeks.push(week)
         }
-        console.log(available_weeks, "available_weeks")
         $scope.weeks_to_schedule = available_weeks
         $scope.update_week_input_options()
     }
@@ -115,8 +110,9 @@ app.controller('games_scheduler', function($scope, $location) {
         round = Math.ceil($scope.set_week_input / games_per_ronund)
         return round
     }
-    $scope.set_filtered_games = (games) =>{
-        $scope.filtered_games = games
+    $scope.update_filtered_games = () =>{
+        console.log('scope.games', $scope.games)
+        $scope.filtered_games = $scope.get_filtered_table_rows(Object.values($scope.games))
     }
     $scope.update_week_input_options = ()=>{
         $scope.week_input_options = $scope.weeks_to_schedule.map((week)=> {
@@ -146,12 +142,14 @@ app.controller('games_scheduler', function($scope, $location) {
     }
     $scope.update_available_teams = ()=>{
         
-        games_played = Object.values($scope.games).filter(game => game.week == $scope.set_week)
-        teams_played = games_played.reduce((game, output)=>{
+        games_played = Object.values($scope.games).filter(game => game.week == $scope.set_week_input )
+        teams_played = games_played.reduce((output, game)=>{
             output.push(game.home_team_id, game.away_team_id)
             return output
         }, [])
-        $scope.available_teams = _.without(Object.keys($scope.teams_by_id), teams_played).map(team_id => 1*team_id)
+        $scope.available_teams = _.difference(Object.keys($scope.teams_by_id).map(team_id => 1*team_id), teams_played)
+        console.log('$scope.teams_by_id, teams_played', $scope.teams_by_id, teams_played)
+        console.log('$scope.available_teams', $scope.available_teams)
         $scope.update_home_team_input_options()
         $scope.update_away_team_input_options()
     }
@@ -174,7 +172,7 @@ app.controller('games_scheduler', function($scope, $location) {
         $scope.round_filter = serach_params.get('round') !== null ? serach_params.get('round') : 'all';
         $scope.week_filter = serach_params.get('week') !== null ? serach_params.get('week') : 'all';
         $scope.bind_table_filters_to_url()
-        $scope.bind_filters_to_table($scope.get_games, $scope.set_filtered_games)
+        $scope.bind_filters_to_table($scope.update_filtered_games)
         $scope.update_table_filters_attrs()
         // $scope.update_table_filter_week()
         $scope.set_week_input = '1';
@@ -183,9 +181,7 @@ app.controller('games_scheduler', function($scope, $location) {
         $.get(`/api/games`)
         .done((res)=>{
             $scope.games = res;
-            console.log('round_filter', $scope.round_filter)
             $scope.update_and_apply();
-            console.log($scope.set_week_input, '$scope.set_week_input')
         })
     };
     $scope.remove_game = function(id){

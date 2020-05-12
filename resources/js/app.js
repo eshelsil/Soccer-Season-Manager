@@ -17,7 +17,7 @@ app.run(function($rootScope) {
         } else if (typeof options[0] !== 'object'){
             // allow implementation of [val1, val2, val3] options
             res = options.map((val)=>{
-                return {value: val, label: val}
+                return {value: `${val}`, label: val}
             })
         } else {
             res = options
@@ -49,7 +49,7 @@ app.run(function($rootScope) {
         }
     }
     $rootScope.update_table_filters_attrs = function(){
-        this.round_filter_options = $rootScope.format_select_options([1,2], {with_all: true})
+        this.round_filter_options = $rootScope.format_select_options(['1','2'], {with_all: true})
         this.team_filter_options = $rootScope.format_select_options(this.teams_by_id, {with_all: true})
         this.update_table_filter_week()
         this.$watch('round_filter', _.bind($rootScope.update_table_filter_week, this))
@@ -59,25 +59,40 @@ app.run(function($rootScope) {
         this.round_filter = 'all'
         this.week_filter = 'all'
     }
-    $rootScope.bind_filters_to_table = function(get_table_rows, set_filtered_rows){
-        filter_table_func = () =>{
-            filtered_rows = get_table_rows().filter(game => {
-                if (this.team_filter !== 'all' && [`${game.home_team_id}`, `${game.away_team_id}`].indexOf(this.team_filter) == -1 ){
-                    return false
-                }
-                if (this.round_filter !== 'all' && this.round_filter != game.round ){
-                    return false
-                }
-                if (this.week_filter !== 'all' && this.week_filter != game.week ){
-                    return false
-                }
-                return true
-            })
-            set_filtered_rows(filtered_rows)
-        }
-        this.$watch('team_filter', filter_table_func)
-        this.$watch('round_filter', filter_table_func)
-        this.$watch('week_filter', filter_table_func)
+    $rootScope.get_filtered_table_rows = function(table_rows){
+        filtered_rows = table_rows.filter(game => {
+            if (this.team_filter !== 'all' && [`${game.home_team_id}`, `${game.away_team_id}`].indexOf(this.team_filter) == -1 ){
+                return false
+            }
+            if (this.round_filter !== 'all' && this.round_filter != game.round ){
+                return false
+            }
+            if (this.week_filter !== 'all' && this.week_filter != game.week ){
+                return false
+            }
+            return true
+        })
+        return filtered_rows
+    }
+    $rootScope.bind_filters_to_table = function(update_filtered_rows){
+        // filter_table_func = () =>{
+        //     filtered_rows = get_table_rows().filter(game => {
+        //         if (this.team_filter !== 'all' && [`${game.home_team_id}`, `${game.away_team_id}`].indexOf(this.team_filter) == -1 ){
+        //             return false
+        //         }
+        //         if (this.round_filter !== 'all' && this.round_filter != game.round ){
+        //             return false
+        //         }
+        //         if (this.week_filter !== 'all' && this.week_filter != game.week ){
+        //             return false
+        //         }
+        //         return true
+        //     })
+        //     set_filtered_rows(filtered_rows)
+        // }
+        this.$watch('team_filter', update_filtered_rows)
+        this.$watch('round_filter', update_filtered_rows)
+        this.$watch('week_filter', update_filtered_rows)
     }
     $rootScope.bind_table_filters_to_url = function(){
         this.bind_model_to_query_param('team_filter', 'team', ['all'])
