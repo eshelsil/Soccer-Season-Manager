@@ -17,7 +17,7 @@ app.run(function($rootScope) {
         } else if (typeof options[0] !== 'object'){
             // allow implementation of [val1, val2, val3] options
             res = options.map((val)=>{
-                return {value: `${val}`, label: val}
+                return {value: val, label: val}
             })
         } else {
             res = options
@@ -49,7 +49,7 @@ app.run(function($rootScope) {
         }
     }
     $rootScope.update_table_filters_attrs = function(){
-        this.round_filter_options = $rootScope.format_select_options(['1','2'], {with_all: true})
+        this.round_filter_options = $rootScope.format_select_options([1,2], {with_all: true})
         this.team_filter_options = $rootScope.format_select_options(this.teams_by_id, {with_all: true})
         this.update_table_filter_week()
         this.$watch('round_filter', _.bind($rootScope.update_table_filter_week, this))
@@ -107,10 +107,13 @@ app.run(function($rootScope) {
             } else {
                 url.searchParams.set(key, newVal)
             }
+            // console.log()
             function update_url(){
-                window.history.replaceState({}, `${model}_bind_to_${key}`,url.href)
+            //     window.history.replaceState({}, `${model}_bind_to_${key}`,url.href)
+                window.history.pushState("", "", url.href);
             }
-            setTimeout(update_url,0)
+            // update_url()
+            setTimeout(update_url,5)
         })
     }
 });

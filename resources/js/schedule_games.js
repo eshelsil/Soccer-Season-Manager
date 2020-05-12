@@ -97,9 +97,12 @@ app.controller('games_scheduler', function($scope, $location) {
         available_weeks = [];
         for (index of Array(params.weeks_count).keys()){
             week = index + 1;
-            if (games_per_week[week] == params.teams_by_id / 2){
+            console.log('week, games_per_week[week], params.teams_by_id / 2', week, games_per_week[week], params.teams_by_id / 2)
+            console.log(games_per_week, params.teams_by_id)
+            if (games_per_week[week] == Object.keys(params.teams_by_id).length / 2){
                 continue;
             }
+            console.log('here')
             available_weeks.push(week)
         }
         $scope.weeks_to_schedule = available_weeks
@@ -111,7 +114,6 @@ app.controller('games_scheduler', function($scope, $location) {
         return round
     }
     $scope.update_filtered_games = () =>{
-        console.log('scope.games', $scope.games)
         $scope.filtered_games = $scope.get_filtered_table_rows(Object.values($scope.games))
     }
     $scope.update_week_input_options = ()=>{
@@ -121,46 +123,46 @@ app.controller('games_scheduler', function($scope, $location) {
                 label: week,
             }
         })
+        console.log('test', $scope.weeks_to_schedule, $scope.set_week_input)
+        if ($scope.weeks_to_schedule.indexOf(Number($scope.set_week_input))){
+            current_week = $scope.set_week_input ?? 0
+            $scope.set_week_input = String($scope.weeks_to_schedule.find(week => week >= current_week))
+        }
+        console.log('$scope.set_week_input', $scope.set_week_input)
     }
     $scope.update_home_team_input_options = ()=>{
         $scope.home_team_options = $scope.available_teams.map((team_id)=> {
             return {
-                value: `${team_id}`,
+                value: team_id,
                 label: $scope.teams_by_id[team_id],
             }
         })
-        $scope.home_team_input = $scope.home_team_input ?? $scope.home_team_options[0].value
+        console.log($scope.home_team_input, '$scope.home_team_input')
+        $scope.home_team_input = $scope.available_teams.indexOf($scope.home_team_input) > -1 ?
+            $scope.home_team_input : String($scope.home_team_options[0].value)
     }
     $scope.update_away_team_input_options = ()=>{
         $scope.away_team_options = $scope.available_teams.map((team_id)=> {
             return {
-                value: `${team_id}`,
+                value: team_id,
                 label: $scope.teams_by_id[team_id],
             }
         })
-        $scope.away_team_input = $scope.away_team_input ?? $scope.away_team_options[1].value
+        $scope.away_team_input = $scope.available_teams.indexOf($scope.away_team_input) > -1 ?
+            $scope.away_team_input : String($scope.away_team_options[1].value)
     }
     $scope.update_available_teams = ()=>{
         
         games_played = Object.values($scope.games).filter(game => game.week == $scope.set_week_input )
         teams_played = games_played.reduce((output, game)=>{
-            output.push(game.home_team_id, game.away_team_id)
+            output.push(String(game.home_team_id), String(game.away_team_id))
             return output
         }, [])
-        $scope.available_teams = _.difference(Object.keys($scope.teams_by_id).map(team_id => 1*team_id), teams_played)
+        $scope.available_teams = _.difference(Object.keys($scope.teams_by_id), teams_played)
         console.log('$scope.teams_by_id, teams_played', $scope.teams_by_id, teams_played)
         console.log('$scope.available_teams', $scope.available_teams)
         $scope.update_home_team_input_options()
         $scope.update_away_team_input_options()
-    }
-    $scope.update_weeks_to_schedule_options = ()=>{
-        options = $scope.get_weeks_to_schedule().map((week)=>{
-            return {
-                value: week,
-                label: week,
-            }
-        })
-        $scope.weeks_to_schedule_options = options
     }
     $scope.get_games = ()=>{
         return Object.values($scope.games)
