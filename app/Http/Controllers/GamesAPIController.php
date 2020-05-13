@@ -51,7 +51,7 @@ class GamesAPIController extends Controller
             $output['team_result'] = $game->getTeamResult($query_team_id);
             $res[$game->game_id] = $output;
         }
-        return Response($res, 200);
+        return response()->json($res, 200);
     }
 
     /**
