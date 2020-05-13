@@ -81,3 +81,8 @@
 .selected_team_cell {
     @extend .underlined;
 }
+.disabled_button{
+    @extend .disabled;
+    cursor: default;
+    pointer-events: none;
+}

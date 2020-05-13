@@ -11,7 +11,7 @@ class RegisteredTeamsManager {
 
     private function fetch_teams_by_id(){
         $teams = Team::query()->get();
-            $teams_by_id = array();
+        $teams_by_id = array();
         foreach($teams as $team_data){
             $teams_by_id[$team_data->team_id] = $team_data->team_name;
         };
