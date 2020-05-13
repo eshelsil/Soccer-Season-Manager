@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Game;
-use App\Team;
 use Log;
+use Exception;
 
 class GamesAPIController extends Controller
 {
@@ -63,10 +63,14 @@ class GamesAPIController extends Controller
     public function store(Request $request){
         $games_array = $request->input('games', []);
         return DB::transaction(function () use($games_array) {
-            $output = [];
-            foreach($games_array as $index=>$game ) {
-                $new_game = $this->store_single_game($game['week'], $game['home_team_id'], $game['away_team_id']);
-                array_push($output, $new_game);
+            try{
+                $output = [];
+                foreach($games_array as $index=>$game ) {
+                    $res = $this->store_single_game($game['week'], $game['home_team_id'], $game['away_team_id']);
+                    array_push($output, $res);
+                }
+            } catch (Exception $e ) {
+                return response($e->getMessage(), 400);
             }
             return response()->json($output, 200);
         });
@@ -87,30 +91,42 @@ class GamesAPIController extends Controller
 
         #NOTE move validation to another resource/function;
         if (is_null($week)){
-            return response("Must pass a valid \"week\" parameter", 400);
+            $error_str = "Must pass a valid \"week\" parameter";
+            throw new Exception($error_str);
+            // return response("Must pass a valid \"week\" parameter", 400);
         }
         if (is_null($home_team_id)){
-            return response("must pass a valid home_team_id parameter", 400);
+            $error_str = "Must pass a valid \"home_team_id\" parameter";
+            throw new Exception($error_str);
+            // return response("must pass a valid home_team_id parameter", 400);
         }
         if (is_null($away_team_id)){
-            return response("must pass a valid away_team_id parameter", 400);
+            $error_str = "Must pass a valid \"away_team_id\" parameter";
+            throw new Exception($error_str);
+            // return response("must pass a valid away_team_id parameter", 400);
         }
         $round = $teams_manager->get_round_of_week($week);
         
         #NOTE move validation to another resource/function;
         if (!$teams_manager->has_min_teams_amount()){
-            return response("In order to schedule a game there must be at least 4 teams", 400);
+            $error_str = "In order to schedule a game there must be at least 4 teams";
+            throw new Exception($error_str);
+            // return response("In order to schedule a game there must be at least 4 teams", 400);
         }
         
         if (!$teams_manager->is_teams_count_even()){
-            return response("In order to schedule a game there must be an even number of teams", 400);
+            $error_str = "In order to schedule a game there must be an even number of teams";
+            throw new Exception($error_str);
+            // return response("In order to schedule a game there must be an even number of teams", 400);
         }
 
         $teams_playing = [$home_team_id, $away_team_id];
 
 
         if ($away_team_id == $home_team_id){
-            return response("Team cannot play against itself", 400);
+            $error_str = "Team cannot play against itself";
+            throw new Exception($error_str);
+            // return response("Team cannot play against itself", 400);
         }
 
         $week_not_team_unique = Game::query()
@@ -123,7 +139,9 @@ class GamesAPIController extends Controller
                 })
                 ->exists();
         if ( $week_not_team_unique ){
-            return response("One of the teams is already playing this week", 400);
+            $error_str = "One of the teams is already playing this week";
+            throw new Exception($error_str);
+            // return response("One of the teams is already playing this week", 400);
         }
 
         $round_not_teams_unique = Game::query()
@@ -132,7 +150,9 @@ class GamesAPIController extends Controller
                 ->whereIn('away_team_id', $teams_playing)
                 ->exists();
         if ( $round_not_teams_unique ){
-            return response("Teams already play against each other on this round", 400);
+            $error_str = "Teams already play against each other on this round";
+            throw new Exception($error_str);
+            // return response("Teams already play against each other on this round", 400);
         }
 
         $not_home_away_unique = Game::query()
@@ -140,7 +160,9 @@ class GamesAPIController extends Controller
                 ->where('away_team_id', $away_team_id)
                 ->exists();
         if ( $not_home_away_unique ){
-            return response("Home team is already hosting away team this season", 400);
+            $error_str = "Home team is already hosting away team this season";
+            throw new Exception($error_str);
+            // return response("Home team is already hosting away team this season", 400);
         }
         $game = new Game;
         $game->round = $round;

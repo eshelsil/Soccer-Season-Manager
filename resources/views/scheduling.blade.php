@@ -2,27 +2,24 @@
 
 @section('title', 'Scheduling')
 
-@section('script')
-    <script>
-        var params = @json([
-            'weeks_count' => $weeks_count,
-            'teams_by_id' => $teams_by_id
-        ]);
-    </script>
-@endsection
-
+@php
+    $init_options = [
+        'teams_by_id' =>$teams_by_id,
+        'weeks_count'=>$weeks_count
+    ];
+@endphp
 @section('content')
     <div class="h3 mt-2 mb-4"><u>
         Step 2 - Schedule Games
     </u></div>
 
-    <div class="row" ng-controller="games_scheduler" ng-init='initialize(@json(['teams_by_id' =>$teams_by_id]));'>
+    <div class="row" ng-controller="games_scheduler" ng-init='initialize(@json($init_options));'>
 
         <div class="col-5 mt-3 pl-0">
             <div ng-show="count_games() >= {{$games_in_season}}" class="h4 mb-2">No more games to schedule :)</div>
             <div ng-show="count_games() < {{$games_in_season}}">
                 <div class="row-1 mb-3 p-0">
-                    <button id="auto_schedule" type="button" class="btn btn-primary">Auto schedule all games</button>
+                    <button ng-click="auto_schedule_all()" type="button" class="btn btn-primary">Auto schedule all games</button>
                 </div>
                 <div class="h4 mb-2"><u>Schedule a game:</u></div>
                 <div class="p-3 border border-dark rounded" style="background: #dcf0ff;">
@@ -76,18 +73,8 @@
             <div class="h4 mb-2"><u>Scheduled Games:</u></div>
             <div class="p-2 pl-4 border border-dark rounded" style="background: #dcf0ff;">
                 <div ng-show="!has_games()" class="h5 mb-2">There are no scheduled games yet</div>
-                {{-- @if (!$has_available_games)
-                @else --}}
                 <div ng-show="has_games()">
-                    @include('snippets.table_filters', 
-                    [
-                        'filters_config_var' => 'games_filters_config'
-                        // 'round_param' => $query_params['round'],
-                        // 'week_param' => $query_params['week'],
-                        // 'team_id_param' => $query_params['team_id'],
-                        // 'weeks_count' => $weeks_count,
-                        // 'teams_by_id' => $teams_by_id
-                    ])
+                    @include('snippets.table_filters')
                     <table class="table table-striped shrunk">
                         <thead class="thead-dark">
                             <tr>
@@ -110,7 +97,6 @@
                             </tr>
                         </tbody>
                     </table>
-                {{-- @endif --}}
                 </div>
             </div>
         </div>

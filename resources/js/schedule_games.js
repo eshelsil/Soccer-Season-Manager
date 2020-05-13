@@ -1,28 +1,70 @@
-function auto_schedule(){
-    $.post('/schedule/auto')
-    .done(()=>{window.location.reload()})
-    .fail(function(e){alert(e.responseText)});
+function generate_first_round_order(ids){
+
+    //explanation on method -> https://nrich.maths.org/1443
+    _.shuffle(ids);
+    middle_of_poligon = ids[0];
+    ids.splice(0, 1);
+    connections = {};
+    weeks_count = ids.length;
+    lower_index = 0;
+    higher_index = weeks_count -1;
+    is_higher_index_hosting = true;
+    while (higher_index >= lower_index){
+        if (higher_index == lower_index){
+            connections["middle"] = higher_index;
+            break;
+        }
+        if (is_higher_index_hosting){
+            connections[higher_index] = lower_index;
+        }else {
+            connections[lower_index] = higher_index;
+        }
+        lower_index ++;
+        higher_index --;
+        is_higher_index_hosting = !is_higher_index_hosting;
+    }
+    games = [];
+    for ( week of _.range(1, weeks_count + 1) ) {
+        last_id = ids.pop();
+        ids.unshift(last_id);
+        
+        for (polygon_pos_a in connections){
+            polygon_pos_b = connections[polygon_pos_a]
+            if (polygon_pos_a == "middle"){
+                teams = [middle_of_poligon, ids[polygon_pos_b]];
+                home_team_id = teams[week % 2];
+                away_team_id = teams[(week + 1) % 2];
+            } else {
+                home_team_id = ids[polygon_pos_a];
+                away_team_id = ids[polygon_pos_b];
+            }
+            games.push({
+                round: 1,
+                week,
+                home_team_id,
+                away_team_id
+            });
+        }
+    }
+    return games;
 }
 
-// function schedule_game(){
-//     week = $('#setWeekSelect').val();
-//     home_team_id = $('#homeTeamSelect').val();
-//     away_team_id = $('#awayTeamSelect').val();
-//     $.post('/api/games', {
-//         week,
-//         home_team_id,
-//         away_team_id
-//     })
-//     .done(()=>{window.location.reload()})
-//     .fail(function(e){alert(e.responseText)});
-// }
-// function delete_game(ev){
-//     el = $(ev.target);
-//     game_id = el.data('game_id')
-//     $.post(`/api/games/${game_id}?_method=delete`)
-//     .done(()=>{window.location.reload()})
-//     .fail(function(e){alert(e.responseText)});
-// }
+function generate_games(teams_by_id){
+    team_ids = Object.keys(teams_by_id);
+    first_round_games = generate_first_round_order(team_ids);
+    last_week = _.last(first_round_games)["week"];
+    second_round_games = [];
+    for(game of first_round_games){
+        second_round_games.push({
+            "round": 2,
+            "week": last_week + game["week"],
+            "home_team_id": game["away_team_id"],
+            "away_team_id": game["home_team_id"]
+        })
+    }
+    return _.concat(first_round_games, second_round_games);
+}
+
 function go_to_set_scores(){
     window.location = '/set_scores';
 }
@@ -30,16 +72,6 @@ function go_to_set_scores(){
 function go_to_set_teams(){
     window.location = '/set_teams';
 }
-
-// function truncate_games_table(){
-//     //#NOTE this method exist in reset.js
-    
-//     $.post('/schedule/reset_games')
-//     .done(()=>{
-//         window.location.reload();
-//     })
-//     .fail(function(e){alert(e.responseText)});
-// }
 
 function reset_filters(){
     url = new URL(window.location);
@@ -67,19 +99,6 @@ app.controller('games_scheduler', function($scope, $location) {
             $scope.reset_table_filters()
         }
     }
-    $scope.add_game = function(){
-        h= $scope.home_team_input;
-        a= $scope.away_team_input;
-        w= $scope.set_week_input;
-        console.log('h,a,w:', h,a,w)
-        $.post(`/api/games`, {games: [{week: w, home_team_id: h, away_team_id: a}]})
-        .done((new_games)=>{
-            game_object = new_games[0];
-            $scope.games[game_object.id] = game_object;
-            $scope.update_and_apply();
-        })
-        .fail((e)=>{alert(e.responseText)});
-    };
     $scope.count_games = function(){
         return Object.keys($scope.games || {}).length
     }
@@ -96,14 +115,11 @@ app.controller('games_scheduler', function($scope, $location) {
             }
         }
         available_weeks = [];
-        for (index of Array(params.weeks_count).keys()){
+        for (index of Array($scope.weeks_count).keys()){
             week = index + 1;
-            console.log('week, games_per_week[week], params.teams_by_id / 2', week, games_per_week[week], params.teams_by_id / 2)
-            console.log(games_per_week, params.teams_by_id)
-            if (games_per_week[week] == Object.keys(params.teams_by_id).length / 2){
+            if (games_per_week[week] == Object.keys($scope.teams_by_id).length / 2){
                 continue;
             }
-            console.log('here')
             available_weeks.push(week)
         }
         $scope.weeks_to_schedule = available_weeks
@@ -124,12 +140,10 @@ app.controller('games_scheduler', function($scope, $location) {
                 label: week,
             }
         })
-        console.log('test', $scope.weeks_to_schedule, $scope.set_week_input)
         if ($scope.weeks_to_schedule.indexOf(Number($scope.set_week_input))){
             current_week = $scope.set_week_input ?? 0
             $scope.set_week_input = String($scope.weeks_to_schedule.find(week => week >= current_week))
         }
-        console.log('$scope.set_week_input', $scope.set_week_input)
     }
     $scope.update_home_team_input_options = ()=>{
         $scope.home_team_options = $scope.available_teams.map((team_id)=> {
@@ -138,7 +152,6 @@ app.controller('games_scheduler', function($scope, $location) {
                 label: $scope.teams_by_id[team_id],
             }
         })
-        console.log($scope.home_team_input, '$scope.home_team_input')
         $scope.home_team_input = $scope.available_teams.indexOf($scope.home_team_input) > -1 ?
             $scope.home_team_input : String($scope.home_team_options[0].value)
     }
@@ -160,16 +173,12 @@ app.controller('games_scheduler', function($scope, $location) {
             return output
         }, [])
         $scope.available_teams = _.difference(Object.keys($scope.teams_by_id), teams_played)
-        console.log('$scope.teams_by_id, teams_played', $scope.teams_by_id, teams_played)
-        console.log('$scope.available_teams', $scope.available_teams)
         $scope.update_home_team_input_options()
         $scope.update_away_team_input_options()
     }
-    $scope.get_games = ()=>{
-        return Object.values($scope.games)
-    }
     $scope.initialize = function(options){
         $scope.teams_by_id = options.teams_by_id
+        $scope.weeks_count = options.weeks_count
         $scope.update_teams_data_inheritors()
         $scope.team_filter = serach_params.get('team') !== null ? serach_params.get('team') : 'all';
         $scope.round_filter = serach_params.get('round') !== null ? serach_params.get('round') : 'all';
@@ -203,14 +212,32 @@ app.controller('games_scheduler', function($scope, $location) {
         })
         .fail((e)=>{alert(e.responseText)});
     };
+    $scope.add_game = function(){
+        h= $scope.home_team_input;
+        a= $scope.away_team_input;
+        w= $scope.set_week_input;
+        $.post(`/api/games`, {games: [{week: w, home_team_id: h, away_team_id: a}]})
+        .done((new_games)=>{
+            game_object = new_games[0];
+            $scope.games[game_object.id] = game_object;
+            $scope.update_and_apply();
+        })
+        .fail((e)=>{alert(e.responseText)});
+    };
+    $scope.auto_schedule_all = function(){
+        if (!_.isEmpty($scope.games)){
+            alert("\"games\" table must be empty in order to auto schedule games")
+            return 
+        }
+        games_list = generate_games($scope.teams_by_id)
+        $.post(`/api/games`, {games: games_list})
+        .done((new_games)=>{
+            for(game_object of new_games){
+                $scope.games[game_object.id] = game_object;
+            }
+            $scope.update_and_apply();
+        })
+        .fail((e)=>{alert(e.responseText)});
+    };
+
 });
-
-
-$(document).ready(function(){
-    $('#auto_schedule').click(auto_schedule);
-    // $('#truncate_games_table').click(truncate_games_table);
-    // $('#go_to_set_teams').click(go_to_set_teams);
-    // $('#reset_filters').click(reset_filters);
-    // $('#to_set_score').click(go_to_set_scores);
-    // $('#schedule_game_button').click(schedule_game);
-})
