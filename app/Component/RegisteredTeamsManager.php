@@ -49,6 +49,10 @@ class RegisteredTeamsManager {
         return $this->get_teams_count() % 2 == 0;
     }
 
+    public function can_start_scheduling(){
+        return $this->is_teams_count_even() && $this->has_min_teams_amount();
+    }
+
     public function get_games_in_season_count(){
         $teams_count = $this->get_teams_count();
         return $teams_count * ( $teams_count - 1 );

@@ -33,6 +33,7 @@ class ScheduleController extends Controller
         return view('scheduling', [
             'weeks_count' => $teams_manager->get_weeks_count(),
             'teams_by_id' => $teams_manager->get_teams_by_id(),
+            'can_schedule_games' => $teams_manager->can_start_scheduling(),
             'games_in_season' => $teams_manager->get_games_in_season_count()
         ]);
     }

@@ -14,7 +14,8 @@
     </u></div>
 
     <div class="row" ng-controller="games_scheduler" ng-init='initialize(@json($init_options));'>
-
+        
+        @if ($can_schedule_games)
         <div class="col-5 mt-3 pl-0">
             <div ng-show="count_games() >= {{$games_in_season}}" class="h4 mb-2">No more games to schedule :)</div>
             <div ng-show="count_games() < {{$games_in_season}}">
@@ -100,5 +101,16 @@
                 </div>
             </div>
         </div>
+
+        @else
+        <div class="col">
+            <p class="mb-2">
+                There are currently {{count($teams_by_id)}} registered teams.
+                <br>
+                In order to start scheduling games there must be even number of teams and at least 4 teams.
+            </p>
+            <button ng-click="go_to_set_teams()" type="button" class="btn btn-secondary mt-2">Back to set teams</button>
+        </div>
+        @endif
     </div>
 @endsection

@@ -11,6 +11,7 @@ use Exception;
 
 class TeamsAPIController extends Controller
 {
+    private $is_locked_msg = 'Cannot change registered teams when there are scheduled games';
 
     /**
      * Display a listing of the resource.
@@ -35,6 +36,9 @@ class TeamsAPIController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){
+        if ($this->is_locked()){
+            return response($this->is_locked_msg, 400);
+        }
         $teams_array = $request->input('teams', []);
         return DB::transaction(function () use($teams_array) {
             try{
@@ -79,6 +83,9 @@ class TeamsAPIController extends Controller
      */
     public function destroy($id)
     {
+        if ($this->is_locked()){
+            return response($this->is_locked_msg, 400);
+        }
         $team = Team::find($id);
         $team->delete();
         return response()->json([], 200);
@@ -91,7 +98,17 @@ class TeamsAPIController extends Controller
      */
     public function reset_all()
     {
+        if ($this->is_locked()){
+            return response($this->is_locked_msg, 400);
+        }
         Team::query()->delete();
         return response()->json([], 200);
     }
+
+    private function is_locked()
+    {
+        return app('RegisteredTeamsManager')->is_locked();
+    }
+
+
 }
