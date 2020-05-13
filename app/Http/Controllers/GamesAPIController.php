@@ -55,18 +55,36 @@ class GamesAPIController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store newly created resources in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request){
+        $games_array = $request->input('games', []);
+        return DB::transaction(function () use($games_array) {
+            $output = [];
+            foreach($games_array as $index=>$game ) {
+                $new_game = $this->store_single_game($game['week'], $game['home_team_id'], $game['away_team_id']);
+                array_push($output, $new_game);
+            }
+            return response()->json($output, 200);
+        });
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  int  $week
+     * @param  int  $home_team_id
+     * @param  int  $away_team_id
+     * @return array #NOTE is this the correct way?
+     */
+    private function store_single_game($week, $home_team_id, $away_team_id)
     {
         $teams_manager = app('RegisteredTeamsManager');
-        $week = $request->input('week');
-        $home_team_id = $request->input('home_team_id');
-        $away_team_id = $request->input('away_team_id');
-        
+
         #NOTE move validation to another resource/function;
         if (is_null($week)){
             return response("Must pass a valid \"week\" parameter", 400);
@@ -130,13 +148,7 @@ class GamesAPIController extends Controller
         $game->home_team_id = $home_team_id;
         $game->away_team_id = $away_team_id;
         $game->save();
-        return response($game->json_export(), 200);
-        // return Game::insert([
-        //     'round' => $round,
-        //     'week' => $week,
-        //     'home_team_id' => $home_team_id,
-        //     'away_team_id' => $away_team_id
-        // ]);
+        return $game->json_export();
     }
 
     /**

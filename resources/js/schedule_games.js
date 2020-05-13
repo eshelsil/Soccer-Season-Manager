@@ -72,8 +72,9 @@ app.controller('games_scheduler', function($scope, $location) {
         a= $scope.away_team_input;
         w= $scope.set_week_input;
         console.log('h,a,w:', h,a,w)
-        $.post(`/api/games`, {week: w, home_team_id: h, away_team_id: a})
-        .done((game_object)=>{
+        $.post(`/api/games`, {games: [{week: w, home_team_id: h, away_team_id: a}]})
+        .done((new_games)=>{
+            game_object = new_games[0];
             $scope.games[game_object.id] = game_object;
             $scope.update_and_apply();
         })
