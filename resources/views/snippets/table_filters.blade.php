@@ -38,8 +38,8 @@
             'id' => 'teamSelect',
             'label' => 'Team'
         ];
+        $team_attrs = array_merge($default_team_attrs, $team_attrs ?? []);
     }
-    $team_attrs = array_merge($default_team_attrs, $team_attrs ?? []);
 
 @endphp
 <div class="row mb-3 ml-0 p-0">

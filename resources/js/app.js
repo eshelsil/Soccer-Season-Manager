@@ -1,4 +1,3 @@
-
 window.app = angular.module('app', [])
 app.run(function($rootScope) {
     $rootScope.format_select_options = (options, params = {})=>{
@@ -112,22 +111,35 @@ app.run(function($rootScope) {
             query_param = serach_params.get(filter_attrs['query_param'])
             null_value = (filter_attrs['null_values'] ?? [])[0]
             this[model] = query_param !== null ? query_param : null_value; 
-            this.bind_model_to_query_param(model, filter_attrs['query_param'], filter_attrs['null_values'])
+            this.bind_model_to_query_param(model)
         }
     }
-    $rootScope.bind_model_to_query_param = function(model, key, null_values = []){
-        this.$watch(model, (newVal) => {
-            url = new URL(window.location)
-            if (newVal === undefined || null_values.indexOf(newVal) > -1){
+    $rootScope.get_search_query_with_filters = function(){
+        url = new URL(window.location)
+        filters_map = this.get_table_filters_map()
+        for (model of Object.keys(filters_map)){
+            key = filters_map[model]['query_param']
+            null_values = filters_map[model]['null_values']
+            val = this[model]
+            if (val === undefined || null_values.indexOf(val) > -1){
                 url.searchParams.delete(key)
             } else {
-                url.searchParams.set(key, newVal)
+                url.searchParams.set(key, val)
             }
-            function update_url(){
-                window.history.pushState("", "", url.href);
-            }
-            setTimeout(update_url,0)
-        })
+        }
+        return url.search
+    }
+    $rootScope.bind_model_to_query_param = function(model){
+        //NOTE does not work... url resets when openeing a select_input
+        update_url = (newVal) => {
+            setTimeout( ()=>{
+                let {protocol, host, pathname} = window.location
+                current_path = `${protocol}//${host}${pathname}`;
+                url = new URL(`${current_path}${this.get_search_query_with_filters()}`)
+                window.history.replaceState({}, "", url.href);
+            }, 200)
+        }
+        this.$watch(model, update_url)
     }
 });
     // .directive('selectInput', function(){

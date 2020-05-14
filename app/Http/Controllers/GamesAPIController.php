@@ -19,11 +19,10 @@ class GamesAPIController extends Controller
      */
     public function index(Request $request)
     {
-        $query_team_id = $request->query('team_id');
+        $query_team_id = $request->query('team');
         $query_round = $request->query('round');
         $query_week = $request->query('week');
         $query_is_done = $request->query('is_done');
-    
         $games = Game::query()
             ->where(function($query) use($query_week, $query_round, $query_is_done) {
                 if (!is_null($query_week)){

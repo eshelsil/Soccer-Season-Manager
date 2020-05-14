@@ -49,9 +49,13 @@ app.controller('set_scores', function($scope, $location) {
         .fail((e)=>{alert(e.responseText)});
     }
     $scope.get_games = function(){
+        let {protocol, host, pathname} = window.location
+        current_path = `${protocol}//${host}${pathname}`;
+        url = new URL(`${current_path}${$scope.get_search_query_with_filters()}`)
         if (url.searchParams.get('is_done') != 1){
             url.searchParams.set('is_done', 0)
         }
+
         $.get(`/api/games/${url.search}`)
         .done((res)=>{
             $scope.games = res;
