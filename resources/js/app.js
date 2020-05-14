@@ -1,7 +1,4 @@
-// window.app = angular.module('app', [], function($interpolateProvider) {
-//     $interpolateProvider.startSymbol('<%');
-//     $interpolateProvider.endSymbol('%>');
-// });
+
 window.app = angular.module('app', [])
 app.run(function($rootScope) {
     $rootScope.format_select_options = (options, params = {})=>{
@@ -75,21 +72,6 @@ app.run(function($rootScope) {
         return filtered_rows
     }
     $rootScope.bind_filters_to_table = function(update_filtered_rows){
-        // filter_table_func = () =>{
-        //     filtered_rows = get_table_rows().filter(game => {
-        //         if (this.team_filter !== 'all' && [`${game.home_team_id}`, `${game.away_team_id}`].indexOf(this.team_filter) == -1 ){
-        //             return false
-        //         }
-        //         if (this.round_filter !== 'all' && this.round_filter != game.round ){
-        //             return false
-        //         }
-        //         if (this.week_filter !== 'all' && this.week_filter != game.week ){
-        //             return false
-        //         }
-        //         return true
-        //     })
-        //     set_filtered_rows(filtered_rows)
-        // }
         this.$watch('team_filter', update_filtered_rows)
         this.$watch('round_filter', update_filtered_rows)
         this.$watch('week_filter', update_filtered_rows)
@@ -107,13 +89,10 @@ app.run(function($rootScope) {
             } else {
                 url.searchParams.set(key, newVal)
             }
-            // console.log()
             function update_url(){
-            //     window.history.replaceState({}, `${model}_bind_to_${key}`,url.href)
                 window.history.pushState("", "", url.href);
             }
-            // update_url()
-            setTimeout(update_url,5)
+            setTimeout(update_url,0)
         })
     }
 });
@@ -157,7 +136,6 @@ app.run(function($rootScope) {
     // })
 
 require('./bootstrap');
-// require('./snippets');
 require('./games');
 require('./set_teams');
 require('./schedule_games');
