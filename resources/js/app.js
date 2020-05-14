@@ -105,8 +105,13 @@ app.run(function($rootScope) {
     }
     $rootScope.bind_table_filters_to_url = function(){
         filters_map = this.get_table_filters_map()
+        url = new URL(window.location);
+        serach_params = url.searchParams;
         for (model of Object.keys(filters_map)){
             filter_attrs = filters_map[model];
+            query_param = serach_params.get(filter_attrs['query_param'])
+            null_value = (filter_attrs['null_values'] ?? [])[0]
+            this[model] = query_param !== null ? query_param : null_value; 
             this.bind_model_to_query_param(model, filter_attrs['query_param'], filter_attrs['null_values'])
         }
     }

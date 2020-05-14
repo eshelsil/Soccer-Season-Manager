@@ -180,9 +180,6 @@ app.controller('games_scheduler', function($scope, $location) {
         $scope.teams_by_id = options.teams_by_id
         $scope.weeks_count = options.weeks_count
         $scope.update_teams_data_inheritors()
-        $scope.team_filter = serach_params.get('team') !== null ? serach_params.get('team') : 'all';
-        $scope.round_filter = serach_params.get('round') !== null ? serach_params.get('round') : 'all';
-        $scope.week_filter = serach_params.get('week') !== null ? serach_params.get('week') : 'all';
         $scope.bind_table_filters_to_url()
         $scope.bind_filters_to_table($scope.update_filtered_games)
         $scope.update_table_filters_attrs()
