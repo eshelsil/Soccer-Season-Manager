@@ -1,11 +1,14 @@
 app.controller('set_scores', function($scope, $location) {
     $scope.home_input = {};
     $scope.away_input = {};
+    $scope.games = {};
     url = new URL(window.location);
     serach_params = url.searchParams;
-    $scope.getSearchParam = function(key){return serach_params.get(key)};
-    $scope.selected_team_class = 'underlined';
-    $scope.winner_class = 'font-weight-bold';
+    $scope.is_on_played_tab = serach_params.get('is_done') == 1;
+
+    $scope.has_available_games = function(){
+        return Object.keys($scope.games).length > 0
+    }
     $scope.edit_game = function(game){
         $scope.home_input[game.id] = game.is_done ? Number(game.home_score) : 0;
         $scope.away_input[game.id] = game.is_done ? Number(game.away_score) : 0;
@@ -78,5 +81,14 @@ app.controller('set_scores', function($scope, $location) {
         })
         .fail((e)=>{alert(e.responseText)});
     }
-    $scope.is_on_played_tab = serach_params.get('is_done') == 1;
+    $scope.initialize = function(options){
+        $scope.teams_by_id = options.teams_by_id
+        $scope.update_teams_data_inheritors()
+        $scope.bind_table_filters_to_url()
+        $scope.update_table_filters_attrs()
+        filters_map = $scope.get_table_filters_map()
+        for (model in filters_map){
+            $scope.$watch(model, $scope.get_games)
+        }
+    }
 });
