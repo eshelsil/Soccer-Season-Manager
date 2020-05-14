@@ -52,34 +52,63 @@ app.run(function($rootScope) {
         this.$watch('round_filter', _.bind($rootScope.update_table_filter_week, this))
     }
     $rootScope.reset_table_filters = function(){
-        this.team_filter = 'all'
-        this.round_filter = 'all'
-        this.week_filter = 'all'
+        filters_map = this.get_table_filters_map()
+        for (model of Object.keys(filters_map)){
+            null_values = filters_map[model]['null_values'] ?? [];
+            this[model] = null_values[0];
+        }
     }
     $rootScope.get_filtered_table_rows = function(table_rows){
-        filtered_rows = table_rows.filter(game => {
-            if (this.team_filter !== 'all' && [`${game.home_team_id}`, `${game.away_team_id}`].indexOf(this.team_filter) == -1 ){
-                return false
-            }
-            if (this.round_filter !== 'all' && this.round_filter != game.round ){
-                return false
-            }
-            if (this.week_filter !== 'all' && this.week_filter != game.week ){
-                return false
+        filters_map = this.get_table_filters_map()
+        filter_func = (row) => {
+            for (model of Object.keys(filters_map)){
+                filter_attrs = filters_map[model];
+                filter_cols = filter_attrs['table_keys']
+                if (typeof filter_cols === 'string'){
+                   filter_cols = [filter_cols]
+                }
+                match_values = filter_cols.map(key=> String(row[key]))
+                filter_val = this[model]
+                if (filter_attrs['null_values'].indexOf(filter_val) == -1 && match_values.indexOf(filter_val) == -1 ){
+                    return false
+                }
             }
             return true
-        })
+        }
+        filtered_rows = table_rows.filter(row => filter_func(row))
         return filtered_rows
     }
+    $rootScope.get_table_filters_map = function(){
+        return {
+            'team_filter': {
+                query_param: 'team',
+                table_keys: ['home_team_id', 'away_team_id'],
+                null_values: ['all']
+            },
+            'round_filter': {
+                query_param: 'round',
+                table_keys: 'round',
+                null_values: ['all']
+            },
+            'week_filter': {
+                query_param: 'week',
+                table_keys: 'week',
+                null_values: ['all']
+            }
+        }
+    }
     $rootScope.bind_filters_to_table = function(update_filtered_rows){
-        this.$watch('team_filter', update_filtered_rows)
-        this.$watch('round_filter', update_filtered_rows)
-        this.$watch('week_filter', update_filtered_rows)
+        filters_map = this.get_table_filters_map()
+        for (model of Object.keys(filters_map)){
+            this.$watch(model, update_filtered_rows)
+        }
     }
     $rootScope.bind_table_filters_to_url = function(){
-        this.bind_model_to_query_param('team_filter', 'team', ['all'])
-        this.bind_model_to_query_param('round_filter', 'round', ['all'])
-        this.bind_model_to_query_param('week_filter', 'week', ['all'])
+        filters_map = this.get_table_filters_map()
+        for (model of Object.keys(filters_map)){
+            filter_attrs = filters_map[model];
+            this.bind_model_to_query_param(model, filter_attrs['query_param'], filter_attrs['null_values'])
+        }
     }
     $rootScope.bind_model_to_query_param = function(model, key, null_values = []){
         this.$watch(model, (newVal) => {
