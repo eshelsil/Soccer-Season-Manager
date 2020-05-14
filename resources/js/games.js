@@ -1,37 +1,34 @@
-SELECT_ID_TO_KEY = {
-    'teamSelect': 'team_id',
-    'roundSelect': 'round',
-    'weekSelect': 'week',
-    'setWeekSelect': 'set_week'
-};
-
-function selectChange(ev){
-    select = ev.target;
-    key = SELECT_ID_TO_KEY[select.id];
-    if (key === undefined){
-        return;
-    }
-    val = select.value;
-    url = new URL(window.location);
-    if (val == 'all'){
-        url.searchParams.delete(key);
-    } else {
-        url.searchParams.set(key, val);
-        if (key == 'round'){
-            weeks_per_round = $("#teamSelect").children().length - 2;
-            min_available_week = (val-1) * weeks_per_round + 1;
-            max_available_week = val * weeks_per_round;
-            selected_week = url.searchParams.get('week');
-            if (selected_week && (selected_week > max_available_week || selected_week < min_available_week) ){
-                url.searchParams.delete('week');
-            }
-        }
-    }
-    window.location = url.href;
+shorten_result_map = {
+    'draw': 'D',
+    'win': 'W',
+    'lose': 'L'
 }
 
-//#NOTE this affects all views. What is best practice to bind javascript file to view?
+app.controller('games_display', function($scope) {
+    $scope.is_team_selected = function(){
+        return [undefined, 'all'].indexOf($scope.team_filter) === -1
+    }
+    $scope.get_shorten_result = function(result){
+        return shorten_result_map[result] ?? ''
+    }
+    $scope.initialize = function(options){
+        $scope.teams_by_id = options.teams_by_id ?? {}
+        $scope.games = []
+        $scope.update_teams_data_inheritors()
+        $scope.update_table_filters_attrs()
+        $scope.bind_filters_to_table($scope.update_table)
+        $scope.bind_table_filters_to_url()
+    }
+    $scope.update_table = function(){
+        let {protocol, host, pathname} = window.location
+        current_path = `${protocol}//${host}${pathname}`;
+        url = new URL(`${current_path}${$scope.get_search_query_with_filters()}`)
+        url.searchParams.delete('is_done')
 
-$(document).ready(function(){
-    // $('select.custom-select').change(selectChange);
-})
+        $.get(`/api/games/${url.search}`)
+        .done((res)=>{
+            $scope.games = res;
+            $scope.$apply();
+        })
+    }
+});
