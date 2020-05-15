@@ -24,10 +24,6 @@ Route::resource('/api/teams', 'TeamsAPIController');
 Route::get('/', 'DefaultRouteController@index');
 Route::get('schedule', 'ScheduleController@index');
 Route::get('set_teams', 'TeamsController@index');
-Route::post('schedule/auto', 'ScheduleController@auto_schedule_games');
-Route::post('schedule/add_game', 'ScheduleController@schedule_game');
-Route::post('schedule/delete_game/{game_id}', 'ScheduleController@delete_game');
-Route::post('schedule/reset_games', 'ScheduleController@truncate_games_table');
 
 Route::get('set_scores', 'ScoresController@index');
 Route::post('set_scores/randomize', 'ScoresController@randomize_game_scores');

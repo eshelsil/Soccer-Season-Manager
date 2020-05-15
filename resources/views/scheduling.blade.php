@@ -2,19 +2,25 @@
 
 @section('title', 'Scheduling')
 
+@php
+    $init_options = [
+        'teams_by_id' =>$teams_by_id,
+        'weeks_count'=>$weeks_count
+    ];
+@endphp
 @section('content')
     <div class="h3 mt-2 mb-4"><u>
         Step 2 - Schedule Games
     </u></div>
 
-    <div class="row">
-
+    <div class="row" ng-controller="games_scheduler" ng-init='initialize(@json($init_options));'>
+        
+        @if ($can_schedule_games)
         <div class="col-5 mt-3 pl-0">
-            @if (empty($weeks_to_schedule))
-                <div class="h4 mb-2">No more games to schedule :)</div>
-            @else
+            <div ng-show="count_games() >= {{$games_in_season}}" class="h4 mb-2">No more games to schedule :)</div>
+            <div ng-show="count_games() < {{$games_in_season}}">
                 <div class="row-1 mb-3 p-0">
-                    <button id="auto_schedule" type="button" class="btn btn-primary">Auto schedule all games</button>
+                    <button ng-click="auto_schedule_all()" type="button" class="btn btn-primary">Auto schedule all games</button>
                 </div>
                 <div class="h4 mb-2"><u>Schedule a game:</u></div>
                 <div class="p-3 border border-dark rounded" style="background: #dcf0ff;">
@@ -22,78 +28,54 @@
                         <div class="row mb-3  ml-0 mr-0 p-0">
                             <div class="col p-0">
                                 <label class="row m-0">Round</label>
-                                @php
-                                    $teams_count = count(array_keys($teams_by_id));
-                                    $games_per_round = $teams_count - 1;
-                                    $round = ceil($query_params['set_week'] / $games_per_round);
-                                @endphp
-                                <input type="text" id ="round_input" maxlength="1" value="{{$round}}" disabled style="width:1rem;">
+                                <input type="text" id="round_input" maxlength="1" value="@{{get_round_input()}}" disabled style="width:1rem;">
                             </div>
                             <div class="col m-0 p-0">
                                 @include('snippets.select_input', [
+                                    'ng_model' => 'set_week_input',
+                                    'options_var' => 'week_input_options',
                                     'id' => 'setWeekSelect',
                                     'label' => 'Week',
-                                    'initial_value' => $query_params['set_week'],
-                                    'options' => $weeks_to_schedule
                                 ])
                             </div>
                         </div>
                         <div class="row m-0 p-0">
-                            @php
-                            $team_options = [];
-                            foreach($available_teams as $team_id){
-                                $team_options[$team_id] = $teams_by_id[$team_id];
-                            }   
-                            @endphp
                             <div class="col m-0 p-0">
                                 @include('snippets.select_input', [
+                                    'ng_model' => 'home_team_input',
+                                    'options_var' => 'home_team_options',
                                     'id' => 'homeTeamSelect',
                                     'label' => 'Home Team',
-                                    'key_as_value' => true,
-                                    'options' => $team_options
                                 ])
                             </div>
                             <div class="col m-0 p-0">
                                 @include('snippets.select_input', [
+                                    'ng_model' => 'away_team_input',
+                                    'options_var' => 'away_team_options',
                                     'id' => 'awayTeamSelect',
                                     'label' => 'Away Team',
-                                    'initial_value' => array_keys($team_options)[1],
-                                    'key_as_value' => true,
-                                    'options' => $team_options
                                 ])
                             </div>
                         </div>
                     </div>
                     <div class="row justify-content-center mt-4">
-                        <button id="schedule_game_button" type="button" class="btn btn-primary">Add Game</button>
+                        <button type="button" class="btn btn-primary" ng-click="add_game()">Add Game</button>
                     </div>
                 </div>
-            @endif
+            </div>
         </div>
 
         <div class="col-7 mt-3 pl-2">
             <div class="row-1 mb-3 p-0">
-                @if ($has_available_games)
-                    <button id="truncate_games_table" type="button" class="btn btn-danger mr-2">Delete all games</button>
-                @else
-                    <button id="go_to_set_teams" type="button" class="btn btn-secondary mr-2">Back to set teams</button>
-                @endif
-                @if ($allow_set_scores)
-                    <button id="to_set_score" type="button" class="btn btn-success">Continue to set scores</button>
-                @endif
+                <button ng-show="has_games()" ng-click="remove_all_games()" type="button" class="btn btn-danger mr-2">Delete all games</button>
+                <button ng-show="!has_games()" ng-click="go_to_set_teams()" type="button" class="btn btn-secondary mr-2">Back to set teams</button>
+                <button ng-show="count_games() >= {{$games_in_season}}" ng-click="go_to_set_scores()" type="button" class="btn btn-success">Continue to set scores</button>
             </div>
             <div class="h4 mb-2"><u>Scheduled Games:</u></div>
             <div class="p-2 pl-4 border border-dark rounded" style="background: #dcf0ff;">
-                @if (!$has_available_games)
-                    <div class="h5 mb-2">There are no scheduled games yet</div>
-                @else
-                    @include('snippets.table_filters', [
-                        'round_param' => $query_params['round'],
-                        'week_param' => $query_params['week'],
-                        'team_id_param' => $query_params['team_id'],
-                        'weeks_count' => $weeks_count,
-                        'teams_by_id' => $teams_by_id
-                    ])
+                <div ng-show="!has_games()" class="h5 mb-2">There are no scheduled games yet</div>
+                <div ng-show="has_games()">
+                    @include('snippets.table_filters')
                     <table class="table table-striped shrunk">
                         <thead class="thead-dark">
                             <tr>
@@ -105,28 +87,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($filtered_games as $game)
-                                @php
-                                    $game_id = $game->game_id;
-                                    $round = $game->round;
-                                    $week = $game->week;
-                                    $home_team_name = $teams_by_id[$game->home_team_id];
-                                    $away_team_name = $teams_by_id[$game->away_team_id];
-                                @endphp
-                                <tr>
-                                    <td class='shrunk'>{{$round}}</td>
-                                    <td class='shrunk'>{{$week}}</td>
-                                    <td class='shrunk'>{{$home_team_name}}</td>
-                                    <td class='shrunk'>{{$away_team_name}}</td>
-                                    <td class='shrunk'>
-                                        <div class='delete_game_btn' data-game_id={{$game_id}}></div>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            <tr ng-repeat="game in filtered_games">
+                                <td class='shrunk'>@{{game.round}}</td>
+                                <td class='shrunk'>@{{game.week}}</td>
+                                <td class='shrunk' ng-class="{'selected_team_cell': game.home_team_id==team_filter}">@{{game.home_team_name}}</td>
+                                <td class='shrunk' ng-class="{'selected_team_cell': game.away_team_id==team_filter}">@{{game.away_team_name}}</td>
+                                <td class='shrunk'>
+                                    <div class='delete_game_btn' ng-click="remove_game(game.id)"></div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
-                @endif
+                </div>
             </div>
         </div>
+
+        @else
+        <div class="col">
+            <p class="mb-2">
+                There are currently {{count($teams_by_id)}} registered teams.
+                <br>
+                In order to start scheduling games there must be even number of teams and at least 4 teams.
+            </p>
+            <button ng-click="go_to_set_teams()" type="button" class="btn btn-secondary mt-2">Back to set teams</button>
+        </div>
+        @endif
     </div>
 @endsection
