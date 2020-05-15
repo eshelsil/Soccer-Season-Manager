@@ -132,7 +132,6 @@ app.controller('season_table', function($scope) {
         last_week = Object.values($scope.games).reduce((max_week, game)=>{
             return Math.max(game.week,  max_week)
         }, 0)
-        console.log(last_week)
         available_weeks = _.range(1, last_week + 1)
         this.until_week_options = this.format_select_options(available_weeks, {with_all: true})
     }
