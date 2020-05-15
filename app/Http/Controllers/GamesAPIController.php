@@ -224,6 +224,9 @@ class GamesAPIController extends Controller
         $game->update(
             ['home_score' => $home_score, 'away_score' => $away_score]
         );
+        #TODO: disallow setting only 1 side score
+        #TODO: disallow setting when not all games are scheduled
+        #TODO: disallow adding games when all games are scheduled
         return response()->json($game->json_export(), 200);
     }
 
