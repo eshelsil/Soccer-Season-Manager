@@ -82,7 +82,7 @@ class GamesAPIController extends Controller
      * @param  int  $week
      * @param  int  $home_team_id
      * @param  int  $away_team_id
-     * @return array #NOTE is this the correct way?
+     * @return array
      */
     private function store_single_game($week, $home_team_id, $away_team_id)
     {
@@ -192,15 +192,12 @@ class GamesAPIController extends Controller
     public function update_many(Request $request)
     {
         $games_data = $request->input('games');
-        $output = [];
         try {
-            return DB::transaction(function () use($games_data, $output) {
+            return DB::transaction(function () use($games_data) {
+                $output = [];
                 foreach($games_data as $index=>$game_data ) {
-                    $game = Game::find($game_data['id']);
-                    $game->update(
-                        ['home_score' => $game_data['home'], 'away_score' => $game_data['away']]
-                    );
-                    $output[$game->game_id] = $game->json_export();
+                    $game = $this->update_single_game($game_data['id'], $game_data['home'], $game_data['away']);
+                    $output[$game['id']] = $game;
                 }
                 return response()->json($output, 200);
             });
@@ -220,14 +217,46 @@ class GamesAPIController extends Controller
     {
         $home_score = $request->input('home');
         $away_score = $request->input('away');
+        try {
+            $game = $this->update_single_game($id, $home_score, $away_score);
+            return response()->json($game, 200);
+        } catch (Exception $e){
+            return response($e->getMessage(), 400);
+        }
+    }
+
+
+    /**
+     * Try setting the specified resource to storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @param  int  $home_score
+     * @param  int  $away_score
+     * @return \App\Game
+     */
+    private function update_single_game($id, $home_score, $away_score)
+    {
+        #NOTE move validation to another resource/function;
+        if (is_null($home_score) !== is_null($away_score)){
+            $error_msg = 'Cannot set score to only one of the teams';
+            throw new Exception($error_msg);
+            
+        }
+        $regist_manager = app('RegisterationManager');
+        if (!$regist_manager->is_all_games_scheduled() && !is_null($home_score)){
+            $error_msg = 'Cannot set new scores when not all games are scheduled';
+            throw new Exception($error_msg);    
+        }
         $game = Game::find($id);
+        if (is_null($game)){
+            $error_msg = 'Game id '.$id.' does not exist';
+            throw new Exception($error_msg);
+        }
         $game->update(
             ['home_score' => $home_score, 'away_score' => $away_score]
         );
-        #TODO: disallow setting only 1 side score
-        #TODO: disallow setting when not all games are scheduled
-        #TODO: disallow adding games when all games are scheduled
-        return response()->json($game->json_export(), 200);
+        return $game->json_export();
     }
 
     /**
