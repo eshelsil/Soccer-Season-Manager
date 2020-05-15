@@ -1,56 +1,98 @@
-function randomize_scores(){
-    $.post('/set_scores/randomize')
-    .done(()=>{window.location.reload()})
-    .fail(function(e){alert(e.responseText)});
-}
-
-function reset_game_score(ev){
-    el = $(ev.target);
-    game_id = el.data('game_id')
-    $.post(`/set_scores/delete/${game_id}`)
-    .done(()=>{window.location.reload()})
-    .fail(function(e){alert(e.responseText)});
-}
-
-function cancel_set_score(ev){
+app.controller('set_scores', function($scope, $location) {
+    $scope.home_input = {};
+    $scope.away_input = {};
+    $scope.games = {};
     url = new URL(window.location);
-    url.searchParams.delete('set_game_id');
-    window.location = url.href;
-}
+    serach_params = url.searchParams;
+    $scope.is_on_played_tab = serach_params.get('is_done') == 1;
 
-function go_to_set_game_score(ev){
-    el = $(ev.target);
-    url = new URL(window.location);
-    url.searchParams.set('set_game_id',el.data('game_id'));
-    window.location = url.href;
-}
-
-function update_game_score(ev){
-    el = $(ev.target);
-    game_id = el.data('game_id');
-    home_input = $(".score_input[data-team='home']")
-    away_input = $(".score_input[data-team='away']")
-    score_home = Number(home_input.val());
-    score_away = Number(away_input.val());
-    if (!Number.isInteger(score_home)){
-        alert(`Cannot set non integer value ${score_home} as home team's score`)
-        return
+    $scope.has_available_games = function(){
+        return Object.keys($scope.games).length > 0
     }
-    if (!Number.isInteger(score_away)){
-        alert(`Cannot set non integer value ${score_away} as away team's score`)
-        return
+    $scope.edit_game = function(game){
+        $scope.home_input[game.id] = game.is_done ? Number(game.home_score) : 0;
+        $scope.away_input[game.id] = game.is_done ? Number(game.away_score) : 0;
+        $scope.game_on_edit = game.id;
+    };
+    $scope.cancel_edit = function(){
+        $scope.game_on_edit = undefined;
+    };
+    $scope.remove_game = function(id){
+        $.post(`/api/games/${id}?_method=put`, {home: null, away: null})
+        .done(()=>{
+            delete($scope.games[id]);
+            $scope.$apply();
+        })
+        .fail((e)=>{alert(e.responseText)});
+    };
+    $scope.set_score = (game_id)=>  {
+        home_score = $scope.home_input[game_id];
+        away_score = $scope.away_input[game_id];
+        if (!Number.isInteger(home_score)){
+            alert(`Cannot set non integer value ${home_score} as home team's score`)
+            return
+        }
+        if (!Number.isInteger(away_score)){
+            alert(`Cannot set non integer value ${away_score} as away team's score`)
+            return
+        }
+        $.post(`/api/games/${game_id}?_method=put`, {home: home_score, away: away_score})
+        .done((game_object)=>{
+            $scope.games[game_object['id']] = Object.assign($scope.games[game_object['id']], game_object)
+            if ($scope.is_on_played_tab){
+                $scope.cancel_edit();
+            } else {
+                delete($scope.games[game_id]);
+            }
+            $scope.$apply();
+        })
+        .fail((e)=>{alert(e.responseText)});
     }
-    $.post(`/set_scores/update/${game_id}`, {home: score_home, away: score_away})
-    .done(cancel_set_score)
-    .fail(function(e){alert(e.responseText)});
-}
+    $scope.get_games = function(){
+        let {protocol, host, pathname} = window.location
+        current_path = `${protocol}//${host}${pathname}`;
+        url = new URL(`${current_path}${$scope.get_search_query_with_filters()}`)
+        if (url.searchParams.get('is_done') != 1){
+            url.searchParams.set('is_done', 0)
+        }
 
-
-
-$(document).ready(function(){
-    $('#randomize_scores').click(randomize_scores);
-    $('.delete_btn').click(reset_game_score);
-    $('.edit_btn').click(go_to_set_game_score);
-    $('.cancel_set_score_btn').click(cancel_set_score);
-    $('.confirm_set_score_btn').click(update_game_score);
-})
+        $.get(`/api/games/${url.search}`)
+        .done((res)=>{
+            $scope.games = res;
+            $scope.$apply();
+        })
+    }
+    $scope.randomize_all = ()=>{
+        games_data = [];
+        for (game_id in $scope.games){
+            home_score = Math.floor(Math.random() * 5);
+            away_score = Math.floor(Math.random() * 5);
+            game = $scope.games[game_id]
+            if (game.home_team_name == 'Hapoel Tel Aviv' && home_score < 2){
+                home_score = Math.floor(Math.random() * 5);
+            }
+            if (game.away_team_name == 'Hapoel Tel Aviv' && away_score < 2){
+                away_score = Math.floor(Math.random() * 5);
+            }
+            games_data.push({id: game_id, home: home_score, away: away_score})
+        }
+        $.post(`/api/games?_method=patch`, {games: games_data})
+        .done((games)=>{
+            for (game_id in games){
+                delete($scope.games[game_id])
+            }
+            $scope.$apply();
+        })
+        .fail((e)=>{alert(e.responseText)});
+    }
+    $scope.initialize = function(options){
+        $scope.teams_by_id = options.teams_by_id
+        $scope.update_teams_data_inheritors()
+        $scope.bind_table_filters_to_url()
+        $scope.update_table_filters_attrs()
+        filters_map = $scope.get_table_filters_map()
+        for (model in filters_map){
+            $scope.$watch(model, $scope.get_games)
+        }
+    }
+});

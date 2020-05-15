@@ -26,14 +26,8 @@ Route::get('schedule', 'ScheduleController@index');
 Route::get('set_teams', 'TeamsController@index');
 
 Route::get('set_scores', 'ScoresController@index');
-Route::post('set_scores/randomize', 'ScoresController@randomize_game_scores');
-Route::post('set_scores/reset', 'ScoresController@reset_all');
-Route::post('set_scores/delete/{game_id}', 'ScoresController@reset_score');
-Route::post('set_scores/update/{game_id}', 'ScoresController@update_score');
 
 Route::get('reset_options', 'ResetController@index');
-
-// Route::resource('reset_options', 'ResetController@index');
 
 
 Route::get('games', 'GamesController@index');
