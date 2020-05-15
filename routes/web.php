@@ -31,7 +31,6 @@ Route::get('reset_options', 'ResetController@index');
 
 
 Route::get('games', 'GamesController@index');
-// Route::get('games/{team_id}', 'GamesController@team');
 
 
 Route::get('table', 'TableController@index');
