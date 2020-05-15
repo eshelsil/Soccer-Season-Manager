@@ -61,18 +61,18 @@ class GamesAPIController extends Controller
      */
     public function store(Request $request){
         $games_array = $request->input('games', []);
-        return DB::transaction(function () use($games_array) {
-            try{
+        try{
+            return DB::transaction(function () use($games_array) {
                 $output = [];
                 foreach($games_array as $index=>$game ) {
                     $res = $this->store_single_game($game['week'], $game['home_team_id'], $game['away_team_id']);
                     array_push($output, $res);
                 }
-            } catch (Exception $e ) {
-                return response($e->getMessage(), 400);
-            }
-            return response()->json($output, 200);
-        });
+                return response()->json($output, 200);
+            });
+        } catch (Exception $e ) {
+            return response($e->getMessage(), 400);
+        }
     }
 
 
@@ -193,16 +193,20 @@ class GamesAPIController extends Controller
     {
         $games_data = $request->input('games');
         $output = [];
-        return DB::transaction(function () use($games_data, $output) {
-            foreach($games_data as $index=>$game_data ) {
-                $game = Game::find($game_data['id']);
-                $game->update(
-                    ['home_score' => $game_data['home'], 'away_score' => $game_data['away']]
-                );
-                $output[$game->game_id] = $game->json_export();
-            }
-            return response()->json($output, 200);
-        });
+        try {
+            return DB::transaction(function () use($games_data, $output) {
+                foreach($games_data as $index=>$game_data ) {
+                    $game = Game::find($game_data['id']);
+                    $game->update(
+                        ['home_score' => $game_data['home'], 'away_score' => $game_data['away']]
+                    );
+                    $output[$game->game_id] = $game->json_export();
+                }
+                return response()->json($output, 200);
+            });
+        } catch (Exception $e){
+            return response($e->getMessage(), 400);
+        }
     }
 
     /**

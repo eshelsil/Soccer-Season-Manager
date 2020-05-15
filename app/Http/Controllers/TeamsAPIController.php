@@ -40,18 +40,18 @@ class TeamsAPIController extends Controller
             return response($this->is_locked_msg, 400);
         }
         $teams_array = $request->input('teams', []);
-        return DB::transaction(function () use($teams_array) {
-            try{
+        try {
+            return DB::transaction(function () use($teams_array) {
                 $output = [];
                 foreach($teams_array as $index=>$team ) {
                     $res = $this->store_single_team($team['name']);
                     array_push($output, $res);
                 }
-            } catch (Exception $e ) {
-                return response($e->getMessage(), 400);
-            }
-            return response()->json($output, 200);
-        });
+                return response()->json($output, 200);
+            });
+        } catch (Exception $e ) {
+            return response($e->getMessage(), 400);
+        }
     }
 
 
