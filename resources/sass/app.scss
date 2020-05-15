@@ -81,6 +81,9 @@
 .selected_team_cell {
     @extend .underlined;
 }
+.leader_row{
+    @extend .font-weight-bold;
+}
 .disabled_button{
     @extend .disabled;
     cursor: default;
