@@ -13,19 +13,26 @@
     DONE - check if table is empty rather than exsits (don't delete tables)
     DONE - route '/' to proper view
     DONE - implement restful api
-    - add validations on backend to api/db_actions:
-        - make sure they handle well transactions as well
-    - return proper responses and handle errors returned from databse action
 
 3. Handle frontend:
     DONE - use frontend mvc (angularjs 1.7)
     DONE - input view should have its own template
     DONE - move complicated functionality (game generator, score genreator) to frontend (js)
-    - change app menu
+    - change app menu:
+        - admin should have a 'manage' button on menu
+        - 'manage' should be devided to 'register teams', schedule games & set scores
+        - each should be disabled if locked
+        - reset buttons should be moved to set scores view & schedule view
+    - handle table & game views when no games are set
+    - implement login to make it possible for admin/guest to login
+    - move season table calculation to backend
 
 4. Finishes
     DONE - scheduling - underline selected team cell
     - compare equal teams by inner games
+    - change_validation - instead of making transaction and query the db for every added row - unite database & request input:
+        - instead of using transaction update db once after input passed all validations
+    - return proper responses and handle errors returned from databse action
     - add is_done filter to games view
     - add loaders
     - split scss to relevant files
