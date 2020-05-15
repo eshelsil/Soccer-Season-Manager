@@ -29,7 +29,7 @@
 
 4. Finishes
     DONE - scheduling - underline selected team cell
-    - compare equal teams by inner games
+    DONE - compare equal teams by inner games
     - change_validation - instead of making transaction and query the db for every added row - unite database & request input:
         - instead of using transaction update db once after input passed all validations
     - return proper responses and handle errors returned from databse action

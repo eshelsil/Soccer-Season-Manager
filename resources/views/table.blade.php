@@ -44,8 +44,8 @@
             </tr>
         </thead>
         <tbody>
-                <tr ng-repeat="team in teams_table" ng-class="{leader_row: $index == 0}">
-                    <td class='shrunk'>@{{team.rank}}</td>
+                <tr ng-repeat="team in teams_table" ng-class="{leader_row: team.rank == 1 && team.games > 0}">
+                    <td class='shrunk'>@{{team.rank_sign}}</td>
                     <td class='shrunk'><a href='/games?team=@{{team.id}}'>@{{team.name}}</a></td>
                     <td class='shrunk'>@{{team.points}}</td>
                     <td class='shrunk'>@{{team.games}}</td>
@@ -54,7 +54,7 @@
                     <td class='shrunk'>@{{team.loses}}</td>
                     <td class='shrunk'>@{{team.goals_for}}</td>
                     <td class='shrunk'>@{{team.goals_against}}</td>
-                    <td class='shrunk'>@{{team.gd}}</td>
+                    <td class='shrunk'>@{{team.goals_diff}}</td>
                 </tr>
         </tbody>
         </table>
