@@ -1,40 +1,40 @@
 @extends('layouts.app')
 
 @section('title', 'Set Teams')
-@section('script')
-    <script>
-        var params = @json(['teams'=>Config::get('default_inputs.TEAMS_LIST')])
-    </script>
-@endsection
+@php
+    $init_options = ['default_teams' => Config::get('default_inputs.TEAMS_LIST')]
+@endphp
 
 @section('content')
-    <div class="h3 mt-2 mb-4"><u>
-        Step 1 - Set Teams
-    </u></div>
+    <div ng-controller="teams_registration" ng-init='initialize(@json($init_options));'>
 
-    <div class="col p-0">
-        
-        <div class="row p-4">
-            <input type="text" maxlength="50" id="new_team_input">
-            <button id="new_team_add_btn" type="button" class="btn btn-primary">Add Team</button>
-        </div>
+        <div class="h3 mt-2 mb-4"><u>
+            Step 1 - Set Teams
+        </u></div>
 
-        <div class="row p-4">
-            <div class="col-6 p-2 bg-white border border-dark rounded">
-                <div class="col">
-                    <div class="h5 mb-1">Teams:</div>
-                    @foreach ($teams_by_id as $id => $name)
-                        <div class='row p-1'>
-                            <div class='delete_team_btn' data-team_id={{$id}}></div>
-                            <p class='mb-0'>{{$name}}</p>
+        <div class="col p-0">
+            
+            <form name="add_team_from" class="row p-4">
+                <input type="text" maxlength="50" ng-model="new_team_input" name="team_name" required >
+                <button ng-click="add_team()" type="button" class="btn btn-primary">Add Team</button>
+            </form>
+
+            <div class="row p-4">
+                <div class="col-6 p-2 bg-white border border-dark rounded">
+                    <div class="col">
+                        <div class="h5 mb-1">Teams:</div>
+                        <div ng-repeat="team in teams" class='row p-1'>
+                            <div class='delete_team_btn' ng-click="remove_team(team.id)"></div>
+                            <p class='mb-0'>@{{team.name}}</p>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
         </div>
+        <button ng-click="remove_all_teams()" type="button" class="btn btn-danger">Delete all teams</button>
+        <button ng-click="use_deafult_teams()" type="button" class="btn btn-primary">Use default teams</button>
+        <button ng-class="{'disabled_button': !can_start_scheduling()}" ng-click="go_to_schedule()"
+                type="button" class="btn btn-success">Continue to schedule games</button>
     </div>
-    <button id="empty_teams_table" type="button" class="btn btn-danger">Delete all teams</button>
-    <button id="default_teams" type="button" class="btn btn-primary">Use default teams</button>
-    <button id="to_schedule" type="button" class="btn btn-success">Continue to schedule games</button>
     
 @endsection

@@ -1,3 +1,5 @@
+window.app = angular.module('app', [])
+
 require('./bootstrap');
 require('./games');
 require('./set_teams');

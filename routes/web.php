@@ -24,10 +24,6 @@ Route::resource('/api/teams', 'TeamsAPIController');
 Route::get('/', 'DefaultRouteController@index');
 Route::get('schedule', 'ScheduleController@index');
 Route::get('set_teams', 'TeamsController@index');
-Route::post('set_teams', 'TeamsController@set_teams');
-Route::delete('set_teams/delete_all', 'TeamsController@truncate_teams_table');
-Route::post('teams/delete/{team_id}', 'TeamsController@delete_team');
-Route::post('teams/add', 'TeamsController@add_team');
 Route::post('schedule/auto', 'ScheduleController@auto_schedule_games');
 Route::post('schedule/add_game', 'ScheduleController@schedule_game');
 Route::post('schedule/delete_game/{game_id}', 'ScheduleController@delete_game');
@@ -49,6 +45,3 @@ Route::get('games', 'GamesController@index');
 
 
 Route::get('table', 'TableController@index');
-// Route::get('table', function () {
-//     return view('table');
-// });
