@@ -29,12 +29,12 @@ class ScheduleController extends Controller
     }
 
     public function index(Request $request){
-        $teams_manager = app('RegisteredTeamsManager');
+        $regist_manager = app('RegisterationManager');
         return view('scheduling', [
-            'weeks_count' => $teams_manager->get_weeks_count(),
-            'teams_by_id' => $teams_manager->get_teams_by_id(),
-            'can_schedule_games' => $teams_manager->can_start_scheduling(),
-            'games_in_season' => $teams_manager->get_games_in_season_count()
+            'weeks_count' => $regist_manager->get_weeks_count(),
+            'teams_by_id' => $regist_manager->get_teams_by_id(),
+            'can_schedule_games' => $regist_manager->can_start_scheduling(),
+            'games_in_season' => $regist_manager->get_games_in_season_count()
         ]);
     }
 }

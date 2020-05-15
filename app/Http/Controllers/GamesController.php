@@ -7,7 +7,7 @@ class GamesController extends Controller
     public function index()
     {
         return view('games',[
-            'teams_by_id' => app('RegisteredTeamsManager')->get_teams_by_id()
+            'teams_by_id' => app('RegisterationManager')->get_teams_by_id()
         ]);
     }
 }

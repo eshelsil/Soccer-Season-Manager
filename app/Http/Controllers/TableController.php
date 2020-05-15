@@ -14,7 +14,7 @@ class TableController extends Controller
         $games = Game::where('is_done', 1)->get();
         return view('table', [
             'games' => $games,
-            'teams_by_id' => app('RegisteredTeamsManager')->get_teams_by_id()
+            'teams_by_id' => app('RegisterationManager')->get_teams_by_id()
         ]);
     }
 }

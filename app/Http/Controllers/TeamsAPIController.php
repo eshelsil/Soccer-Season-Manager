@@ -107,7 +107,7 @@ class TeamsAPIController extends Controller
 
     private function is_locked()
     {
-        return app('RegisteredTeamsManager')->is_locked();
+        return app('RegisterationManager')->is_teams_table_locked();
     }
 
 

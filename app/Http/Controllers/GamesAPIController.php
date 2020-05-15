@@ -86,7 +86,7 @@ class GamesAPIController extends Controller
      */
     private function store_single_game($week, $home_team_id, $away_team_id)
     {
-        $teams_manager = app('RegisteredTeamsManager');
+        $regist_manager = app('RegisterationManager');
 
         #NOTE move validation to another resource/function;
         if (is_null($week)){
@@ -104,16 +104,16 @@ class GamesAPIController extends Controller
             throw new Exception($error_str);
             // return response("must pass a valid away_team_id parameter", 400);
         }
-        $round = $teams_manager->get_round_of_week($week);
+        $round = $regist_manager->get_round_of_week($week);
         
         #NOTE move validation to another resource/function;
-        if (!$teams_manager->has_min_teams_amount()){
+        if (!$regist_manager->has_min_teams_amount()){
             $error_str = "In order to schedule a game there must be at least 4 teams";
             throw new Exception($error_str);
             // return response("In order to schedule a game there must be at least 4 teams", 400);
         }
         
-        if (!$teams_manager->is_teams_count_even()){
+        if (!$regist_manager->is_teams_count_even()){
             $error_str = "In order to schedule a game there must be an even number of teams";
             throw new Exception($error_str);
             // return response("In order to schedule a game there must be an even number of teams", 400);

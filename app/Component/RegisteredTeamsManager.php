@@ -5,7 +5,7 @@ namespace App\Component;
 use App\Game;
 use App\Team;
 
-class RegisteredTeamsManager {
+class RegisterationManager {
     
     private $teams_by_id = null;
 
@@ -63,10 +63,7 @@ class RegisteredTeamsManager {
         return $games_count >= $this->get_games_in_season_count();
     }
 
-    public function is_locked(){
+    public function is_teams_table_locked(){
         return Game::query()->exists();
     }
-
-
-
 }

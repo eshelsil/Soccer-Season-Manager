@@ -78,7 +78,7 @@ class Game extends Model
 
     
     public function json_export(){
-        $teams_by_id = app('RegisteredTeamsManager')->get_teams_by_id();
+        $teams_by_id = app('RegisterationManager')->get_teams_by_id();
         return  [
             'id' => $this->game_id,
             'round' => $this->round,
