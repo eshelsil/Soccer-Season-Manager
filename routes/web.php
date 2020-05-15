@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 //#NOTE how to choose urls properly? (REST etc.)
 //#NOTE how to choose post/delete/put methods properly? (REST etc.)
 
+Route::delete('/api/teams/reset_all', 'TeamsAPIController@reset_all');
+Route::resource('/api/teams', 'TeamsAPIController');
+
+
 Route::get('/', 'DefaultRouteController@index');
 Route::get('schedule', 'ScheduleController@index');
 Route::get('set_teams', 'TeamsController@index');
