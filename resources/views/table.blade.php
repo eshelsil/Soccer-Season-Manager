@@ -14,6 +14,7 @@
 @endphp
 
 @section('content')
+    @if (count($teams_by_id) > 0)
     <div ng-controller="season_table" ng-init='initialize(@json($init_options));'>
         <div ng-show="games.length > 0" class="col mb-4">
             @include('snippets.select_input', [
@@ -59,4 +60,9 @@
         </tbody>
         </table>
     </div>
+    @else
+        <div class="h3 mt-2">
+            There are no registered teams yet
+        </div>
+    @endif
 @endsection

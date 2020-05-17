@@ -23,7 +23,7 @@
         - 'manage' should be devided to 'register teams', schedule games & set scores
         - each should be disabled if locked
         - reset buttons should be moved to set scores view & schedule view
-    - handle table & game views when no games are set
+    DONE - handle table & game views when no games are set
     - implement login to make it possible for admin/guest to login
     - move season table calculation to backend
 

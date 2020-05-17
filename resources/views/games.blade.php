@@ -7,11 +7,14 @@
 @endsection
 
 @section('content')
+    @if($has_games)
+
     @php
         $init_options = [
             'teams_by_id' => $teams_by_id
         ];
     @endphp
+
     <div ng-controller="games_display" ng-init='initialize(@json($init_options))'>
     <div class="row justify-content-start m-0">
         @include('snippets.table_filters', [
@@ -59,4 +62,10 @@
             </tr>
         </tbody>
     </table>
+
+    @else
+        <div class="h3 mt-2">
+            There are no scheduled games yet
+        </div>
+    @endif
 @endsection
