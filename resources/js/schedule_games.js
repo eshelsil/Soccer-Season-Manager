@@ -1,7 +1,7 @@
 function generate_first_round_order(ids){
 
     //explanation on method -> https://nrich.maths.org/1443
-    _.shuffle(ids);
+    ids = _.shuffle(ids);
     middle_of_poligon = ids[0];
     ids.splice(0, 1);
     connections = {};
