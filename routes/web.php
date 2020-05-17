@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::delete('/api/games/reset_all', 'GamesAPIController@reset_all');
 Route::resource('/api/games', 'GamesAPIController');
-Route::patch('/api/games', 'GamesAPIController@update_many');
+Route::put('/api/games', 'GamesAPIController@update_many');
 
 Route::delete('/api/teams/reset_all', 'TeamsAPIController@reset_all');
 Route::resource('/api/teams', 'TeamsAPIController');

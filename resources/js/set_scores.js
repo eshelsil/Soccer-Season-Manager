@@ -76,7 +76,7 @@ app.controller('set_scores', function($scope, $location) {
             }
             games_data.push({id: game_id, home: home_score, away: away_score})
         }
-        $.post(`/api/games?_method=patch`, {games: games_data})
+        $.post(`/api/games?_method=put`, {games: games_data})
         .done((games)=>{
             for (game_id in games){
                 delete($scope.games[game_id])
