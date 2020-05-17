@@ -147,7 +147,11 @@ app.controller('games_scheduler', function($scope, DisabledAdminViews) {
         })
         if ($scope.weeks_to_schedule.indexOf(Number($scope.set_week_input))){
             current_week = $scope.set_week_input ?? 0
-            $scope.set_week_input = String($scope.weeks_to_schedule.find(week => week >= current_week))
+            selected_week = $scope.weeks_to_schedule.find(week => week >= current_week)
+            if (selected_week == undefined && !_.isEmpty($scope.weeks_to_schedule)){
+                selected_week = $scope.weeks_to_schedule[0]
+            }
+            $scope.set_week_input = String(selected_week ?? 0)
         }
     }
     $scope.update_home_team_input_options = ()=>{
@@ -167,7 +171,7 @@ app.controller('games_scheduler', function($scope, DisabledAdminViews) {
                 label: $scope.teams_by_id[team_id],
             }
         })
-        $scope.away_team_input = $scope.available_teams.indexOf($scope.away_team_input) > -1 ?
+        $scope.away_team_input = $scope.available_teams.indexOf($scope.away_team_input) > -1 && $scope.away_team_input != $scope.home_team_input ?
             $scope.away_team_input : String($scope.away_team_options[1].value)
     }
     $scope.update_available_teams = ()=>{
@@ -192,6 +196,7 @@ app.controller('games_scheduler', function($scope, DisabledAdminViews) {
         $scope.set_week_input = '1';
         $scope.games = {}
         $scope.home_team_options = [];
+        $scope.$watch('set_week_input', $scope.update_available_teams)
         $.get(`/api/games`)
         .done((res)=>{
             $scope.games = res;
