@@ -22,13 +22,11 @@ Route::resource('/api/teams', 'TeamsAPIController');
 
 
 Route::get('/', 'DefaultRouteController@index');
-Route::get('schedule', 'ScheduleController@index');
-Route::get('set_teams', 'TeamsController@index');
+Route::get('/admin', 'DefaultRouteController@admin_index');
+Route::get('admin/schedule', 'ScheduleController@index');
+Route::get('admin/teams', 'TeamsController@index');
 
-Route::get('set_scores', 'ScoresController@index');
-
-Route::get('reset_options', 'ResetController@index');
-
+Route::get('admin/scores', 'ScoresController@index');
 
 Route::get('games', 'GamesController@index');
 

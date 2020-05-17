@@ -18,11 +18,11 @@
     DONE - use frontend mvc (angularjs 1.7)
     DONE - input view should have its own template
     DONE - move complicated functionality (game generator, score genreator) to frontend (js)
-    - change app menu:
-        - admin should have a 'manage' button on menu
-        - 'manage' should be devided to 'register teams', schedule games & set scores
-        - each should be disabled if locked
-        - reset buttons should be moved to set scores view & schedule view
+    DONE - change app menu:
+        DONE - admin should have a 'manage' button on menu
+        DONE - 'manage' should be devided to 'register teams', schedule games & set scores
+        DONE - each should be disabled if locked
+        DONE - reset buttons should be moved to set scores view & schedule view
     DONE - handle table & game views when no games are set
     - implement login to make it possible for admin/guest to login
     - move season table calculation to backend

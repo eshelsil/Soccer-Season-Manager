@@ -5,20 +5,26 @@
 @php
     $init_options = [
         'teams_by_id' =>$teams_by_id,
-        'weeks_count'=>$weeks_count
+        'weeks_count'=>$weeks_count,
+        'games_in_season'=>$games_in_season
     ];
 @endphp
+
+@section('menu')
+  @include('snippets.main_menu', ['view' => 'admin'])
+  @include('snippets.admin_menu', ['view' => 'schedule'])
+@endsection
 @section('content')
     <div class="h3 mt-2 mb-4"><u>
-        Step 2 - Schedule Games
+        Schedule Games
     </u></div>
 
     <div class="row" ng-controller="games_scheduler" ng-init='initialize(@json($init_options));'>
         
         @if ($can_schedule_games)
         <div class="col-5 mt-3 pl-0">
-            <div ng-show="count_games() >= {{$games_in_season}}" class="h4 mb-2">No more games to schedule :)</div>
-            <div ng-show="count_games() < {{$games_in_season}}">
+            <div ng-show="are_all_games_scheduled()" class="h4 mb-2">No more games to schedule :)</div>
+            <div ng-hide="are_all_games_scheduled()">
                 <div class="row-1 mb-3 p-0">
                     <button ng-click="auto_schedule_all()" type="button" class="btn btn-primary">Auto schedule all games</button>
                 </div>
@@ -69,7 +75,7 @@
             <div class="row-1 mb-3 p-0">
                 <button ng-show="has_games()" ng-click="remove_all_games()" type="button" class="btn btn-danger mr-2">Delete all games</button>
                 <button ng-show="!has_games()" ng-click="go_to_set_teams()" type="button" class="btn btn-secondary mr-2">Back to set teams</button>
-                <button ng-show="count_games() >= {{$games_in_season}}" ng-click="go_to_set_scores()" type="button" class="btn btn-success">Continue to set scores</button>
+                <button ng-show="are_all_games_scheduled()" ng-click="go_to_set_scores()" type="button" class="btn btn-success">Continue to set scores</button>
             </div>
             <div class="h4 mb-2"><u>Scheduled Games:</u></div>
             <div class="p-2 pl-4 border border-dark rounded" style="background: #dcf0ff;">

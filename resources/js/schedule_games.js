@@ -66,15 +66,15 @@ function generate_games(teams_by_id){
 }
 
 function go_to_set_scores(){
-    window.location = '/set_scores';
+    window.location = '/admin/scores';
 }
 
 function go_to_set_teams(){
-    window.location = '/set_teams';
+    window.location = '/admin/teams';
 }
 
 
-app.controller('games_scheduler', function($scope, $location) {
+app.controller('games_scheduler', function($scope, DisabledAdminViews) {
     url = new URL(window.location);
     serach_params = url.searchParams;
     $scope.go_to_set_scores = go_to_set_scores;
@@ -84,6 +84,7 @@ app.controller('games_scheduler', function($scope, $location) {
         $scope.update_available_teams()
         $scope.update_filtered_games()
         $scope.reset_filters_if_no_table()
+        $scope.update_disabled_views()
         $scope.$apply()
     }
     $scope.reset_filters_if_no_table = () =>{
@@ -91,11 +92,23 @@ app.controller('games_scheduler', function($scope, $location) {
             $scope.reset_table_filters()
         }
     }
+    $scope.update_disabled_views = () => {
+        is_scores_view_available = $scope.are_all_games_scheduled() || _.find(Object.values($scope.games), game=>game.is_done)
+        DisabledAdminViews.set('teams', $scope.has_games())
+        DisabledAdminViews.set('scores', !is_scores_view_available)
+        DisabledAdminViews.set('schedule', false)
+    }
+    $scope.is_scores_view_disabled = () => {
+        return _.isEmpty($scope.games)
+    }
     $scope.count_games = function(){
         return Object.keys($scope.games || {}).length
     }
     $scope.has_games = function(){
         return $scope.count_games() > 0
+    }
+    $scope.are_all_games_scheduled = () =>{
+        return $scope.count_games() >= $scope.games_in_season
     }
     $scope.update_weeks_to_schedule = function(){
         games_per_week = {};
@@ -171,6 +184,7 @@ app.controller('games_scheduler', function($scope, $location) {
     $scope.initialize = function(options){
         $scope.teams_by_id = options.teams_by_id
         $scope.weeks_count = options.weeks_count
+        $scope.games_in_season = options.games_in_season
         $scope.update_teams_data_inheritors()
         $scope.bind_table_filters_to_url()
         $scope.bind_filters_to_table($scope.update_filtered_games)

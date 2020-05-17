@@ -3,7 +3,7 @@
 @section('title', 'Games')
 
 @section('menu')
-    @include('snippets.menu', ['view' => 'games'])
+    @include('snippets.main_menu', ['view' => 'games'])
 @endsection
 
 @section('content')

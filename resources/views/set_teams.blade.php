@@ -5,11 +5,16 @@
     $init_options = ['default_teams' => Config::get('default_inputs.TEAMS_LIST')]
 @endphp
 
+@section('menu')
+  @include('snippets.main_menu', ['view' => 'admin'])
+  @include('snippets.admin_menu', ['view' => 'teams'])
+@endsection
+
 @section('content')
     <div ng-controller="teams_registration" ng-init='initialize(@json($init_options));'>
 
         <div class="h3 mt-2 mb-4"><u>
-            Step 1 - Set Teams
+            Set Teams
         </u></div>
 
         <div class="col p-0">

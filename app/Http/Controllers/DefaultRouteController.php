@@ -8,19 +8,24 @@ use App\Team;
 
 class DefaultRouteController extends Controller
 {
-    public function index()
+    public function admin_index()
     { 
         if (!Schema::hasTable('games') || !Game::query()->exists()){
-            return redirect('/set_teams');
+            return redirect('/admin/teams');
         }
         $teams_count = Team::query()->count();
         $games_per_season = $teams_count * ($teams_count - 1);
         if (Game::query()->count() < $games_per_season){
-            return redirect('/schedule');
+            return redirect('/admin/schedule');
         }
-        if (Game::where('is_done', 0)->exists()){
-            return redirect('/set_scores');
+        return redirect('/admin/scores');
+    }
+
+    public function index()
+    {
+        if (Game::where('is_done', 1)->exists()){
+            return redirect('/table');
         }
-        return redirect('/table');
+        return redirect('/admin');
     }
 }

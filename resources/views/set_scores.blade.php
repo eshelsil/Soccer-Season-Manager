@@ -6,12 +6,12 @@
 @extends('layouts.card', [
   'cards' => [
     [
-      'url' => '/set_scores?'. http_build_query( array_merge($_GET, ['is_done' => 0]) ),
+      'url' => '/admin/scores?'. http_build_query( array_merge($_GET, ['is_done' => 0]) ),
       'label' => 'Non Played Games',
       'active' => !$is_on_done_tab,
     ],
     [
-      'url' => '/set_scores?'. http_build_query( array_merge($_GET, ['is_done' => 1]) ),
+      'url' => '/admin/scores?'. http_build_query( array_merge($_GET, ['is_done' => 1]) ),
       'label' => 'Played Games',
       'active' => $is_on_done_tab,
     ]
@@ -22,23 +22,46 @@
 @section('container', 'set_scores')
 
 @section('menu')
-  @include('snippets.menu', ['view' => 'set_scores'])
+  @include('snippets.main_menu', ['view' => 'admin'])
+  @include('snippets.admin_menu', ['view' => 'scores'])
 @endsection
 
 @section('view_title', 'Set Scores')
 
 @section('card_content')
 <div ng-controller="set_scores" ng-init='initialize(@json($init_options))'>
-    <div class="h3 mt-2 mb-5"><u>
+    <div class="h3 mt-2 mb-5">
+      <u>
         @if (!$is_on_done_tab)
           Set New Scores
-          @if ($has_available_games)
-            <button type="button" ng-click="randomize_all()" class="btn btn-primary ml-5">Randomize all non-finished games</button>
-          @endif
+          <div ng-show="has_available_games()" class="ml-4" style="display: inline-block;">
+            @include('snippets.button_modal', [
+                'button_action' => 'randomize_all',
+                'button_id' => 'randomize_scores',
+                'button_label' => 'Randomize Scores',
+                'button_class' => 'btn-primary',
+                'title' => 'Randomize Scores',
+                'msg' => "This will randomize a score for each game shown on table. \n Are you sure?",
+                'action_label' => 'Randomize',
+                'cancel_label' => 'Cancel'
+                ])
+          </div>
         @else
           Update Scores
+          <div ng-show="has_available_games()" class="ml-4" style="display: inline-block;">
+            @include('snippets.button_modal', [
+                'button_action' => 'reset_all_scores',
+                'button_id' => 'reset_scores',
+                'button_label' => 'Reset All Shown Scores',
+                'title' => 'Reset Scores',
+                'msg' => "This will reset the score of all the games shown on table. \n Are you sure?",
+                'action_label' => 'Reset',
+                'cancel_label' => 'Cancel'
+                ])
+          </div>
         @endif
-    </u></div>
+      </u>
+    </div>
 
     <div class="col mt-3">
         @if (!$has_available_games)
@@ -51,7 +74,7 @@
           </div>
         @else
           @include('snippets.table_filters')
-          <table ng-cloak ng-init="get_games()" class="table table-striped shrunk">
+          <table ng-cloak class="table table-striped shrunk">
               <thead class="thead-dark">
                   <tr>
                       <th scope="col">Round</th>

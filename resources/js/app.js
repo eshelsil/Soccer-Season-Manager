@@ -1,4 +1,21 @@
 window.app = angular.module('app', [])
+app.factory('DisabledAdminViews', function(){
+    var data = {
+        'teams': false,
+        'schedule': false,
+        'scores': false,
+    }
+    function set(view, bool){
+        data[view] = bool;
+    }
+    function get(view){
+        return data[view]
+    }
+    return {
+        set,
+        get
+    }
+})
 app.run(function($rootScope) {
     $rootScope.format_select_options = (options, params = {})=>{
         if (!Array.isArray(options) && typeof options == 'object'){
@@ -149,7 +166,7 @@ require('./set_teams');
 require('./schedule_games');
 require('./set_scores');
 require('./table');
-require('./reset');
+require('./admin_menu');
 
 
 $(document).ready(function(){

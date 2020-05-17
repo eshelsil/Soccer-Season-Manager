@@ -13,11 +13,11 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>{{$msg}}</p>
+          <h6>{{$msg}}</h6>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">{{$cancel_label}}</button>
-        <button type="button" id="{{$button_id}}_confirm" class="btn {{$action_button_class ?? "btn-danger"}}">{{$action_label}}</button>
+        <button type="button" id="{{$button_id}}_confirm" ng-click="{{$button_action}}()" class="btn {{$button_class ?? "btn-danger"}}">{{$action_label}}</button>
         </div>
       </div>
     </div>

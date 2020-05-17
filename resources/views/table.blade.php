@@ -3,7 +3,7 @@
 @section('title', 'Table')
 
 @section('menu')
-    @include('snippets.menu', ['view' => 'table'])
+    @include('snippets.main_menu', ['view' => 'table'])
 @endsection
 
 @php

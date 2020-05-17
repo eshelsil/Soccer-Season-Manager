@@ -1,4 +1,4 @@
-app.controller('set_scores', function($scope, $location) {
+app.controller('set_scores', function($scope, DisabledAdminViews) {
     $scope.home_input = {};
     $scope.away_input = {};
     $scope.games = {};
@@ -78,6 +78,7 @@ app.controller('set_scores', function($scope, $location) {
         }
         $.post(`/api/games?_method=put`, {games: games_data})
         .done((games)=>{
+            $('#randomize_scores_dismiss_modal').click();
             for (game_id in games){
                 delete($scope.games[game_id])
             }
@@ -85,8 +86,29 @@ app.controller('set_scores', function($scope, $location) {
         })
         .fail((e)=>{alert(e.responseText)});
     }
+    $scope.reset_all_scores = () => {
+        games_data = Object.keys($scope.games).map(game_id=>({
+            id: game_id,
+            home: null,
+            away: null
+        }));
+        $.post(`/api/games?_method=put`, {games: games_data})
+        .done(()=>{
+            $('#reset_scores_dismiss_modal').click();
+            $scope.games = {};
+            $scope.$apply();
+        })
+        //#NOTE improve error alerts
+        .fail(function(e){alert(e.responseText)});
+    }
+    $scope.update_disabled_views = () => {
+        DisabledAdminViews.set('teams', true)
+        DisabledAdminViews.set('scores', false)
+        DisabledAdminViews.set('schedule', false)
+    }
     $scope.initialize = function(options){
         $scope.teams_by_id = options.teams_by_id
+        $scope.update_disabled_views()
         $scope.update_teams_data_inheritors()
         $scope.bind_table_filters_to_url()
         $scope.update_table_filters_attrs()
