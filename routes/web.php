@@ -21,14 +21,14 @@ Route::delete('/api/teams/reset_all', 'TeamsAPIController@reset_all');
 Route::resource('/api/teams', 'TeamsAPIController');
 
 
-Route::get('/', 'DefaultRouteController@index');
-Route::get('/admin', 'DefaultRouteController@admin_index');
-Route::get('admin/schedule', 'ScheduleController@index');
-Route::get('admin/teams', 'TeamsController@index');
+Route::get('/', 'ContentController@index');
+Route::get('games', 'ContentController@season_games');
+Route::get('table', 'ContentController@season_table');
+Route::get('/admin', 'ContentController@admin_index');
+Route::get('admin/schedule', 'ContentController@games_scheduler');
+Route::get('admin/teams', 'ContentController@set_teams');
+Route::get('admin/scores', 'ContentController@set_scores');
 
-Route::get('admin/scores', 'ScoresController@index');
-
-Route::get('games', 'GamesController@index');
 
 
-Route::get('table', 'TableController@index');
+
