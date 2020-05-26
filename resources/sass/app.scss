@@ -25,6 +25,13 @@
         }
     }
 }
+.user_icon{
+    background: url('/img/user_icon.svg');
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-size: 24px 24px;
+}
 .delete_btn, .edit_btn, .confirm_set_score_btn, .cancel_set_score_btn, .delete_team_btn, .delete_game_btn{
     @include clickable;
     display: block;

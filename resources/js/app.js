@@ -171,9 +171,11 @@ require('./admin_menu');
 
 $(document).ready(function(){
     let csrf_tkn = $('input[name="_token"]').val();
+    let api_tkn = $('input[name="_api_token"]').val();
     $.ajaxSetup({
         headers: {
-            'X-CSRF-TOKEN': csrf_tkn
+            'X-CSRF-TOKEN': csrf_tkn,
+            'Authorization': `Bearer ${api_tkn}`,
       }
     });
 })

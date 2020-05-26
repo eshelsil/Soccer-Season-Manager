@@ -14,6 +14,17 @@ class TeamsAPIController extends Controller
     private $is_locked_msg = 'Cannot change registered teams when there are scheduled games';
 
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth')->only('index');
+        $this->middleware('admin:api')->except('index');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response

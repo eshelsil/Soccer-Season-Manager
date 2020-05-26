@@ -12,6 +12,17 @@ use Exception;
 class GamesAPIController extends Controller
 {
 
+     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth')->only('index');
+        $this->middleware('admin:api')->except('index');
+    }
+
     /**
      * Display a listing of the resource.
      *

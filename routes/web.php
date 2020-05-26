@@ -17,18 +17,27 @@ Route::delete('/api/games/reset_all', 'GamesAPIController@reset_all');
 Route::resource('/api/games', 'GamesAPIController');
 Route::put('/api/games', 'GamesAPIController@update_many');
 
+
 Route::delete('/api/teams/reset_all', 'TeamsAPIController@reset_all');
 Route::resource('/api/teams', 'TeamsAPIController');
-
 
 Route::get('/', 'ContentController@index');
 Route::get('games', 'ContentController@season_games');
 Route::get('table', 'ContentController@season_table');
-Route::get('/admin', 'ContentController@admin_index');
-Route::get('admin/schedule', 'ContentController@games_scheduler');
-Route::get('admin/teams', 'ContentController@set_teams');
-Route::get('admin/scores', 'ContentController@set_scores');
+
+Route::middleware('admin')->group(function () {
+    Route::get('/admin', 'ContentController@admin_index');
+    Route::get('admin/schedule', 'ContentController@games_scheduler');
+    Route::get('admin/teams', 'ContentController@set_teams');
+    Route::get('admin/scores', 'ContentController@set_scores');
+});
 
 
 
 
+Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
+Route::post('login', ['as' => 'login.post', 'uses' => 'Auth\LoginController@login']);
+Route::post('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
+
+Route::get('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@showRegistrationForm']);
+Route::post('register', ['as' => 'register.post', 'uses' => 'Auth\RegisterController@register']);

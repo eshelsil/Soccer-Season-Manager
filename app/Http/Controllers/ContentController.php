@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Game;
 use App\Team;
 
@@ -12,6 +13,7 @@ class ContentController extends Controller
 
     public function __construct()
     {
+        $this->middleware('auth');
         $this->ensure_teams_table_existance();
         $this->ensure_games_table_existance();
     }
@@ -53,9 +55,13 @@ class ContentController extends Controller
         return redirect('/admin/scores');
     }
 
+    private function is_admin(){
+        return Auth::user()->isAdmin();
+    }
+
     public function index()
     {
-        if (Game::where('is_done', 1)->exists()){
+        if (!$this->is_admin() || Game::where('is_done', 1)->exists()){
             return redirect('/table');
         }
         return redirect('/admin');
