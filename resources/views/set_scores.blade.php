@@ -102,9 +102,9 @@
                         </td>
 
                         <td ng-if-start="is_on_played_tab && game_on_edit !== game.id" class="shrunk pr-1 text-center"
-                            ng-class="{'winner_class': game.is_home_winner}">@{{game.home_score}}</td>
+                            ng-class="{'winner_cell': game.is_home_winner}">@{{game.home_score}}</td>
                         <td class='shrunk pr-0 pl-0'>:</td>
-                        <td ng-if-end ng-class="{'winner_class': game.is_away_winner}" class="shrunk pl-0 text-center">@{{game.away_score}}</td>
+                        <td ng-if-end ng-class="{'winner_cell': game.is_away_winner}" class="shrunk pl-0 text-center">@{{game.away_score}}</td>
 
 
 

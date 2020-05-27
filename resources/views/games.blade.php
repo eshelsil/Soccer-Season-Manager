@@ -56,9 +56,9 @@
                 }">@{{get_shorten_result(game.team_result)}}</td>
                 <td class="shrunk" ng-class="{'selected_team_cell': game.team_side=='home', 'winner_cell': game.is_home_winner}">@{{game.home_team_name}}</td>
                 <td class="shrunk" ng-class="{'selected_team_cell': game.team_side=='away', 'winner_cell': game.is_away_winner}">@{{game.away_team_name}}</td>
-                <td class='shrunk pr-0' ng-class="{'winner_class': game.is_home_winner}">@{{game.home_score}}</td>
+                <td class='shrunk pr-0' ng-class="{'winner_cell': game.is_home_winner}">@{{game.home_score}}</td>
                 <td class='shrunk pr-0 pl-0'>@{{game.is_done ? ':' : ''}}</td>
-                <td class='shrunk pl-1' ng-class="{'winner_class': game.is_away_winner}">@{{game.away_score}}</td>
+                <td class='shrunk pl-1' ng-class="{'winner_cell': game.is_away_winner}">@{{game.away_score}}</td>
             </tr>
         </tbody>
     </table>
