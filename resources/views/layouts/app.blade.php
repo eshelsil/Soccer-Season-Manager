@@ -39,7 +39,6 @@
         @yield('menu')
 
         <div class="ml-5 mr-5 mt-3">
-        {{-- <div class="ml-5 mr-5 mt-3" ng-controller="@yield('controller')"> --}}
             @yield('content')
         </div>
     </body>
