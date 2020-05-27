@@ -21,6 +21,13 @@ app.run(function($rootScope) {
     $rootScope.logout = ()=>{
         document.getElementById('logout-form').submit();
     }
+    $rootScope.delete_active_user = ()=>{
+        $.post(`/api/users/${$rootScope.active_user_id}?_method=delete`)
+        .done(()=>{
+            $rootScope.logout();
+        })
+        .fail((e)=>{alert(e.responseText)});
+    }
     $rootScope.format_select_options = (options, params = {})=>{
         if (!Array.isArray(options) && typeof options == 'object'){
             // allow implementation of {value1: label1, value2: label2} options

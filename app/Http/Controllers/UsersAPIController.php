@@ -74,7 +74,7 @@ class UsersAPIController extends Controller
     {
         try {
             $active_user = Auth::user();
-            if (!$active_user->isAdmin() && $active_user->id !== $id){
+            if (!$active_user->isAdmin() && $active_user->id != $id){
                 $error_msg = 'Regular user cannot remove other users';
                 throw new Exception($error_msg);
             }

@@ -28,6 +28,9 @@
                                      document.getElementById('logout-form').submit();">
                         {{ __('Logout') }}
                     </a>
+                    <a class="dropdown-item" href="" onclick="event.preventDefault();" ng-click="delete_active_user()">
+                        {{ __('Delete User (and logout)') }}
+                    </a>
 
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf

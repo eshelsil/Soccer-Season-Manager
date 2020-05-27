@@ -24,7 +24,7 @@
         DONE - each should be disabled if locked
         DONE - reset buttons should be moved to set scores view & schedule view
     DONE - handle table & game views when no games are set
-    - implement login to make it possible for admin/guest to login
+    DONE - implement login to make it possible for admin/guest to login
     - move season table calculation to backend
 
 4. Finishes

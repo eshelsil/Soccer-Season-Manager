@@ -33,6 +33,7 @@
             <input type="hidden" name="_api_token" value="" autocomplete="off">
         @else
             <input type="hidden" name="_api_token" value="{{ Auth::user()->api_token }}" autocomplete="off">
+            <div hidden ng-init="active_user_id = {{ Auth::user()->id }}"></div>
         @endguest
         
         @yield('menu')
