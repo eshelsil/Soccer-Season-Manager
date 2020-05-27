@@ -4,6 +4,7 @@ app.factory('DisabledAdminViews', function(){
         'teams': false,
         'schedule': false,
         'scores': false,
+        'users': false,
     }
     function set(view, bool){
         data[view] = bool;
@@ -17,6 +18,9 @@ app.factory('DisabledAdminViews', function(){
     }
 })
 app.run(function($rootScope) {
+    $rootScope.logout = ()=>{
+        document.getElementById('logout-form').submit();
+    }
     $rootScope.format_select_options = (options, params = {})=>{
         if (!Array.isArray(options) && typeof options == 'object'){
             // allow implementation of {value1: label1, value2: label2} options
@@ -165,6 +169,7 @@ require('./games');
 require('./set_teams');
 require('./schedule_games');
 require('./set_scores');
+require('./manage_users');
 require('./table');
 require('./admin_menu');
 

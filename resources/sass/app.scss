@@ -13,6 +13,16 @@
 
 //#NOTE split css to relevant files and import
 
+.link{
+    @include clickable;
+    color: #3490dc;
+    text-decoration: none;
+    &:hover{
+        color: #1d68a7;
+        text-decoration: underline;
+    }
+}
+
 .table {
     &.shrunk{
         white-space: nowrap;

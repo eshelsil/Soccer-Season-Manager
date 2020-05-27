@@ -40,4 +40,12 @@ class User extends Authenticatable
     public function isAdmin(){
         return $this->role == 'admin';
     }
+
+    public function json_export(){
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+            'role' => $this->role,
+        ];
+    }
 }

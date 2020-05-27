@@ -21,6 +21,11 @@ Route::put('/api/games', 'GamesAPIController@update_many');
 Route::delete('/api/teams/reset_all', 'TeamsAPIController@reset_all');
 Route::resource('/api/teams', 'TeamsAPIController');
 
+Route::delete('/api/users/{id}', 'UsersAPIController@destroy');
+Route::put('/api/users/{id}/set_admin', 'UsersAPIController@set_admin');
+Route::put('/api/users/{id}/set_regular', 'UsersAPIController@set_regular');
+Route::get('/api/users', 'UsersAPIController@index');
+
 Route::get('/', 'ContentController@index');
 Route::get('games', 'ContentController@season_games');
 Route::get('table', 'ContentController@season_table');
@@ -30,6 +35,7 @@ Route::middleware('admin')->group(function () {
     Route::get('admin/schedule', 'ContentController@games_scheduler');
     Route::get('admin/teams', 'ContentController@set_teams');
     Route::get('admin/scores', 'ContentController@set_scores');
+    Route::get('admin/users', 'ContentController@manage_users');
 });
 
 

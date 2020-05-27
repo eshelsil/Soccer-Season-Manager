@@ -109,4 +109,8 @@ class ContentController extends Controller
         return view('set_teams');
     }
 
+    public function manage_users(){
+        return view('users');
+    }
+
 }
