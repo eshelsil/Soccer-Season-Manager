@@ -158,14 +158,12 @@ app.run(function($rootScope) {
         return url.search
     }
     $rootScope.bind_model_to_query_param = function(model){
-        //NOTE does not work... url resets when openeing a select_input
+        //NOTE used to not work - url got reset when openeing a select_input. could not reproduce bug
         update_url = (newVal) => {
-            setTimeout( ()=>{
-                let {protocol, host, pathname} = window.location
-                current_path = `${protocol}//${host}${pathname}`;
-                url = new URL(`${current_path}${this.get_search_query_with_filters()}`)
-                window.history.replaceState({}, "", url.href);
-            }, 200)
+            let {protocol, host, pathname} = window.location
+            current_path = `${protocol}//${host}${pathname}`;
+            url = new URL(`${current_path}${this.get_search_query_with_filters()}`)
+            window.history.replaceState({}, "", url.href);
         }
         this.$watch(model, update_url)
     }
