@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Utils\SeasonTableUtil;
 use App\Game;
 use App\Team;
 
@@ -75,11 +76,30 @@ class ContentController extends Controller
         ]);
     }
 
-    public function season_table(){
-        $games = Game::where('is_done', 1)->get();
+    public function season_table(Request $request){
+        $query_until_week = $request->query('week');
+        $games = Game::query()
+            ->where('is_done', 1)
+            ->get();
+        $last_week = $games->max('week');
+        $has_games = !is_null($last_week);
+        if (!is_null($query_until_week)){
+            $games = $games->filter(function ($game) use($query_until_week) {
+                return $game['week'] <= $query_until_week;
+            });
+        }
+        
+        $teams_by_id = app('RegisterationManager')->get_teams_by_id();
+        $table_rows = SeasonTableUtil::get_table($games, array_keys($teams_by_id));
+        foreach($table_rows as $index => $row){
+            $row['name'] = $teams_by_id[$row['id']];
+        }
+        
         return view('table', [
-            'games' => $games,
-            'teams_by_id' => app('RegisterationManager')->get_teams_by_id()
+            'has_games' => $has_games,
+            'last_week' => $last_week,
+            'has_teams' => count($teams_by_id) > 0,
+            'table_rows' => $table_rows,
         ]);
     }
 

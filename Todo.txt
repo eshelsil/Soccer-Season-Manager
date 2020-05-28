@@ -25,7 +25,7 @@
         DONE - reset buttons should be moved to set scores view & schedule view
     DONE - handle table & game views when no games are set
     DONE - implement login to make it possible for admin/guest to login
-    - move season table calculation to backend
+    DONE - move season table calculation to backend
 
 4. Finishes
     DONE - scheduling - underline selected team cell
@@ -36,9 +36,6 @@
     - add is_done filter to games view
     - add loaders
     - split scss to relevant files
-    
-- debug using Log::
-
 
 
 
