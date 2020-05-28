@@ -94,8 +94,8 @@ class ContentController extends Controller
         foreach($table_rows as $index => $row){
             $row['name'] = $teams_by_id[$row['id']];
         }
-        
-        return view('table', [
+
+        return view('season_table', [
             'has_games' => $has_games,
             'last_week' => $last_week,
             'has_teams' => count($teams_by_id) > 0,

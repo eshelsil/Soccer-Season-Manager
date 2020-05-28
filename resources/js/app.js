@@ -175,7 +175,7 @@ require('./set_teams');
 require('./schedule_games');
 require('./set_scores');
 require('./manage_users');
-require('./table');
+require('./season_table');
 require('./admin_menu');
 
 
