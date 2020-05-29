@@ -57,8 +57,10 @@ app.controller('set_scores', ['$scope', 'DisabledAdminViews', function($scope, D
         }
 
         $.get(`/api/games/${url.search}`)
-        .done((res)=>{
-            $scope.games = res;
+        .done((games)=>{
+            for(game_object of games){
+                $scope.games[game_object.id] = game_object;
+            }
             $scope.$apply();
         })
     }

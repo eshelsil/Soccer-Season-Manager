@@ -198,8 +198,10 @@ app.controller('games_scheduler', ['$scope', 'DisabledAdminViews', function($sco
         $scope.home_team_options = [];
         $scope.$watch('set_week_input', $scope.update_available_teams)
         $.get(`/api/games`)
-        .done((res)=>{
-            $scope.games = res;
+        .done((games)=>{
+            for(game_object of games){
+                $scope.games[game_object.id] = game_object;
+            }
             $scope.update_and_apply();
         })
     };

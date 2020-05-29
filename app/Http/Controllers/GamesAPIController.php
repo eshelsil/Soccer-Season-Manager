@@ -59,7 +59,7 @@ class GamesAPIController extends Controller
             $output = $game->json_export();
             $output['team_side'] = $game->getTeamSide($query_team_id);
             $output['team_result'] = $game->getTeamResult($query_team_id);
-            $res[$game->game_id] = $output;
+            $res[] = $output;
         }
         return response()->json($res, 200);
     }

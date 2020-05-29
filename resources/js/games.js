@@ -13,7 +13,7 @@ app.controller('games_display', ['$scope', function($scope) {
     }
     $scope.initialize = function(options){
         $scope.teams_by_id = options.teams_by_id ?? {}
-        $scope.games = []
+        $scope.games = {}
         $scope.update_teams_data_inheritors()
         $scope.update_table_filters_attrs()
         $scope.bind_filters_to_table($scope.update_table)
@@ -23,8 +23,10 @@ app.controller('games_display', ['$scope', function($scope) {
         search_params = new URLSearchParams($scope.get_search_query_with_filters())
 
         $.get(`/api/games?${search_params.toString()}`)
-        .done((res)=>{
-            $scope.games = res;
+        .done((games)=>{
+            for(game_object of games){
+                $scope.games[game_object.id] = game_object;
+            }
             $scope.$apply();
         })
     }
