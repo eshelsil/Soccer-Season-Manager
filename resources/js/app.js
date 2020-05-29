@@ -17,7 +17,7 @@ app.factory('DisabledAdminViews', function(){
         get
     }
 })
-app.run(function($rootScope) {
+app.run(['$rootScope', function($rootScope) {
     $rootScope.logout = ()=>{
         document.getElementById('logout-form').submit();
     }
@@ -167,7 +167,7 @@ app.run(function($rootScope) {
         }
         this.$watch(model, update_url)
     }
-});
+}]);
 
 require('./bootstrap');
 require('./games');

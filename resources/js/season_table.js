@@ -1,4 +1,4 @@
-app.controller('season_table', function($scope) {
+app.controller('season_table', ['$scope', function($scope) {
     $scope.get_table_filters_map = function(){
         return {
             'until_week_filter': {
@@ -32,4 +32,4 @@ app.controller('season_table', function($scope) {
         available_weeks = _.range(1, $scope.last_week + 1)
         this.until_week_options = this.format_select_options(available_weeks, {with_all: true})
     }
-});
+}]);

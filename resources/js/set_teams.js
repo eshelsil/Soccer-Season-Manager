@@ -2,7 +2,7 @@ function go_to_schedule(){
     window.location = '/admin/schedule';
 }
 
-app.controller('teams_registration', function($scope, DisabledAdminViews) {
+app.controller('teams_registration', ['$scope', 'DisabledAdminViews', function($scope, DisabledAdminViews) {
     $scope.go_to_schedule = go_to_schedule;
     $scope.initialize = function(options){
         $scope.default_teams = options.default_teams
@@ -74,4 +74,4 @@ app.controller('teams_registration', function($scope, DisabledAdminViews) {
         })
     };
 
-});
+}]);

@@ -1,4 +1,4 @@
-app.controller('manage_users', function($scope) {
+app.controller('manage_users', ['$scope', function($scope) {
     $scope.remove_user = function(id, with_logout = false){
         $.post(`/api/users/${id}?_method=delete`)
         .done(()=>{
@@ -36,4 +36,4 @@ app.controller('manage_users', function($scope) {
             $scope.$apply();
         })
     }
-});
+}]);

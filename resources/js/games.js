@@ -4,7 +4,7 @@ shorten_result_map = {
     'lose': 'L'
 }
 
-app.controller('games_display', function($scope) {
+app.controller('games_display', ['$scope', function($scope) {
     $scope.is_team_selected = function(){
         return [undefined, 'all'].indexOf($scope.team_filter) === -1
     }
@@ -28,4 +28,4 @@ app.controller('games_display', function($scope) {
             $scope.$apply();
         })
     }
-});
+}]);

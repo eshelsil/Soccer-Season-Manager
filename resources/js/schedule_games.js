@@ -74,7 +74,7 @@ function go_to_set_teams(){
 }
 
 
-app.controller('games_scheduler', function($scope, DisabledAdminViews) {
+app.controller('games_scheduler', ['$scope', 'DisabledAdminViews', function($scope, DisabledAdminViews) {
     url = new URL(window.location);
     serach_params = url.searchParams;
     $scope.go_to_set_scores = go_to_set_scores;
@@ -247,4 +247,4 @@ app.controller('games_scheduler', function($scope, DisabledAdminViews) {
         .fail((e)=>{alert(e.responseText)});
     };
 
-});
+}]);

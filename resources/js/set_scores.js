@@ -1,4 +1,4 @@
-app.controller('set_scores', function($scope, DisabledAdminViews) {
+app.controller('set_scores', ['$scope', 'DisabledAdminViews', function($scope, DisabledAdminViews) {
     $scope.home_input = {};
     $scope.away_input = {};
     $scope.games = {};
@@ -117,4 +117,4 @@ app.controller('set_scores', function($scope, DisabledAdminViews) {
             $scope.$watch(model, $scope.get_games)
         }
     }
-});
+}]);
