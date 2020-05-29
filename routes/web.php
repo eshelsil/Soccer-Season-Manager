@@ -41,7 +41,7 @@ Route::middleware('admin')->group(function () {
 
 
 
-Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
+Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@index']);
 Route::post('login', ['as' => 'login.post', 'uses' => 'Auth\LoginController@login']);
 Route::post('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
 
