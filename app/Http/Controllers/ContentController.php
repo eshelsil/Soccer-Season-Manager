@@ -15,32 +15,6 @@ class ContentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->ensure_teams_table_existance();
-        $this->ensure_games_table_existance();
-    }
-
-    private function ensure_teams_table_existance(){
-        if (!Schema::hasTable('teams')) {
-            Schema::create('teams', function($table){
-                $table->increments('team_id');
-                $table->string('team_name', 50)->unique();
-            });
-        }
-    }
-
-    private function ensure_games_table_existance(){
-        if (!Schema::hasTable('games')) {
-            Schema::create('games', function($table){
-                $table->increments('game_id');
-                $table->tinyInteger('round');
-                $table->tinyInteger('week');
-                $table->integer('home_team_id');
-                $table->integer('away_team_id');
-                $table->tinyInteger('home_score')->nullable();
-                $table->tinyInteger('away_score')->nullable();
-                $table->boolean('is_done')->storedAs('home_score is not null and away_score is not null');
-            });
-        }
     }
 
     public function admin_index()
