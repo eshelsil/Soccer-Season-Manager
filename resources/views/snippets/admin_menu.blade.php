@@ -2,7 +2,7 @@
     $disabled_views = $disabled_views ?? [];
 @endphp
 
-<nav ng-controller="admin_menu" class="mt-2 navbar navbar-expand-lg navbar-dark" style="background-color:#11348e;">
+<nav ng-controller="admin_menu" class="mt-2 navbar navbar-expand navbar-dark" style="background-color:#11348e;">
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav" style="width:100%;">
             <li class="nav-item @if ($view == 'teams') active @endif">

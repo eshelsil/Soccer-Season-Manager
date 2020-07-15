@@ -1,7 +1,7 @@
 @php
     $is_admin = Auth::user()->isAdmin();
 @endphp
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav" style="width: 100%;">
             @if ($is_admin)
