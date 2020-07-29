@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Game;
 use Log;
+use Carbon\Carbon;
 use Exception;
 
 class GamesAPIController extends Controller
@@ -76,7 +77,7 @@ class GamesAPIController extends Controller
             return DB::transaction(function () use($games_array) {
                 $output = [];
                 foreach($games_array as $index=>$game ) {
-                    $res = $this->store_single_game($game['week'], $game['home_team_id'], $game['away_team_id']);
+                    $res = $this->store_single_game($game['week'], $game['home_team_id'], $game['away_team_id'], $game['time']);
                     array_push($output, $res);
                 }
                 return response()->json($output, 200);
@@ -95,7 +96,7 @@ class GamesAPIController extends Controller
      * @param  int  $away_team_id
      * @return array
      */
-    private function store_single_game($week, $home_team_id, $away_team_id)
+    private function store_single_game($week, $home_team_id, $away_team_id, $time)
     {
         $regist_manager = app('RegisterationManager');
 
@@ -175,6 +176,7 @@ class GamesAPIController extends Controller
             // return response("Home team is already hosting away team this season", 400);
         }
         $game = new Game;
+        $game->time = Carbon::parse($time);
         $game->round = $round;
         $game->week = $week;
         $game->home_team_id = $home_team_id;

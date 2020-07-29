@@ -62,8 +62,26 @@ function generate_games(teams_by_id){
             "away_team_id": game["home_team_id"]
         })
     }
-    return _.concat(first_round_games, second_round_games);
+    let games = _.concat(first_round_games, second_round_games);
+    first_week_date = get_default_starting_date();
+    return _.map(games, function(game){
+        week = game['week'];
+        time = new Date(first_week_date);
+        recess_period = 7 * ( game['round'] - 1 );
+        time.setDate(first_week_date.getDate() + (7 * (week - 1)) + recess_period);
+        game['time'] = time.toISOString();
+        return game;
+    });
 }
+
+function get_default_starting_date(){
+    let now = new Date();
+    let tonight = new Date(now.toISOString().replace(/T.*Z/, 'T19:00:00.000'));
+    let first_week_date = new Date(tonight);
+    first_week_date.setDate(tonight.getDate() + 1);
+    return first_week_date
+}
+
 
 function go_to_set_scores(){
     window.location = '/admin/scores';
@@ -153,6 +171,50 @@ app.controller('games_scheduler', ['$scope', 'DisabledAdminViews', function($sco
             }
             $scope.set_week_input = String(selected_week ?? 0)
         }
+        if (!$scope.are_all_games_scheduled()){
+            $scope.update_time_inputs();
+        }
+    }
+    $scope.update_time_inputs = ()=>{
+        let week = $scope.set_week_input;
+        function get_datetime(){
+            if (!$scope.has_games()){
+                starting_date = get_default_starting_date()
+                let date = new Date(starting_date);
+                date.setDate(date.getDate() + ( 7 * (week - 1) ) )
+                return date
+            }
+            let game_in_same_week = _.find(Object.values($scope.games), (game)=>{
+                return game['week'] == week
+            })
+            if (game_in_same_week !== undefined){
+                return new Date(game_in_same_week['time']);
+            }
+            let games_by_week = _.sortBy(Object.values($scope.games), 'week')
+            let games_by_week_dec = _.reverse(_.clone(games_by_week))
+            let most_prior_game = _.find(games_by_week_dec, (game)=>{
+                return game['week'] < week
+            })
+            if (most_prior_game !== undefined){
+                let date = new Date(most_prior_game['time']);
+                date.setDate(date.getDate() + 7)
+                return date
+            }
+            let most_posterior_game = _.find(games_by_week, (game)=>{
+                return game['week'] > week
+            })
+            if (most_posterior_game !== undefined){
+                let date = new Date(most_prior_game['time']);
+                date.setDate(date.getDate() - 7)
+                return date
+            }
+
+
+
+        }
+        let datetime = get_datetime()
+        $scope.date_input = datetime
+        $scope.time_input = datetime
     }
     $scope.update_home_team_input_options = ()=>{
         $scope.home_team_options = $scope.available_teams.map((team_id)=> {
@@ -225,7 +287,21 @@ app.controller('games_scheduler', ['$scope', 'DisabledAdminViews', function($sco
         h= $scope.home_team_input;
         a= $scope.away_team_input;
         w= $scope.set_week_input;
-        $.post(`/api/games`, {games: [{week: w, home_team_id: h, away_team_id: a}]})
+        d= new Date($scope.date_input)
+        t= new Date($scope.time_input)
+        datetime = new Date(t)
+        datetime.setYear(d.getFullYear())
+        datetime.setMonth(d.getMonth())
+        datetime.setDate(d.getDate())
+        
+        $.post(`/api/games`, {
+            games: [{
+                week: w,
+                home_team_id: h,
+                away_team_id: a,
+                time: datetime.toISOString(),
+            }]
+        })
         .done((new_games)=>{
             game_object = new_games[0];
             $scope.games[game_object.id] = game_object;

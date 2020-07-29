@@ -79,6 +79,7 @@
                   <tr>
                       <th scope="col">Round</th>
                       <th scope="col">Week</th>
+                      <th scope="col">Time</th>
                       <th scope="col">Home Team</th>
                       <th scope="col">Away Team</th>
                       <th colspan="3" scope="col">Score</th>
@@ -90,6 +91,7 @@
                     <tr ng-repeat="game in games">
                       <td class='shrunk'>@{{game.round}}</td>
                       <td class='shrunk'>@{{game.week}}</td>
+                      <td class='date_cell'>@{{print_time_cell(game.time)}}</td>
                       <td class="shrunk" ng-class="{'selected_team_cell': game.team_side=='home', 'winner_cell': game.is_home_winner}">@{{game.home_team_name}}</td>
                       <td class="shrunk" ng-class="{'selected_team_cell': game.team_side=='away', 'winner_cell': game.is_away_winner}">@{{game.away_team_name}}</td>
 

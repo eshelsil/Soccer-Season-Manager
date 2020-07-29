@@ -54,13 +54,23 @@
                                     'label' => 'Home Team',
                                 ])
                             </div>
-                            <div class="col m-0 p-0">
+                            <div class="col m-0 mb-3 p-0">
                                 @include('snippets.select_input', [
                                     'ng_model' => 'away_team_input',
                                     'options_var' => 'away_team_options',
                                     'id' => 'awayTeamSelect',
                                     'label' => 'Away Team',
                                 ])
+                            </div>
+                        </div>
+                        <div class="row m-0 p-0">
+                            <div class="col p-0">
+                                <label class="row m-0">Date</label>
+                                <input type="date" id="date_input" ng-model="date_input">
+                            </div>
+                            <div class="col p-0">
+                                <label class="row m-0">Time</label>
+                                <input type="time" id="time_input" ng-model="time_input">
                             </div>
                         </div>
                     </div>
@@ -87,6 +97,7 @@
                             <tr>
                                 <th scope="col">Round</th>
                                 <th scope="col">Week</th>
+                                <th scope="col">Time</th>
                                 <th scope="col">Home Team</th>
                                 <th scope="col">Away Team</th>
                                 <th scope="col"></th>
@@ -96,6 +107,7 @@
                             <tr ng-repeat="game in filtered_games">
                                 <td class='shrunk'>@{{game.round}}</td>
                                 <td class='shrunk'>@{{game.week}}</td>
+                                <td class='date_cell'>@{{print_time_cell(game.time)}}</td>
                                 <td class='shrunk' ng-class="{'selected_team_cell': game.home_team_id==team_filter}">@{{game.home_team_name}}</td>
                                 <td class='shrunk' ng-class="{'selected_team_cell': game.away_team_id==team_filter}">@{{game.away_team_name}}</td>
                                 <td class='shrunk'>

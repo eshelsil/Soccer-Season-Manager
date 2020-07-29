@@ -83,6 +83,7 @@ class Game extends Model
             'id' => $this->game_id,
             'round' => $this->round,
             'week' => $this->week,
+            'time' => $this->time,
             'home_team_id' => $this->getHomeTeamId(),
             'home_team_name' => $teams_by_id[$this->getHomeTeamId()],
             'away_team_id' => $this->getAwayTeamId(),

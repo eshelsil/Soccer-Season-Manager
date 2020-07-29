@@ -18,6 +18,8 @@ app.factory('DisabledAdminViews', function(){
     }
 })
 app.run(['$rootScope', function($rootScope) {
+    let time_regex = /(\d+):(\d+):.*(\w\w)/;
+    let date_regex = /(\d+)\/(\d+)\/(\d+)/;
     $rootScope.logout = ()=>{
         document.getElementById('logout-form').submit();
     }
@@ -27,6 +29,16 @@ app.run(['$rootScope', function($rootScope) {
             $rootScope.logout();
         })
         .fail((e)=>{alert(e.responseText)});
+    }
+    $rootScope.print_time_cell = function(date){
+        let date_obj = new Date(date);
+        let [time_str, hs, ms, ampm] = time_regex.exec(date_obj.toLocaleTimeString());
+        if (ampm.toLowerCase() == 'pm'){
+            hs = 12 + Number(hs);
+        }
+        let [date_str, mm, dd, yy] = date_regex.exec(date_obj.toLocaleDateString());
+        yy = yy.substr(2);
+        return `${mm}/${dd}/${yy}\n${hs}:${ms}`
     }
     $rootScope.format_select_options = (options, params = {})=>{
         if (!Array.isArray(options) && typeof options == 'object'){

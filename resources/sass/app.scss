@@ -32,10 +32,12 @@
         white-space: nowrap;
         width: 1%;
     }
-    td, th {
-        .shrunk{
-            white-space: nowrap;
-            width: 1%;
+
+    td {
+        &.date_cell {
+            padding: 0.5rem 0.75rem;
+            font-size: 80%;
+            white-space: pre;
         }
     }
 }

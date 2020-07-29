@@ -22,6 +22,7 @@ class CreateGamesTable extends Migration
             $table->tinyInteger('home_score')->nullable();
             $table->tinyInteger('away_score')->nullable();
             $table->boolean('is_done')->storedAs('home_score is not null and away_score is not null');
+            $table->timestamp('time');
         });
     }
 

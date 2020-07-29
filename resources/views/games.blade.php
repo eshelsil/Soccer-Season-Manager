@@ -41,6 +41,7 @@
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Week</th>
+                <th scope="col">Time</th>
                 <th ng-show="is_team_selected()" scope="col">Res.</th>
                 <th scope="col">Home Team</th>
                 <th scope="col">Away Team</th>
@@ -50,6 +51,7 @@
         <tbody>
             <tr ng-repeat="game in games">
                 <td class='shrunk'>@{{game.week}}</td>
+                <td class='date_cell'>@{{print_time_cell(game.time)}}</td>
                 <td ng-show="is_team_selected()" ng-class="{
                     'text-success': game.team_result == 'win',
                     'text-danger': game.team_result == 'lose',
