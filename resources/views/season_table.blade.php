@@ -7,7 +7,7 @@
 @endsection
 
 @php
-    $init_options = [
+    $init_options = [ 
         'last_week' => $last_week,
     ];
 @endphp
