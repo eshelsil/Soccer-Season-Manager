@@ -28,3 +28,8 @@ Regular users may see the Season Table & the Games of the season.
 ## Supported Competitions
 The app currently support the following competition types:
 - [round-robin](https://en.wikipedia.org/wiki/Round-robin_tournament) season of 2 rounds
+
+
+## Example
+Deployed example may be seen here:
+http://season-manager-2020-dev.herokuapp.com/
