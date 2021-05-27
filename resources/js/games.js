@@ -24,6 +24,7 @@ app.controller('games_display', ['$scope', function($scope) {
 
         $.get(`/api/games?${search_params.toString()}`)
         .done((games)=>{
+            $scope.games = {};
             for(game_object of games){
                 $scope.games[game_object.id] = game_object;
             }
