@@ -32,4 +32,4 @@ The app currently support the following competition types:
 
 ## Example
 Deployed example may be seen here:
-http://season-manager-2020-dev.herokuapp.com/
+https://season-manager-2020-dev.herokuapp.com/
