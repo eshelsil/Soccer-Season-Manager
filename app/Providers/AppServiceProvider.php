@@ -17,6 +17,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('RegisterationManager', function ($app) {
             return new RegisterationManager();
         });
+        if(config('app.env') === 'production') {
+            \URL::forceScheme('https');
+        }
     }
 
     /**
