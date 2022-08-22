@@ -56,7 +56,7 @@ app.controller('set_scores', ['$scope', 'DisabledAdminViews', function($scope, D
             url.searchParams.set('is_done', 0)
         }
 
-        $.get(`/api/games/${url.search}`)
+        $.get(`/api/games${url.search}`)
         .done((games)=>{
             for(game_object of games){
                 $scope.games[game_object.id] = game_object;
